@@ -11,9 +11,15 @@ times_array = []
 counter = 0
 
 GPIO.setmode(GPIO.BOARD)
+GPIO.setup(pin_to_circuit, GPIO.IN)
 
 
-# define the pin that goes to the circuit
+def my_callback(channel):
+    print(GPIO.input(channel))
+
+
+GPIO.add_event_detect(pin_to_circuit, pull_up_down=GPIO.PUD_UP,
+                      callback=my_callback, bouncetime=100)
 
 
 def check_sensor(pin_to_circuit):
@@ -35,7 +41,8 @@ def check_sensor(pin_to_circuit):
 try:
     # Main loop
     while True:
-        check_sensor(pin_to_circuit)
+        # check_sensor(pin_to_circuit)
+        pass
 except KeyboardInterrupt:
     pass
 finally:
