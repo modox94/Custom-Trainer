@@ -8,24 +8,33 @@ __maintainer__ = "pimylifeup.com"
 count_of_magnets = 2
 pin_to_circuit = 7
 times_array = []
+counter = 0
 
 GPIO.setmode(GPIO.BOARD)
-GPIO.setup(pin_to_circuit, GPIO.IN)
+
 
 # define the pin that goes to the circuit
 
 
-def check_sensor():
-    print(GPIO.input(pin_to_circuit))
+def check_sensor(pin_to_circuit):
+    GPIO.setup(pin_to_circuit, GPIO.OUT)
+    GPIO.output(pin_to_circuit, GPIO.LOW)
     time.sleep(0.1)
-    return
+
+    GPIO.setup(pin_to_circuit, GPIO.IN)
+
+    while (GPIO.input(pin_to_circuit) == GPIO.LOW):
+        pass
+
+    counter = counter + 1
+    return print('magnit!', counter)
 
 
 # Catch when script is interupted, cleanup correctly
 try:
     # Main loop
     while True:
-        check_sensor()
+        check_sensor(pin_to_circuit)
 except KeyboardInterrupt:
     pass
 finally:
