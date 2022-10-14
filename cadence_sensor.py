@@ -18,7 +18,7 @@ def my_callback(channel):
     print(GPIO.input(channel))
 
 
-GPIO.add_event_detect(pin_to_circuit, pull_up_down=GPIO.PUD_UP,
+GPIO.add_event_detect(pin_to_circuit, GPIO.BOTH, pull_up_down=GPIO.PUD_UP,
                       callback=my_callback, bouncetime=100)
 
 
