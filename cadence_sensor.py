@@ -16,8 +16,8 @@ GPIO.setmode(GPIO.BOARD)
 # define the pin that goes to the circuit
 
 
-def check_sensor(pin_to_circuit, counter):
-
+def check_sensor(pin_to_circuit):
+    global counter
     GPIO.setup(pin_to_circuit, GPIO.OUT)
     GPIO.output(pin_to_circuit, GPIO.LOW)
     time.sleep(0.1)
@@ -35,7 +35,7 @@ def check_sensor(pin_to_circuit, counter):
 try:
     # Main loop
     while True:
-        check_sensor(pin_to_circuit, counter)
+        check_sensor(pin_to_circuit)
 except KeyboardInterrupt:
     pass
 finally:
