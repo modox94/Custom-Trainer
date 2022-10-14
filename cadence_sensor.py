@@ -11,7 +11,11 @@ times_array = []
 counter = 0
 
 GPIO.setmode(GPIO.BOARD)
-GPIO.setup(pin_to_circuit, GPIO.IN,)  # pull_up_down=GPIO.PUD_UP)
+GPIO.setup(pin_to_circuit, GPIO.OUT)
+GPIO.output(pin_to_circuit, GPIO.LOW)
+time.sleep(0.1)
+
+GPIO.setup(pin_to_circuit, GPIO.IN)  # pull_up_down=GPIO.PUD_UP)
 
 
 def my_callback(channel):
