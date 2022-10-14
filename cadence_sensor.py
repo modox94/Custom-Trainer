@@ -16,8 +16,8 @@ GPIO.setmode(GPIO.BOARD)
 # define the pin that goes to the circuit
 
 
-def check_sensor(pin_to_circuit):
-    inside_counter = 0
+def check_sensor(pin_to_circuit, counter):
+
     GPIO.setup(pin_to_circuit, GPIO.OUT)
     GPIO.output(pin_to_circuit, GPIO.LOW)
     time.sleep(0.1)
@@ -25,7 +25,7 @@ def check_sensor(pin_to_circuit):
     GPIO.setup(pin_to_circuit, GPIO.IN)
 
     while (GPIO.input(pin_to_circuit) == GPIO.LOW):
-        inside_counter += 1
+        pass
 
     counter += 1
     return print('magnit!', counter)
@@ -35,7 +35,7 @@ def check_sensor(pin_to_circuit):
 try:
     # Main loop
     while True:
-        check_sensor(pin_to_circuit)
+        check_sensor(pin_to_circuit, counter)
 except KeyboardInterrupt:
     pass
 finally:
