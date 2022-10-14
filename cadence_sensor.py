@@ -26,7 +26,7 @@ def check_sensor(pin_to_circuit):
     while (GPIO.input(pin_to_circuit) == GPIO.LOW):
         pass
 
-    counter = counter + 1
+    counter += 1
     return print('magnit!', counter)
 
 
