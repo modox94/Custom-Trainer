@@ -19,6 +19,7 @@ GPIO.setup(pin_to_circuit, GPIO.IN)  # pull_up_down=GPIO.PUD_UP)
 
 
 def my_callback(channel):
+    global pin_to_circuit
     print(GPIO.input(channel))
     GPIO.setup(pin_to_circuit, GPIO.OUT)
     GPIO.output(pin_to_circuit, GPIO.LOW)
