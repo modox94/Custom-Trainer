@@ -6,7 +6,7 @@ sensor_ground = 40
 
 GPIO.setmode(GPIO.BOARD)
 GPIO.setup(sensor_plus, GPIO.OUT)
-GPIO.setup(sensor_ground, GPIO.IN)
+GPIO.setup(sensor_ground, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
 
 GPIO.output(sensor_plus, GPIO.HIGH)
 
