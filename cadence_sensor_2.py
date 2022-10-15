@@ -1,7 +1,6 @@
 import RPi.GPIO as GPIO
 import time
 
-GPIO.cleanup()
 
 sensor_plus = 38
 sensor_ground = 40
