@@ -28,7 +28,7 @@ def my_callback(channel):
 
 
 GPIO.add_event_detect(pin_to_circuit, GPIO.BOTH,
-                      callback=my_callback, bouncetime=100)
+                      callback=my_callback)  # , bouncetime=100)
 
 
 def check_sensor(pin_to_circuit):
