@@ -19,10 +19,15 @@ def my_callback(channel):
 
 # GPIO.add_event_detect(sensor_ground, GPIO.RISING, callback=my_callback)
 
-
-while True:
-    GPIO.wait_for_edge(sensor_ground, GPIO.RISING)
-    print(sensor_ground, 'RISING')
-    # time.sleep(0.1)
-    # print(sensor_plus, GPIO.input(sensor_plus))
-    # print(sensor_ground, GPIO.input(sensor_ground))
+try:
+    # Main loop
+    while True:
+        GPIO.wait_for_edge(sensor_ground, GPIO.RISING)
+        print(sensor_ground, 'RISING')
+        # time.sleep(0.1)
+        # print(sensor_plus, GPIO.input(sensor_plus))
+        # print(sensor_ground, GPIO.input(sensor_ground))
+except KeyboardInterrupt:
+    pass
+finally:
+    GPIO.cleanup()
