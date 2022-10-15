@@ -17,9 +17,6 @@ time.sleep(0.1)
 
 GPIO.setup(pin_to_circuit, GPIO.IN)
 
-print('LOW', GPIO.LOW)
-print('HIGH', GPIO.HIGH)
-
 
 def my_callback(channel):
     print(GPIO.input(channel))
