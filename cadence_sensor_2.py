@@ -16,3 +16,7 @@ def my_callback(channel):
 
 
 GPIO.add_event_detect(sensor_ground, GPIO.BOTH, callback=my_callback)
+
+
+while True:
+    pass
