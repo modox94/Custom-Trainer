@@ -19,6 +19,7 @@ def my_callback(channel):
 
 
 def recording_signals():
+    global time
     global sensor_signal
     global times_array
     global max_timeout
