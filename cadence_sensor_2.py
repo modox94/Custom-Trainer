@@ -1,31 +1,51 @@
 import RPi.GPIO as GPIO
 import time
+import utils
+from utils import array_filter
 
-
-sensor_plus = 38
-sensor_ground = 40
+count_of_magnets = 2
+sensor_power = 38
+sensor_signal = 40
+times_array = []
+max_timeout = 5000
 
 GPIO.setmode(GPIO.BOARD)
-GPIO.setup(sensor_plus, GPIO.OUT)
-GPIO.setup(sensor_ground, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
+GPIO.setup(sensor_power, GPIO.OUT)
+GPIO.setup(sensor_signal, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
 
-GPIO.output(sensor_plus, GPIO.HIGH)
+GPIO.output(sensor_power, GPIO.HIGH)
 
 
 def my_callback(channel):
     print('40', GPIO.input(channel))
 
 
-# GPIO.add_event_detect(sensor_ground, GPIO.RISING, callback=my_callback)
+def recording_signals():
+    global sensor_signal
+    global times_array
+    global max_timeout
+    new_array = []
+    GPIO.wait_for_edge(sensor_signal, GPIO.RISING)
+    now = time.gmtime()
+    edge_timeout = now - max_timeout
+    for time in times_array:
+        is_valid = time > edge_timeout
+        if is_valid:
+            new_array.append(time)
+    times_array = new_array
+
+
+def calculate_cadence():
+    global times_array
+    print('times_array', times_array)
+    time.sleep(1)
+
 
 try:
     # Main loop
     while True:
-        GPIO.wait_for_edge(sensor_ground, GPIO.RISING)
-        print(sensor_ground, 'RISING')
-        # time.sleep(0.1)
-        # print(sensor_plus, GPIO.input(sensor_plus))
-        # print(sensor_ground, GPIO.input(sensor_ground))
+        recording_signals()
+        calculate_cadence()
 except KeyboardInterrupt:
     pass
 finally:
