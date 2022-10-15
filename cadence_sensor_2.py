@@ -15,8 +15,9 @@ def my_callback(channel):
     print('40', GPIO.input(channel))
 
 
-GPIO.add_event_detect(sensor_ground, GPIO.RISING, callback=my_callback)
+# GPIO.add_event_detect(sensor_ground, GPIO.RISING, callback=my_callback)
 
 
 while True:
-    pass
+    GPIO.wait_for_edge(sensor_ground, GPIO.RISING)
+    print(sensor_ground, GPIO.input(sensor_ground))
