@@ -1,5 +1,6 @@
 import RPi.GPIO as GPIO
 import time
+from datetime import datetime
 
 count_of_magnets = 2
 sensor_power = 38
@@ -14,12 +15,7 @@ GPIO.setup(sensor_signal, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
 GPIO.output(sensor_power, GPIO.HIGH)
 
 
-def my_callback(channel):
-    print('40', GPIO.input(channel))
-
-
 def recording_signals():
-    global time
     global sensor_signal
     global times_array
     global max_timeout
@@ -27,17 +23,17 @@ def recording_signals():
     GPIO.wait_for_edge(sensor_signal, GPIO.RISING)
     now = time.gmtime()
     edge_timeout = now - max_timeout
-    for time in times_array:
-        is_valid = time > edge_timeout
+    for time_el in times_array:
+        is_valid = time_el > edge_timeout
         if is_valid:
-            new_array.append(time)
+            new_array.append(time_el)
     times_array = new_array
 
 
 def calculate_cadence():
     global times_array
     print('times_array', times_array)
-    time.sleep(1)
+    # time.sleep(1)
 
 
 try:
