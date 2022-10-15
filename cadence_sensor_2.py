@@ -19,5 +19,6 @@ def my_callback(channel):
 
 
 while True:
-    GPIO.wait_for_edge(sensor_ground, GPIO.RISING)
+    # GPIO.wait_for_edge(sensor_ground, GPIO.RISING)
+    time.sleep(0.1)
     print(sensor_ground, GPIO.input(sensor_ground))
