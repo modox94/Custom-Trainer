@@ -1,7 +1,5 @@
 import RPi.GPIO as GPIO
 import time
-import utils
-from utils import array_filter
 
 count_of_magnets = 2
 sensor_power = 38
