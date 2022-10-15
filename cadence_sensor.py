@@ -18,29 +18,17 @@ time.sleep(0.1)
 GPIO.setup(pin_to_circuit, GPIO.IN)
 
 
-def my_callback1(channel):
+def my_callback(channel):
     print(GPIO.input(channel))
     GPIO.setup(channel, GPIO.OUT)
     GPIO.output(channel, GPIO.LOW)
     time.sleep(0.001)
     GPIO.setup(channel, GPIO.IN)
-    print("GPIO.RISING")
+    print("FIN")
 
 
-def my_callback2(channel):
-    print(GPIO.input(channel))
-    GPIO.setup(channel, GPIO.OUT)
-    GPIO.output(channel, GPIO.LOW)
-    time.sleep(0.001)
-    GPIO.setup(channel, GPIO.IN)
-    print("GPIO.FALLING")
-
-
-GPIO.add_event_detect(pin_to_circuit, GPIO.RISING,
-                      callback=my_callback1)  # , bouncetime=100)
-
-GPIO.add_event_detect(pin_to_circuit, GPIO.FALLING,
-                      callback=my_callback2)  # , bouncetime=100)
+GPIO.add_event_detect(pin_to_circuit, GPIO.BOTH,
+                      callback=my_callback)  # , bouncetime=100)
 
 
 def check_sensor(pin_to_circuit):
