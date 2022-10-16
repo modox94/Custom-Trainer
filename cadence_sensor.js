@@ -11,7 +11,7 @@ const cadenceSignal = new Gpio(sensorSignal, DIRECTION.in, EDGE.both); // EDGE.r
 console.log('cadencePower', cadencePower.readSync());
 console.log('cadenceSignal', cadenceSignal.readSync());
 
-setInterval(() => cadenceSignal.readSync(), 2000);
+setInterval(() => console.log('cadenceSignal', cadenceSignal.readSync()), 2000);
 
 cadenceSignal.watch((error, value) => {
   if (error) {
