@@ -7,6 +7,8 @@ const sensorSignal = 40;
 new Gpio(sensorPower, DIRECTION.high);
 const cadenceSignal = new Gpio(sensorSignal, DIRECTION.in, EDGE.rising);
 
+console.log('check', cadenceSignal);
+
 cadenceSignal.watch((error, value) => {
   if (error) {
     throw error;
