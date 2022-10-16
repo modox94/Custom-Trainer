@@ -11,7 +11,7 @@ const sensorSignal = 8;
 // cadencePower.writeSync(Gpio.HIGH );
 const cadenceSignal = new Gpio(sensorSignal, DIRECTION.in, EDGE.both); // EDGE.rising);
 
-console.log('cadencePower', cadencePower.readSync());
+// console.log('cadencePower', cadencePower.readSync());
 console.log('cadenceSignal', cadenceSignal.readSync());
 
 console.log('-------------------');
