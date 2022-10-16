@@ -31,7 +31,7 @@ const recordingSignals = (error, value) => {
     return;
   }
 
-  fs.appendFile(dataFile, '\n' + String(Date.now()));
+  fs.appendFile(dataFile, '\n' + String(Date.now()), () => {});
   counter.inc(1);
 };
 
