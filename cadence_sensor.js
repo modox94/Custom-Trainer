@@ -8,7 +8,7 @@ const sensorSignal = PHYSICAL_TO_GPIO[40];
 new Gpio(sensorPower, DIRECTION.high);
 const cadenceSignal = new Gpio(sensorSignal, DIRECTION.in, EDGE.rising);
 
-const window = 5;
+const window = 1;
 const resultWindow = 60;
 const countMagnets = 2;
 
