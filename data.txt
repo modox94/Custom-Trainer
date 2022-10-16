@@ -1,0 +1,252 @@
+Program launched: 1665964037742
+frequencyRaw: 0
+  frequency: 0
+frequencyRaw: 0
+  frequency: 0
+frequencyRaw: 0
+  frequency: 0
+frequencyRaw: 0
+  frequency: 0
+frequencyRaw: 0
+  frequency: 0
+frequencyRaw: 0
+  frequency: 0
+frequencyRaw: 0
+  frequency: 0
+frequencyRaw: 0
+  frequency: 0
+frequencyRaw: 0
+  frequency: 0
+frequencyRaw: 0
+  frequency: 0
+frequencyRaw: 0
+  frequency: 0
+frequencyRaw: 0
+  frequency: 0
+frequencyRaw: 0
+  frequency: 0
+frequencyRaw: 0
+  frequency: 0
+frequencyRaw: 0
+  frequency: 0
+frequencyRaw: 0
+  frequency: 0
+1665964053820
+1665964054665
+frequencyRaw: 1
+  frequency: 30
+1665964055223
+1665964055732
+frequencyRaw: 2
+  frequency: 60
+1665964056243
+1665964056719
+frequencyRaw: 2
+  frequency: 60
+1665964057205
+1665964057670
+frequencyRaw: 2
+  frequency: 60
+1665964058115
+1665964058528
+frequencyRaw: 2
+  frequency: 60
+1665964058933
+1665964059336
+1665964059765
+frequencyRaw: 2
+  frequency: 60
+1665964060183
+1665964060599
+frequencyRaw: 2
+  frequency: 60
+1665964061005
+1665964061420
+frequencyRaw: 1
+  frequency: 30
+1665964061823
+1665964062242
+1665964062664
+frequencyRaw: 2
+  frequency: 60
+1665964063096
+1665964063526
+frequencyRaw: 2
+  frequency: 60
+1665964063960
+1665964064367
+1665964064778
+frequencyRaw: 2
+  frequency: 60
+1665964065189
+1665964065610
+frequencyRaw: 2
+  frequency: 60
+1665964066023
+1665964066440
+frequencyRaw: 1
+  frequency: 30
+1665964066854
+1665964067274
+1665964067683
+frequencyRaw: 2
+  frequency: 60
+1665964068097
+1665964068511
+frequencyRaw: 2
+  frequency: 60
+1665964068927
+1665964069340
+1665964069754
+frequencyRaw: 2
+  frequency: 60
+1665964070166
+1665964070580
+frequencyRaw: 2
+  frequency: 60
+1665964070989
+1665964071397
+1665964071800
+frequencyRaw: 2
+  frequency: 60
+1665964072211
+1665964072630
+frequencyRaw: 2
+  frequency: 60
+1665964073057
+1665964073488
+frequencyRaw: 1
+  frequency: 30
+1665964073920
+1665964074338
+1665964074753
+frequencyRaw: 2
+  frequency: 60
+1665964075169
+1665964075588
+frequencyRaw: 2
+  frequency: 60
+1665964076000
+1665964076416
+frequencyRaw: 1
+  frequency: 30
+1665964076829
+1665964077241
+1665964077649
+frequencyRaw: 2
+  frequency: 60
+1665964078062
+1665964078486
+frequencyRaw: 1
+  frequency: 30
+1665964078908
+1665964079326
+1665964079742
+frequencyRaw: 2
+  frequency: 60
+1665964080170
+1665964080593
+frequencyRaw: 2
+  frequency: 60
+1665964081019
+1665964081437
+frequencyRaw: 1
+  frequency: 30
+1665964081858
+1665964082281
+1665964082697
+frequencyRaw: 2
+  frequency: 60
+1665964083116
+1665964083537
+frequencyRaw: 2
+  frequency: 60
+1665964083950
+1665964084355
+1665964084750
+frequencyRaw: 2
+  frequency: 60
+1665964085153
+1665964085558
+frequencyRaw: 2
+  frequency: 60
+1665964085962
+1665964086383
+frequencyRaw: 1
+  frequency: 30
+1665964086825
+1665964087254
+1665964087661
+frequencyRaw: 2
+  frequency: 60
+1665964088062
+1665964088453
+frequencyRaw: 1
+  frequency: 30
+1665964088829
+1665964089177
+1665964089511
+frequencyRaw: 2
+  frequency: 60
+1665964089835
+1665964090151
+1665964090459
+1665964090759
+frequencyRaw: 3
+  frequency: 90
+1665964091057
+1665964091349
+1665964091639
+frequencyRaw: 2
+  frequency: 60
+1665964091928
+1665964092218
+1665964092506
+1665964092794
+frequencyRaw: 3
+  frequency: 90
+1665964093079
+1665964093370
+1665964093662
+frequencyRaw: 3
+  frequency: 90
+1665964093959
+1665964094257
+1665964094557
+frequencyRaw: 2
+  frequency: 60
+1665964094858
+1665964095159
+1665964095454
+1665964095751
+frequencyRaw: 3
+  frequency: 90
+1665964096045
+1665964096343
+1665964096634
+frequencyRaw: 2
+  frequency: 60
+1665964096929
+1665964097256
+1665964097651
+frequencyRaw: 2
+  frequency: 60
+1665964098117
+1665964098630
+frequencyRaw: 2
+  frequency: 60
+1665964099482
+frequencyRaw: 1
+  frequency: 30
+frequencyRaw: 0
+  frequency: 0
+frequencyRaw: 0
+  frequency: 0
+frequencyRaw: 0
+  frequency: 0
+frequencyRaw: 0
+  frequency: 0
+frequencyRaw: 0
+  frequency: 0
+frequencyRaw: 0
+  frequency: 0
