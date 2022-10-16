@@ -17,6 +17,7 @@
   "homepage": "https://github.com/modox94/Custom-Trainer#readme",
   "description": "",
   "dependencies": {
+    "frequency-counter": "^1.0.1",
     "onoff": "^6.0.3"
   },
   "type": "module"
