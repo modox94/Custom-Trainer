@@ -7,7 +7,8 @@ const sensorSignal = 40;
 
 rpio.init({ mapping: 'physical' });
 rpio.open(sensorPower, rpio.OUTPUT, rpio.LOW);
-rpio.open(sensorSignal, rpio.INPUT, rpio.PULL_DOWN);
+// rpio.open(sensorSignal, rpio.INPUT, rpio.PULL_DOWN);
+rpio.open(sensorSignal, rpio.INPUT);
 
 rpio.write(sensorPower, rpio.HIGH);
 
