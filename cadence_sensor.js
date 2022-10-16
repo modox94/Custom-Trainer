@@ -25,7 +25,7 @@ const recordingSignals = (error, value) => {
 const calculateCadence = () => {
   const res = counter.freq();
   console.log('resraw', res);
-  console.log('res', res / 2);
+  console.log('res', res * 6);
 };
 
 cadenceSignal.watch(recordingSignals);
