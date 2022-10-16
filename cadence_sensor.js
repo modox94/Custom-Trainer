@@ -11,15 +11,14 @@ const cadenceSignal = new Gpio(sensorSignal, DIRECTION.in, EDGE.rising);
 const timesArray = [];
 const maxTimeout = 5000;
 
-const counter = new Freq();
+const counter = new Freq(5);
 
 const recordingSignals = (error, value) => {
   if (error) {
     throw error;
   }
 
-  // splice;
-  counter.inc();
+  counter.inc(0.5);
   console.log('value', value);
 };
 
