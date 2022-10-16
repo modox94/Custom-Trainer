@@ -1,0 +1,23 @@
+{
+  "name": "custom-trainer",
+  "version": "1.0.0",
+  "main": "cadence_sensor.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/modox94/Custom-Trainer.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/modox94/Custom-Trainer/issues"
+  },
+  "homepage": "https://github.com/modox94/Custom-Trainer#readme",
+  "description": "",
+  "dependencies": {
+    "onoff": "^6.0.3"
+  },
+  "type": "module"
+}
