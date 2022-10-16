@@ -6,10 +6,10 @@ const sensorSignal = 40;
 
 const cadencePower = new Gpio(sensorPower, DIRECTION.high);
 cadencePower.writeSync(1);
-const cadenceSignal = new Gpio(sensorSignal, DIRECTION.in, EDGE.rising);
+const cadenceSignal = new Gpio(sensorSignal, DIRECTION.in, EDGE.both); // EDGE.rising);
 
-console.log('cadencePower', cadencePower);
-console.log('cadenceSignal', cadenceSignal);
+console.log('cadencePower', cadencePower.readSync());
+console.log('cadenceSignal', cadenceSignal.readSync());
 
 cadenceSignal.watch((error, value) => {
   if (error) {
