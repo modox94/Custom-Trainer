@@ -18,13 +18,14 @@ const recordingSignals = (error, value) => {
     throw error;
   }
 
-  counter.inc(0.5);
+  counter.inc(1);
   console.log('value', value);
 };
 
 const calculateCadence = () => {
   const res = counter.freq();
-  console.log('res', res);
+  console.log('resraw', res);
+  console.log('res', res / 2);
 };
 
 cadenceSignal.watch(recordingSignals);
