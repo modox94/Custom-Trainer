@@ -21,6 +21,7 @@ def recording_signals():
     global max_timeout
     new_array = []
     GPIO.wait_for_edge(sensor_signal, GPIO.RISING)
+    print('SIGNAL!')
     now = time.gmtime()
     edge_timeout = now - max_timeout
     for time_el in times_array:
@@ -40,7 +41,7 @@ try:
     # Main loop
     while True:
         recording_signals()
-        calculate_cadence()
+        # calculate_cadence()
 except KeyboardInterrupt:
     pass
 finally:
