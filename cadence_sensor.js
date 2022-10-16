@@ -8,24 +8,27 @@ const sensorSignal = PHYSICAL_TO_GPIO[40];
 new Gpio(sensorPower, DIRECTION.high);
 const cadenceSignal = new Gpio(sensorSignal, DIRECTION.in, EDGE.rising);
 
-const timesArray = [];
-const maxTimeout = 5000;
+const window = 5;
+const resultWindow = 60;
+const countMagnets = 2;
 
-const counter = new Freq(5);
+const counter = new Freq(window);
 
 const recordingSignals = (error, value) => {
   if (error) {
-    throw error;
+    console.error(error);
+    return;
   }
 
   counter.inc(1);
-  console.log('value', value);
 };
 
 const calculateCadence = () => {
-  const res = counter.freq();
-  console.log('resraw', res);
-  console.log('res', res * 6);
+  const frequencyRaw = counter.freq();
+  const frequency = frequencyRaw * (resultWindow / window / countMagnets);
+
+  console.log('frequencyRaw', frequencyRaw);
+  console.log('frequency', frequency);
 };
 
 cadenceSignal.watch(recordingSignals);
