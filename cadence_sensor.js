@@ -7,7 +7,7 @@ import { DIRECTION, EDGE } from './constants.js';
 const sensorPower = 7;
 const sensorSignal = 8;
 
-const cadencePower = new Gpio(sensorPower, DIRECTION.high);
+// const cadencePower = new Gpio(sensorPower, DIRECTION.high);
 // cadencePower.writeSync(Gpio.HIGH );
 const cadenceSignal = new Gpio(sensorSignal, DIRECTION.in, EDGE.both); // EDGE.rising);
 
@@ -17,7 +17,7 @@ console.log('cadenceSignal', cadenceSignal.readSync());
 console.log('-------------------');
 
 setInterval(() => {
-  console.log('cadencePower', cadencePower.readSync());
+  // console.log('cadencePower', cadencePower.readSync());
   console.log('cadenceSignal', cadenceSignal.readSync());
 }, 2000);
 
