@@ -1,5 +1,5 @@
 import { Gpio } from 'onoff';
-import { DIRECTION, EDGE } from './constants';
+import { DIRECTION, EDGE } from './constants.js';
 
 const sensorPower = 38;
 const sensorSignal = 40;
