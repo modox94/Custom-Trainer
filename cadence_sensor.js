@@ -1,8 +1,11 @@
 import { Gpio } from 'onoff';
 import { DIRECTION, EDGE } from './constants.js';
 
-const sensorPower = 38;
-const sensorSignal = 40;
+// const sensorPower = 38;
+// const sensorSignal = 40;
+
+const sensorPower = 7;
+const sensorSignal = 8;
 
 const cadencePower = new Gpio(sensorPower, DIRECTION.high);
 // cadencePower.writeSync(Gpio.HIGH );
