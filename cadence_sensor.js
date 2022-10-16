@@ -5,6 +5,7 @@ const sensorPower = 38;
 const sensorSignal = 40;
 
 const cadencePower = new Gpio(sensorPower, DIRECTION.high);
+cadencePower.writeSync(1);
 const cadenceSignal = new Gpio(sensorSignal, DIRECTION.in, EDGE.rising);
 
 console.log('cadencePower', cadencePower);
