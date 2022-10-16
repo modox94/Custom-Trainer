@@ -17,7 +17,8 @@
   "homepage": "https://github.com/modox94/Custom-Trainer#readme",
   "description": "",
   "dependencies": {
-    "onoff": "^6.0.3"
+    "onoff": "^6.0.3",
+    "rpio": "^2.4.2"
   },
   "type": "module"
 }
