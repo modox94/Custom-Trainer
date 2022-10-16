@@ -3,6 +3,8 @@ import { Gpio } from 'onoff';
 import Freq from 'frequency-counter';
 import { DIRECTION, EDGE, PHYSICAL_TO_GPIO } from './constants.js';
 
+const noop = () => {};
+
 const sensorPower = PHYSICAL_TO_GPIO[38];
 const sensorSignal = PHYSICAL_TO_GPIO[40];
 
@@ -31,7 +33,7 @@ const recordingSignals = (error, value) => {
     return;
   }
 
-  fs.appendFile(dataFile, '\n' + String(Date.now()), () => {});
+  fs.appendFile(dataFile, '\n' + String(Date.now()), noop);
   counter.inc(1);
 };
 
@@ -42,7 +44,7 @@ const calculateCadence = () => {
   const freqString = `frequencyRaw: ${frequencyRaw}
   frequency: ${frequency}`;
 
-  fs.appendFile(dataFile, '\n' + freqString);
+  fs.appendFile(dataFile, '\n' + freqString, noop);
 
   console.log(freqString);
 };
