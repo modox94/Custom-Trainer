@@ -8,7 +8,7 @@ const { LF, PL, FRQ_R, FRQ, dataFile } = DEV_CONSTS;
 const noop = () => {};
 
 // const sensorPower = PHYSICAL_TO_GPIO[38];
-const sensorSignal = PHYSICAL_TO_GPIO[7];
+const sensorSignal = PHYSICAL_TO_GPIO[11];
 
 // new Gpio(sensorPower, DIRECTION.high);
 const cadenceSignal = new Gpio(sensorSignal, DIRECTION.in, EDGE.rising);
