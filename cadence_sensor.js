@@ -1,17 +1,17 @@
+import Freq from 'frequency-counter';
 import fs from 'fs';
 import { Gpio } from 'onoff';
-import Freq from 'frequency-counter';
-import { DIRECTION, EDGE, PHYSICAL_TO_GPIO } from './constants.js';
+import { DEV_CONSTS, DIRECTION, EDGE, PHYSICAL_TO_GPIO } from './constants.js';
+
+const { LF, PL, FRQ_R, FRQ, dataFile } = DEV_CONSTS;
 
 const noop = () => {};
 
-const sensorPower = PHYSICAL_TO_GPIO[38];
-const sensorSignal = PHYSICAL_TO_GPIO[40];
+// const sensorPower = PHYSICAL_TO_GPIO[38];
+const sensorSignal = PHYSICAL_TO_GPIO[7];
 
-new Gpio(sensorPower, DIRECTION.high);
+// new Gpio(sensorPower, DIRECTION.high);
 const cadenceSignal = new Gpio(sensorSignal, DIRECTION.in, EDGE.rising);
-
-const dataFile = 'data.txt';
 
 try {
   fs.unlinkSync(dataFile);
@@ -19,7 +19,7 @@ try {
   console.log('unlink error', error);
 }
 
-fs.writeFileSync(dataFile, `Program launched: ${Date.now()}`, 'utf8');
+fs.writeFileSync(dataFile, `${PL}${Date.now()}`, 'utf8');
 
 const window = 1;
 const resultWindow = 60;
@@ -33,7 +33,7 @@ const recordingSignals = (error, value) => {
     return;
   }
 
-  fs.appendFile(dataFile, '\n' + String(Date.now()), noop);
+  fs.appendFile(dataFile, LF + String(Date.now()), noop);
   counter.inc(1);
 };
 
@@ -41,10 +41,9 @@ const calculateCadence = () => {
   const frequencyRaw = counter.freq();
   const frequency = frequencyRaw * (resultWindow / window / countMagnets);
 
-  const freqString = `frequencyRaw: ${frequencyRaw}
-  frequency: ${frequency}`;
+  const freqString = `${FRQ_R}${frequencyRaw}` + LF + `${FRQ}${frequency}`;
 
-  fs.appendFile(dataFile, '\n' + freqString, noop);
+  fs.appendFile(dataFile, LF + freqString, noop);
 
   console.log(freqString);
 };

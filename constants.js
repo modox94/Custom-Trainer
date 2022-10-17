@@ -38,3 +38,11 @@ export const PHYSICAL_TO_GPIO = {
   38: 20,
   40: 21,
 };
+
+export const DEV_CONSTS = {
+  dataFile: 'data.txt',
+  LF: '\n',
+  PL: 'Program launched: ',
+  FRQ_R: 'frequencyRaw: ',
+  FRQ: 'frequency: ',
+};
