@@ -3,8 +3,8 @@ import time
 
 GPIO.setmode(GPIO.BOARD)
 
-pin_a = 38
-pin_b = 40
+pin_a = 40
+pin_b = 38
 
 def discharge():
     GPIO.setup(pin_a, GPIO.IN)
