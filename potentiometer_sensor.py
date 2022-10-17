@@ -17,7 +17,7 @@ def charge_time():
     GPIO.setup(pin_a, GPIO.OUT)
     count = 0
     GPIO.output(pin_a, True)
-    while not GPIO.input(b_pin):
+    while not GPIO.input(pin_b):
         count = count + 1
     return count
 
