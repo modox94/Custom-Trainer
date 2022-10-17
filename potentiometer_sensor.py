@@ -12,7 +12,7 @@ def discharge():
     GPIO.setup(pin_a, GPIO.IN)
     GPIO.setup(pin_b, GPIO.OUT)
     GPIO.output(pin_b, False)
-    time.sleep(0.01)
+    time.sleep(0.02)
 
 def charge_time():
     GPIO.setup(pin_b, GPIO.IN)
