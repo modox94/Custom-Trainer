@@ -1,12 +1,12 @@
 import RPi.GPIO as GPIO
 import time
 
-GPIO.cleanup()
+# GPIO.cleanup()
 
 GPIO.setmode(GPIO.BOARD)
 
-pin_a = 40
-pin_b = 38
+pin_a = 38
+pin_b = 40
 
 def discharge():
     GPIO.setup(pin_a, GPIO.IN)
