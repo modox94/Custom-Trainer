@@ -1,6 +1,8 @@
 import RPi.GPIO as GPIO
 import time
 
+GPIO.cleanup()
+
 GPIO.setmode(GPIO.BOARD)
 
 pin_a = 40
