@@ -19,4 +19,4 @@ const recordingSignals = (error, value) => {
 
 cadenceSignal.watch(recordingSignals);
 
-setInterval(counter.rpm, 1000);
+setInterval(() => console.log(counter.rpm), 1000);
