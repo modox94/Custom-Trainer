@@ -20,3 +20,5 @@ const recordingSignals = (error, value) => {
 cadenceSignal.watch(recordingSignals);
 
 setInterval(() => console.log(counter.rpm), 1000);
+
+exports.counter = counter;
