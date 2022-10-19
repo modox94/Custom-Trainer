@@ -1,16 +1,16 @@
-export const EDGE = {
+exports.EDGE = {
   rising: 'rising',
   falling: 'falling',
   both: 'both',
 };
 
-export const DIRECTION = {
+exports.DIRECTION = {
   in: 'in',
   high: 'high',
   low: 'low',
 };
 
-export const PHYSICAL_TO_GPIO = {
+exports.PHYSICAL_TO_GPIO = {
   3: 2,
   5: 3,
   7: 4,
@@ -39,10 +39,14 @@ export const PHYSICAL_TO_GPIO = {
   40: 21,
 };
 
-export const DEV_CONSTS = {
+exports.DEV_CONSTS = {
   dataFile: 'data.txt',
   LF: '\n',
   PL: 'Program launched: ',
   FRQ_R: 'frequencyRaw: ',
   FRQ: 'frequency: ',
 };
+
+exports.DEFAULT_WINDOW = 60;
+
+exports.DEFAULT_M_C = 1;

@@ -1,8 +1,9 @@
 {
   "name": "custom-trainer",
   "version": "1.0.0",
-  "main": "cadence_sensor.js",
+  "main": "main.js",
   "scripts": {
+    "start": "electron .",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -17,8 +18,9 @@
   "homepage": "https://github.com/modox94/Custom-Trainer#readme",
   "description": "",
   "dependencies": {
-    "frequency-counter": "^1.0.1",
     "onoff": "^6.0.3"
   },
-  "type": "module"
+  "devDependencies": {
+    "electron": "^21.1.1"
+  }
 }
