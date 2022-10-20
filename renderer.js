@@ -1,5 +1,5 @@
-// const { ipcRenderer } = require('electron');
-const ipcRenderer = require('electron').ipcRenderer;
+const { ipcRenderer } = require('electron');
+
 console.log('renderer.js');
 
 const but = document.getElementById('but-test');
