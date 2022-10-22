@@ -1,20 +1,26 @@
 const { app, BrowserWindow, ipcMain } = require('electron');
-const { counter } = require('./cadence_sensor.js');
+const { cadenceSignal, counter } = require('./cadence_sensor.js');
 const path = require('path');
 
+let win = null;
 const createWindow = () => {
-  const win = new BrowserWindow({
+  win = new BrowserWindow({
     width: 800,
     height: 600,
+    fullscreenable: true,
+    // fullscreen: true,
     webPreferences: {
       preload: path.join(__dirname, 'preload.js'),
-      nodeIntegration: true,
-      contextIsolation: false,
+      contextIsolation: true,
       enableRemoteModule: true,
     },
   });
 
-  win.loadFile('index.html');
+  if (process.env.ELECTRON_START_URL) {
+    win.loadURL(process.env.ELECTRON_START_URL);
+  } else {
+    win.loadFile('./renderer/build/index.html');
+  }
 };
 
 app.whenReady().then(() => {
@@ -29,27 +35,10 @@ app.on('window-all-closed', () => {
   if (process.platform !== 'darwin') app.quit();
 });
 
-// In the main process, we receive the port.
-ipcMain.on('port', (event) => {
-  // When we receive a MessagePort in the main process, it becomes a
-  // MessagePortMain.
-  const port = event.ports[0];
+const sendMessageFunc = () => {
+  if (win) {
+    win.webContents.send('ipc-example', counter.rpm);
+  }
+};
 
-  // MessagePortMain uses the Node.js-style events API, rather than the
-  // web-style events API. So .on('message', ...) instead of .onmessage = ...
-  port.on('message', (event) => {
-    // data is { answer: 42 }
-    // const data = event.data;
-    console.log('event', event?.data);
-  });
-
-  // MessagePortMain queues messages until the .start() method has been called.
-  port.start();
-});
-
-ipcMain.handle('test123', (event, dateTest) => {
-  console.log('dateTest', dateTest);
-
-  // return `added text ${dateTest}`;
-  return counter.rpm;
-});
+cadenceSignal.watch(sendMessageFunc);

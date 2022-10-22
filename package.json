@@ -4,10 +4,10 @@
   "main": "main.js",
   "scripts": {
     "start": "electron-forge start",
+    "dev": "ELECTRON_START_URL=http://localhost:3000 electron-forge start",
     "test": "echo \"Error: no test specified\" && exit 1",
     "package": "electron-forge package",
-    "make": "electron-forge make",
-    "make-mac": "electron-forge make --platform darwin"
+    "make": "electron-forge make"
   },
   "repository": {
     "type": "git",
@@ -22,6 +22,7 @@
   "description": "Сustom app for control the trainers",
   "dependencies": {
     "electron-squirrel-startup": "^1.0.0",
+    "lodash": "^4.17.21",
     "onoff": "^6.0.3"
   },
   "devDependencies": {
