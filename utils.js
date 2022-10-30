@@ -1,5 +1,5 @@
-const fs = require('fs');
-const { DEV_CONSTS, DEFAULT_WINDOW, DEFAULT_M_C } = require('./constants.js');
+const fs = require("fs");
+const { DEV_CONSTS, DEFAULT_WINDOW, DEFAULT_M_C } = require("./constants.js");
 
 const { dataFile, LF, PL, FRQ_R, FRQ } = DEV_CONSTS;
 
@@ -7,7 +7,7 @@ const stringSlice = (fullString, forCut) =>
   fullString.slice(fullString.indexOf(forCut) + forCut.length);
 
 exports.getTimecodes = () => {
-  const data = fs.readFileSync(dataFile, 'utf-8');
+  const data = fs.readFileSync(dataFile, "utf-8");
   const resultObject = {
     frqR: [],
     frq: [],

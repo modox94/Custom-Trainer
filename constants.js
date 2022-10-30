@@ -1,13 +1,13 @@
 exports.EDGE = {
-  rising: 'rising',
-  falling: 'falling',
-  both: 'both',
+  rising: "rising",
+  falling: "falling",
+  both: "both",
 };
 
 exports.DIRECTION = {
-  in: 'in',
-  high: 'high',
-  low: 'low',
+  in: "in",
+  high: "high",
+  low: "low",
 };
 
 exports.PHYSICAL_TO_GPIO = {
@@ -40,11 +40,11 @@ exports.PHYSICAL_TO_GPIO = {
 };
 
 exports.DEV_CONSTS = {
-  dataFile: 'data.txt',
-  LF: '\n',
-  PL: 'Program launched: ',
-  FRQ_R: 'frequencyRaw: ',
-  FRQ: 'frequency: ',
+  dataFile: "data.txt",
+  LF: "\n",
+  PL: "Program launched: ",
+  FRQ_R: "frequencyRaw: ",
+  FRQ: "frequency: ",
 };
 
 exports.DEFAULT_WINDOW = 60;

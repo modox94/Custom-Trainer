@@ -1,4 +1,4 @@
-const { getTimecodes, Frequency } = require('./utils.js');
+const { getTimecodes, Frequency } = require("./utils.js");
 
 const { frq, pl, sensorSignals } = getTimecodes();
 
@@ -11,7 +11,7 @@ const { frq, pl, sensorSignals } = getTimecodes();
 
 const frqEl = new Frequency({ magnetsCount: 2 });
 
-sensorSignals.forEach((el) => {
+sensorSignals.forEach(el => {
   console.log(frqEl.inc(el.getMilliseconds()));
 });
 

@@ -1,10 +1,16 @@
-import React from 'react';
-import { useGetCadenceQuery } from '../../api/ipc';
+import React from "react";
+import { useGetCadenceQuery } from "../../api/ipc";
+import Round from "../Scales/Round";
 
-const CadenceGauge = (props) => {
+const CadenceGauge = props => {
   const cadence = useGetCadenceQuery();
 
-  return <>{cadence?.data}</>;
+  return (
+    <>
+      <Round />
+      {cadence?.data}
+    </>
+  );
 };
 
 export default CadenceGauge;

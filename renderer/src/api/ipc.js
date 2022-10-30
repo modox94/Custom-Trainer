@@ -1,29 +1,29 @@
-import { createApi } from '@reduxjs/toolkit/query/react';
-import { noop } from 'lodash';
+import { createApi } from "@reduxjs/toolkit/query/react";
+import { noop } from "lodash";
 
 export const api = createApi({
-  reducerPath: 'ipcApi',
-  endpoints: (build) => ({
+  reducerPath: "ipcApi",
+  endpoints: build => ({
     getCadence: build.query({
       queryFn: () => 0,
       async onCacheEntryAdded(
         arg,
-        { updateCachedData, cacheDataLoaded, cacheEntryRemoved }
+        { updateCachedData, cacheDataLoaded, cacheEntryRemoved },
       ) {
         let removeListener = noop;
         try {
           await cacheDataLoaded;
-          const listener = (rpmValue) => {
+          const listener = rpmValue => {
             updateCachedData(() => {
               return rpmValue;
             });
           };
           removeListener = window.electron.ipcRenderer.on(
-            'ipc-example',
-            listener
+            "ipc-example",
+            listener,
           );
         } catch (error) {
-          console.log('ipc error', error);
+          console.log("ipc error", error);
         }
 
         await cacheEntryRemoved;

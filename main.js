@@ -1,6 +1,6 @@
-const { app, BrowserWindow, ipcMain } = require('electron');
-const { cadenceSignal, counter } = require('./cadence_sensor.js');
-const path = require('path');
+const { app, BrowserWindow, ipcMain } = require("electron");
+const { cadenceSignal, counter } = require("./cadence_sensor.js");
+const path = require("path");
 
 let win = null;
 const createWindow = () => {
@@ -10,7 +10,7 @@ const createWindow = () => {
     fullscreenable: true,
     // fullscreen: true,
     webPreferences: {
-      preload: path.join(__dirname, 'preload.js'),
+      preload: path.join(__dirname, "preload.js"),
       contextIsolation: true,
       enableRemoteModule: true,
     },
@@ -19,25 +19,25 @@ const createWindow = () => {
   if (process.env.ELECTRON_START_URL) {
     win.loadURL(process.env.ELECTRON_START_URL);
   } else {
-    win.loadFile('./renderer/build/index.html');
+    win.loadFile("./renderer/build/index.html");
   }
 };
 
 app.whenReady().then(() => {
   createWindow();
 
-  app.on('activate', () => {
+  app.on("activate", () => {
     if (BrowserWindow.getAllWindows().length === 0) createWindow();
   });
 });
 
-app.on('window-all-closed', () => {
-  if (process.platform !== 'darwin') app.quit();
+app.on("window-all-closed", () => {
+  if (process.platform !== "darwin") app.quit();
 });
 
 const sendMessageFunc = () => {
   if (win) {
-    win.webContents.send('ipc-example', counter.rpm);
+    win.webContents.send("ipc-example", counter.rpm);
   }
 };
 

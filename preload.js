@@ -1,6 +1,6 @@
-const { contextBridge, ipcRenderer } = require('electron');
+const { contextBridge, ipcRenderer } = require("electron");
 
-contextBridge.exposeInMainWorld('electron', {
+contextBridge.exposeInMainWorld("electron", {
   ipcRenderer: {
     sendMessage(channel, args) {
       ipcRenderer.send(channel, args);
