@@ -1,4 +1,5 @@
 const { getTimecodes, Frequency } = require("./utils.js");
+const { cadenceSignal, counter } = require("./cadence_sensor.js");
 
 const { frq, pl, sensorSignals } = getTimecodes();
 
@@ -9,11 +10,11 @@ const { frq, pl, sensorSignals } = getTimecodes();
 
 // console.log('rpm', rpm);
 
-const frqEl = new Frequency({ magnetsCount: 2 });
+// const frqEl = new Frequency({ magnetsCount: 2 });
 
-sensorSignals.forEach(el => {
-  console.log(frqEl.inc(el.getMilliseconds()));
-});
+// sensorSignals.forEach(el => {
+//   console.log(frqEl.inc(el.getMilliseconds()));
+// });
 
 // for (let idx = 1; idx < sensorSignals.length; idx++) {
 //   const prevDate = sensorSignals[idx - 1];
@@ -25,3 +26,5 @@ sensorSignals.forEach(el => {
 
 //   console.log(result);
 // }
+
+cadenceSignal.watch(() => console.log("MAGNET"));
