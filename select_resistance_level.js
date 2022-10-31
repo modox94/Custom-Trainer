@@ -10,7 +10,7 @@ const readFn = async () => {
     if (condition.isReady) {
       console.log("readFn - 1");
       potentiometerSensor.read((err, reading) => {
-        console.log("reading", reading);
+        console.log("reading", reading.value);
         resolve(reading?.value);
       });
     } else {
