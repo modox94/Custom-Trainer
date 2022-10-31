@@ -8,13 +8,11 @@ const sleepDelay = 1;
 const readFn = async () => {
   return await new Promise(resolve => {
     if (condition.isReady) {
-      console.log("readFn - 1");
       potentiometerSensor.read((err, reading) => {
         console.log("reading", reading.value);
         resolve(reading?.value);
       });
     } else {
-      console.log("readFn - 2");
       resolve(NaN);
     }
   });
