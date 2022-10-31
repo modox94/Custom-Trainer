@@ -16,7 +16,4 @@ exports.potentiometerSensor = mcpadc.open(5, err => {
   if (err) {
     console.log("err", err);
   }
-
-  console.log("ptn", tempVariable);
-  potentiometerSensor = tempVariable;
 });
