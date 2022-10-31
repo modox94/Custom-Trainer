@@ -3,7 +3,7 @@ const { motor } = require("./motor_driver");
 const { consoleCheck, sleep } = require("./utils");
 
 const step = 5;
-const sleepDelay = 10;
+const sleepDelay = 5;
 
 const readFn = async () => {
   return await new Promise(resolve => {
