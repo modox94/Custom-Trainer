@@ -3,7 +3,7 @@ const { motor } = require("./motor_driver");
 const { consoleCheck, sleep } = require("./utils");
 
 const step = 5;
-const sleepDelay = 50;
+const sleepDelay = 10;
 
 const readFn = async () => {
   return await new Promise(resolve => {
@@ -25,12 +25,13 @@ const consoleCb = async input => {
     case "m": {
       console.log("more");
       const motorPos = await readFn();
-      if (Number.isNaN(motorPos)) {
+      if (Number.isNaN(motorPos) || (1 - motorPos) * 100 < step) {
         console.log("wrong motor position");
         break;
       }
 
       let newMotorPos = motorPos;
+
       motor.forward();
       while (newMotorPos * 100 <= motorPos * 100 + step && newMotorPos < 1) {
         await sleep(sleepDelay);
@@ -46,7 +47,7 @@ const consoleCb = async input => {
     case "l": {
       console.log("less");
       const motorPos = await readFn();
-      if (Number.isNaN(motorPos)) {
+      if (Number.isNaN(motorPos) || motorPos * 100 < step) {
         console.log("wrong motor position");
         break;
       }
