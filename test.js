@@ -33,7 +33,9 @@ const { frq, pl, sensorSignals } = getTimecodes();
 setInterval(() => {
   console.log("isReady", condition.isReady);
   if (condition.isReady) {
-    potentiometerSensor.read(value => console.log("ptnS", value));
+    potentiometerSensor.read((err, reading) =>
+      console.log("ptnS", reading?.value),
+    );
   } else {
     console.log("not ready");
   }

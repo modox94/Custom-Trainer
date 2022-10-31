@@ -9,7 +9,7 @@ const readFn = async () => {
   await new Promise(resolve => {
     if (condition.isReady) {
       console.log("readFn - 1");
-      potentiometerSensor.read(resolve);
+      potentiometerSensor.read((err, reading) => resolve(reading?.value));
     } else {
       console.log("readFn - 2");
       resolve(NaN);
