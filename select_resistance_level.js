@@ -22,7 +22,7 @@ const readFn = async () => {
 
 const consoleCb = async input => {
   switch (input) {
-    case "m":
+    case "m": {
       console.log("more");
       const motorPos = await readFn();
       if (Number.isNaN(motorPos)) {
@@ -32,11 +32,7 @@ const consoleCb = async input => {
 
       let newMotorPos = motorPos;
       motor.forward();
-      while (
-        newMotorPos * 100 <=
-        motorPos * 100 + step
-        // && newMotorPos >= motorPos
-      ) {
+      while (newMotorPos * 100 <= motorPos * 100 + step && newMotorPos < 1) {
         await sleep(sleepDelay);
         newMotorPos = await readFn();
       }
@@ -45,10 +41,33 @@ const consoleCb = async input => {
       console.log("motorPos", motorPos);
       console.log("newMotorPos", newMotorPos);
       break;
+    }
 
-    default:
+    case "l": {
+      console.log("less");
+      const motorPos = await readFn();
+      if (Number.isNaN(motorPos)) {
+        console.log("wrong motor position");
+        break;
+      }
+
+      let newMotorPos = motorPos;
+      motor.back();
+      while (newMotorPos * 100 >= motorPos * 100 - step && newMotorPos > 0) {
+        await sleep(sleepDelay);
+        newMotorPos = await readFn();
+      }
+
+      motor.stop();
+      console.log("motorPos", motorPos);
+      console.log("newMotorPos", newMotorPos);
+      break;
+    }
+
+    default: {
       motor.stop();
       break;
+    }
   }
 };
 
