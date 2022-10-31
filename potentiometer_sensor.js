@@ -22,5 +22,10 @@ const potentiometerSensor = mcpadc.open(5, err => {
   isReady = true;
 });
 
-exports.isReady = isReady;
-exports.potentiometerSensor = potentiometerSensor;
+exports = {
+  isReady,
+  potentiometerSensor,
+};
+
+// exports.isReady = isReady;
+// exports.potentiometerSensor = potentiometerSensor;
