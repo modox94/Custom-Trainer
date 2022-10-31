@@ -3,11 +3,11 @@ const { DIRECTION, EDGE, PHYSICAL_TO_GPIO } = require("./constants.js");
 const { Frequency } = require("./utils.js");
 const { random } = require("lodash");
 
-const sensorSignal = PHYSICAL_TO_GPIO[11];
+const cadenceSignalPin = PHYSICAL_TO_GPIO[11];
 
 let cadenceSignal;
 try {
-  cadenceSignal = new Gpio(sensorSignal, DIRECTION.in, EDGE.rising);
+  cadenceSignal = new Gpio(cadenceSignalPin, DIRECTION.in, EDGE.rising);
 } catch (error) {
   const watch = fn => {
     const timeout = random(100, 1000);

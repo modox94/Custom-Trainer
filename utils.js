@@ -72,3 +72,8 @@ exports.Frequency = class Frequency {
     return 0;
   }
 };
+
+exports.sleep = (delay = 1000) =>
+  new Promise(resolve => {
+    setTimeout(resolve, delay);
+  });
