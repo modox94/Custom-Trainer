@@ -1,26 +1,15 @@
 const mcpadc = require("mcp-spi-adc");
 
-// let potentiometerSensor;
-// const tempVariable = mcpadc.open(5, err => {
-//   if (err) {
-//     console.log("err", err);
-//   }
-
-//   console.log("ptn", tempVariable);
-//   potentiometerSensor = tempVariable;
-// });
-
-// exports.potentiometerSensor = potentiometerSensor;
-
-let isReady = { isReady: false };
+let condition = { isReady: false, error: false };
 
 const potentiometerSensor = mcpadc.open(5, err => {
   if (err) {
     console.log("err", err);
+    condition.error = err;
+  } else {
+    condition.isReady = true;
   }
-
-  isReady.isReady = true;
 });
 
-exports.isReady = isReady;
+exports.condition = condition;
 exports.potentiometerSensor = potentiometerSensor;

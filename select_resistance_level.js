@@ -1,4 +1,4 @@
-const { potentiometerSensor } = require("./potentiometer_sensor");
+const { potentiometerSensor, condition } = require("./potentiometer_sensor");
 const { motor } = require("./motor_driver");
 const { consoleCheck, sleep } = require("./utils");
 
@@ -7,7 +7,7 @@ const sleepDelay = 50;
 
 const readFn = async () => {
   await new Promise(resolve => {
-    if (potentiometerSensor?.read) {
+    if (condition.isReady) {
       console.log("readFn - 1");
       potentiometerSensor.read(resolve);
     } else {
