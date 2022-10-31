@@ -30,6 +30,8 @@ const { frq, pl, sensorSignals } = getTimecodes();
 
 // cadenceSignal.watch(() => console.log("MAGNET"));
 
+console.log("isReady", isReady);
+
 setInterval(() => {
   console.log("isReady", isReady);
   //   potentiometerSensor.read(value => console.log("ptnS", value));
