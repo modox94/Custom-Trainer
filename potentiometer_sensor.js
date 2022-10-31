@@ -12,20 +12,15 @@ const mcpadc = require("mcp-spi-adc");
 
 // exports.potentiometerSensor = potentiometerSensor;
 
-let isReady = false;
+let isReady = { isReady: false };
 
 const potentiometerSensor = mcpadc.open(5, err => {
   if (err) {
     console.log("err", err);
   }
 
-  isReady = true;
+  isReady.isReady = true;
 });
 
-exports = {
-  isReady,
-  potentiometerSensor,
-};
-
-// exports.isReady = isReady;
-// exports.potentiometerSensor = potentiometerSensor;
+exports.isReady = isReady;
+exports.potentiometerSensor = potentiometerSensor;
