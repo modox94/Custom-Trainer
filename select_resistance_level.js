@@ -53,7 +53,7 @@ const consoleCb = async input => {
       let newMotorPos = motorPos;
       motor.back();
       while (newMotorPos * 100 >= motorPos * 100 - step && newMotorPos > 0.05) {
-        await sleep(sleepDelay);
+        // await sleep(sleepDelay);
         newMotorPos = await readFn();
       }
 
