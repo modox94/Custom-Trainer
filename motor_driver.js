@@ -21,13 +21,13 @@ class MotorDriver {
   }
 
   forward() {
-    this.motorIn2.writeSync(0);
-    this.motorIn1.writeSync(1);
+    this.motorIn1.writeSync(0);
+    this.motorIn2.writeSync(1);
   }
 
   back() {
-    this.motorIn1.writeSync(0);
-    this.motorIn2.writeSync(1);
+    this.motorIn2.writeSync(0);
+    this.motorIn1.writeSync(1);
   }
 
   stop() {
