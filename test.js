@@ -1,6 +1,6 @@
 const { getTimecodes, Frequency } = require("./utils.js");
 const { cadenceSignal, counter } = require("./cadence_sensor.js");
-const { potentiometerSensor } = require("./potentiometer_sensor");
+const { isReady, potentiometerSensor } = require("./potentiometer_sensor");
 
 const { frq, pl, sensorSignals } = getTimecodes();
 
@@ -31,6 +31,6 @@ const { frq, pl, sensorSignals } = getTimecodes();
 // cadenceSignal.watch(() => console.log("MAGNET"));
 
 setInterval(() => {
-  console.log("potentiometerSensor", potentiometerSensor);
+  console.log("isReady", isReady);
   //   potentiometerSensor.read(value => console.log("ptnS", value));
 }, 1000);
