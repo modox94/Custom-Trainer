@@ -3,7 +3,7 @@ const { motor } = require("./motor_driver");
 const { consoleCheck, sleep } = require("./utils");
 
 const step = 5;
-const sleepDelay = 1;
+// const sleepDelay = 1;
 
 const readFn = async () => {
   return await new Promise(resolve => {
@@ -32,7 +32,7 @@ const consoleCb = async input => {
 
       motor.forward();
       while (newMotorPos * 100 <= motorPos * 100 + step && newMotorPos < 0.95) {
-        await sleep(sleepDelay);
+        // await sleep(sleepDelay);
         newMotorPos = await readFn();
       }
 
