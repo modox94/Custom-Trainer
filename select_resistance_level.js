@@ -6,7 +6,7 @@ const step = 5;
 const sleepDelay = 50;
 
 const readFn = async () => {
-  await new Promise(resolve => {
+  return await new Promise(resolve => {
     if (condition.isReady) {
       console.log("readFn - 1");
       potentiometerSensor.read((err, reading) => {
