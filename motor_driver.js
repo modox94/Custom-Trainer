@@ -1,8 +1,5 @@
 const { Gpio } = require("onoff");
-const { DIRECTION, EDGE, PHYSICAL_TO_GPIO } = require("./constants.js");
-
-const readline = require("node:readline");
-const { stdin: input, stdout: output } = require("node:process");
+const { DIRECTION, PHYSICAL_TO_GPIO } = require("./constants.js");
 
 const write = (value, cb = () => {}) => {
   console.log("write", value);
@@ -56,28 +53,4 @@ try {
 
 const motor = new MotorDriver({ motorIn1, motorIn2 });
 
-const rl = readline.createInterface({ input, output });
-
-const consoleCheck = async () => {
-  for await (const line of rl) {
-    switch (line) {
-      case "f":
-        motor.forward();
-        break;
-
-      case "b":
-        motor.back();
-        break;
-
-      case "s":
-        motor.stop();
-        break;
-
-      default:
-        motor.stop();
-        break;
-    }
-  }
-};
-
-consoleCheck();
+exports.motor = motor;
