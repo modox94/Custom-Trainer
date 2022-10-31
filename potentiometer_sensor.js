@@ -6,6 +6,7 @@ const tempVariable = mcpadc.open(5, err => {
     console.log("err", err);
   }
 
+  console.log("ptn", tempVariable);
   potentiometerSensor = tempVariable;
 });
 
