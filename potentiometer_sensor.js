@@ -9,6 +9,8 @@ const potentiometerSensor = mcpadc.open(5, err => {
   } else {
     condition.isReady = true;
   }
+
+  console.log("potentiometerSensor", potentiometerSensor);
 });
 
 exports.condition = condition;
