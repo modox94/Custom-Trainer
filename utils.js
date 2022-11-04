@@ -87,23 +87,3 @@ exports.consoleCheck = async cb => {
     cb(line);
   }
 };
-
-/*
-switch (line) {
-  case "f":
-    motor.forward();
-    break;
-
-  case "b":
-    motor.back();
-    break;
-
-  case "s":
-    motor.stop();
-    break;
-
-  default:
-    motor.stop();
-    break;
-}
-*/
