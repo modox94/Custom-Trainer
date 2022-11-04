@@ -1,6 +1,7 @@
-const { getTimecodes, Frequency } = require("./utils.js");
-const { cadenceSignal, counter } = require("./cadence_sensor.js");
-const { condition, potentiometerSensor } = require("./potentiometer_sensor");
+const { getTimecodes, Frequency, consoleCheck } = require("./utils.js");
+// const { cadenceSignal, counter } = require("./cadence_sensor.js");
+// const { condition, potentiometerSensor } = require("./potentiometer_sensor");
+const fs = require("fs");
 
 const { frq, pl, sensorSignals } = getTimecodes();
 
@@ -30,13 +31,43 @@ const { frq, pl, sensorSignals } = getTimecodes();
 
 // cadenceSignal.watch(() => console.log("MAGNET"));
 
-setInterval(() => {
-  console.log("isReady", condition.isReady);
-  if (condition.isReady) {
-    potentiometerSensor.read((err, reading) =>
-      console.log("ptnS", reading?.value),
-    );
-  } else {
-    console.log("not ready");
+// setInterval(() => {
+//   console.log("isReady", condition.isReady);
+//   if (condition.isReady) {
+//     potentiometerSensor.read((err, reading) =>
+//       console.log("ptnS", reading?.value),
+//     );
+//   } else {
+//     console.log("not ready");
+//   }
+// }, 1000);
+
+const temp = [];
+const consoleCb = path => input => {
+  if (input === "stop") {
+    return fs.writeFileSync(path, JSON.stringify(temp));
   }
-}, 1000);
+
+  const value = Number(String(input).trim());
+  if (Number.isNaN(value) || value <= 0) {
+    return console.log("invalid value");
+  }
+
+  const length = temp.length;
+  let lastIdx = length - 1;
+  if (
+    length === 0 ||
+    (temp[lastIdx].resistanceLevel && temp[lastIdx].targetRpm)
+  ) {
+    temp.push({ resistanceLevel: undefined, targetRpm: undefined });
+    lastIdx = temp.length - 1;
+  }
+
+  if (!temp[lastIdx].resistanceLevel) {
+    temp[lastIdx].resistanceLevel = Number(input);
+  } else {
+    temp[lastIdx].targetRpm = Number(input);
+  }
+};
+
+// consoleCheck(consoleCb());
