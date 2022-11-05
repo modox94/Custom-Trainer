@@ -79,7 +79,7 @@ class MotorDriver {
               console.log("Дальше нельзя!");
             }
 
-            this.back();
+            this.forward();
             await sleep(DELAY);
             this.stop();
             console.log("pos", await PS.readPosition());
@@ -93,7 +93,7 @@ class MotorDriver {
               console.log("Дальше нельзя!");
             }
 
-            this.forward();
+            this.back();
             await sleep(DELAY);
             this.stop();
             console.log("pos", await PS.readPosition());
