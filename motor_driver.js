@@ -72,21 +72,35 @@ class MotorDriver {
             rl.close();
             break;
 
-          case "f":
+          case "f": {
+            const posCur = await PS.readPosition();
+
+            if (posCur >= 95) {
+              console.log("Дальше нельзя!");
+            }
+
             this.back();
             await sleep(DELAY);
             this.stop();
             console.log("pos", await PS.readPosition());
             break;
+          }
 
-          case "b":
+          case "b": {
+            const posCur = await PS.readPosition();
+
+            if (posCur <= 5) {
+              console.log("Дальше нельзя!");
+            }
+
             this.forward();
             await sleep(DELAY);
             this.stop();
             console.log("pos", await PS.readPosition());
             break;
+          }
 
-          case "next":
+          case "next": {
             const positionSum = 0;
             for (let i = 0; i < 3; i++) {
               positionSum += await PS.readPosition();
@@ -124,8 +138,10 @@ class MotorDriver {
               rl.close();
             }
             break;
+          }
 
           default:
+            console.log("Не знаю таких команд.");
             break;
         }
       }).on("close", () => {
