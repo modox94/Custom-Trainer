@@ -17,7 +17,8 @@ try {
   motorSettings = {};
 }
 
-const DELAY = 100;
+// const DELAY = 100;
+const DELAY = 500;
 
 const write = (value, cb = () => {}) => {
   console.log("write", value);
