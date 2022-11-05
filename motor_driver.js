@@ -44,12 +44,7 @@ class MotorDriver {
     this.motorIn1.writeSync(0);
     this.motorIn2.writeSync(0);
 
-    if (
-      !this.minPosition ||
-      !this.maxPosition ||
-      !this.resistanceLevels ||
-      resistanceLevels.length <= 1
-    ) {
+    if (!this.minPosition && !this.maxPosition) {
       console.log(
         "Нужно найти положение двигателя соответствующее минимальной нагрузке",
       );
@@ -57,99 +52,111 @@ class MotorDriver {
         "Отправляйте f (вперед) или b (назад) для управления мотором",
       );
       console.log("При достижении соответсвующего положения отправьте next");
-
-      const rl = readline.createInterface({ input, output });
-
-      rl.prompt();
-
-      rl.on("line", async inputRaw => {
-        const input = inputRaw.trim();
-
-        switch (input) {
-          case "exit":
-            console.log("экстренная остановка");
-            this.stop();
-            rl.close();
-            break;
-
-          case "f": {
-            const posCur = await PS.readPosition();
-
-            if (posCur >= 95) {
-              console.log("Дальше нельзя!");
-              break;
-            }
-
-            this.forward();
-            await sleep(DELAY);
-            this.stop();
-            console.log("pos", await PS.readPosition());
-            break;
-          }
-
-          case "b": {
-            const posCur = await PS.readPosition();
-
-            if (posCur <= 5) {
-              console.log("Дальше нельзя!");
-              break;
-            }
-
-            this.back();
-            await sleep(DELAY);
-            this.stop();
-            console.log("pos", await PS.readPosition());
-            break;
-          }
-
-          case "next": {
-            let positionSum = 0;
-            for (let i = 0; i < 3; i++) {
-              positionSum += await PS.readPosition();
-            }
-            const positionRes = Math.round(positionSum / 3);
-            if (!this.minPosition) {
-              this.minPosition = positionRes;
-
-              console.log("Значение записано", positionRes);
-              console.log("");
-
-              console.log(
-                "Нужно найти положение двигателя соответствующее максимальной нагрузке",
-              );
-              console.log(
-                "Отправляйте f (вперед) или b (назад) для управления мотором",
-              );
-              console.log(
-                "При достижении соответсвующего положения отправьте next",
-              );
-            } else if (!this.maxPosition) {
-              this.maxPosition = positionRes;
-
-              console.log("Значение записано", positionRes);
-              console.log("");
-
-              fs.writeFileSync(
-                "./motor_settings.json",
-                JSON.stringify({
-                  minPosition: this.minPosition,
-                  maxPosition: this.maxPosition,
-                }),
-              );
-
-              rl.close();
-            }
-            break;
-          }
-
-          default:
-            console.log("Не знаю таких команд.");
-            break;
-        }
-      }).on("close", () => {
-        console.log("readline closed");
-      });
+    } else {
+      console.log("Мотор уже инициализирован.");
+      console.log(`Позиция минимальной нагрузки: ${this.minPosition}.`);
+      console.log(`Позиция максимальной нагрузки ${this.maxPosition}.`);
+      console.log("Для сброса настроек отправьте reset.");
     }
+
+    const rl = readline.createInterface({ input, output });
+
+    rl.prompt();
+
+    rl.on("line", async inputRaw => {
+      const input = inputRaw.trim();
+
+      switch (input) {
+        case "exit":
+          console.log("экстренная остановка");
+          this.stop();
+          rl.close();
+          break;
+
+        case "reset":
+          console.log("сброс настроек");
+          this.stop();
+          this.minPosition = undefined;
+          this.maxPosition = undefined;
+          break;
+
+        case "f": {
+          const posCur = await PS.readPosition();
+
+          if (posCur >= 95) {
+            console.log("Дальше нельзя!");
+            break;
+          }
+
+          this.forward();
+          await sleep(DELAY);
+          this.stop();
+          console.log("pos", await PS.readPosition());
+          break;
+        }
+
+        case "b": {
+          const posCur = await PS.readPosition();
+
+          if (posCur <= 5) {
+            console.log("Дальше нельзя!");
+            break;
+          }
+
+          this.back();
+          await sleep(DELAY);
+          this.stop();
+          console.log("pos", await PS.readPosition());
+          break;
+        }
+
+        case "next": {
+          let positionSum = 0;
+          for (let i = 0; i < 3; i++) {
+            positionSum += await PS.readPosition();
+          }
+          const positionRes = Math.round(positionSum / 3);
+          if (!this.minPosition) {
+            this.minPosition = positionRes;
+
+            console.log("Значение записано", positionRes);
+            console.log("");
+
+            console.log(
+              "Нужно найти положение двигателя соответствующее максимальной нагрузке",
+            );
+            console.log(
+              "Отправляйте f (вперед) или b (назад) для управления мотором",
+            );
+            console.log(
+              "При достижении соответсвующего положения отправьте next",
+            );
+          } else if (!this.maxPosition) {
+            this.maxPosition = positionRes;
+
+            console.log("Значение записано", positionRes);
+            console.log("");
+
+            fs.writeFileSync(
+              "./motor_settings.json",
+              JSON.stringify({
+                minPosition: this.minPosition,
+                maxPosition: this.maxPosition,
+              }),
+            );
+
+            rl.close();
+          }
+          break;
+        }
+
+        default:
+          console.log("Не знаю таких команд.");
+          break;
+      }
+    }).on("close", () => {
+      console.log("readline closed");
+    });
   }
 
   forward() {
