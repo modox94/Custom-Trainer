@@ -103,7 +103,7 @@ class MotorDriver {
           }
 
           case "next": {
-            const positionSum = 0;
+            let positionSum = 0;
             for (let i = 0; i < 3; i++) {
               positionSum += await PS.readPosition();
             }
