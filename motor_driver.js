@@ -10,7 +10,12 @@ const {
   potentiometerSensor,
   condition,
 } = require("./potentiometer_sensor");
-const motorSettings = require("./motor_settings.json");
+let motorSettings;
+try {
+  motorSettings = require("./motor_settings.json");
+} catch (error) {
+  motorSettings = {};
+}
 
 const write = (value, cb = () => {}) => {
   console.log("write", value);
@@ -82,7 +87,7 @@ class MotorDriver {
             if (!this.minPosition) {
               this.minPosition = positionRes;
 
-              console.log("Ура, значение записано", positionRes);
+              console.log("Значение записано", positionRes);
               console.log("");
 
               console.log(
@@ -97,7 +102,7 @@ class MotorDriver {
             } else if (!this.maxPosition) {
               this.maxPosition = positionRes;
 
-              console.log("Ура, значение записано", positionRes);
+              console.log("Значение записано", positionRes);
               console.log("");
 
               fs.writeFileSync(
@@ -115,20 +120,10 @@ class MotorDriver {
           default:
             break;
         }
-        if (input.trim() === "exit") {
-        }
-
-        cb(...args);
       }).on("close", () => {
         console.log("readline closed");
       });
-
-      consoleOnLine();
     }
-
-    // minPosition
-    // maxPosition
-    // resistanceLevels
   }
 
   forward() {
@@ -162,7 +157,7 @@ try {
   console.log("Gpio error", error);
 }
 
-const motor = new MotorDriver({ ...(motorSettings || {}), motorIn1, motorIn2 });
+const motor = new MotorDriver({ ...motorSettings, motorIn1, motorIn2 });
 
 motor.initialize();
 
