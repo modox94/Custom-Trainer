@@ -19,8 +19,7 @@ exports.PotentiometerSensor = class PotentiometerSensor {
     return await new Promise(resolve => {
       if (this.condition.isReady) {
         this.sensor.read((err, reading) => {
-          console.log("reading", reading.value);
-          resolve(reading?.value);
+          resolve(reading?.value * 100);
         });
       } else {
         resolve(NaN);
@@ -28,6 +27,8 @@ exports.PotentiometerSensor = class PotentiometerSensor {
     });
   }
 };
+
+exports.PS = new exports.PotentiometerSensor();
 
 const potentiometerSensor = mcpadc.open(5, err => {
   if (err) {

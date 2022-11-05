@@ -1,9 +1,16 @@
 const { Gpio } = require("onoff");
 const { DIRECTION, PHYSICAL_TO_GPIO } = require("./constants.js");
 const readline = require("node:readline");
+const fs = require("fs");
 const { stdin: input, stdout: output } = require("node:process");
 const { sleep } = require("./utils");
-const { potentiometerSensor, condition } = require("./potentiometer_sensor");
+const {
+  PotentiometerSensor,
+  PS,
+  potentiometerSensor,
+  condition,
+} = require("./potentiometer_sensor");
+const motorSettings = require("./motor_settings.json");
 
 const write = (value, cb = () => {}) => {
   console.log("write", value);
@@ -26,55 +33,103 @@ class MotorDriver {
     this.motorIn2.writeSync(0);
   }
 
-  // initialize() {
-  //   this.motorIn1.writeSync(0);
-  //   this.motorIn2.writeSync(0);
+  async initialize() {
+    this.motorIn1.writeSync(0);
+    this.motorIn2.writeSync(0);
 
-  //   if (
-  //     !this.minPosition ||
-  //     !this.maxPosition ||
-  //     !this.resistanceLevels ||
-  //     resistanceLevels.length <= 1
-  //   ) {
-  //     console.log("Нужно найти минимум возможный");
-  //     console.log("Жмите f или b для управления мотором");
-  //     console.log("При достижении пишем next");
+    if (
+      !this.minPosition ||
+      !this.maxPosition ||
+      !this.resistanceLevels ||
+      resistanceLevels.length <= 1
+    ) {
+      console.log(
+        "Нужно найти положение двигателя соответствующее минимальной нагрузке",
+      );
+      console.log(
+        "Отправляйте f (вперед) или b (назад) для управления мотором",
+      );
+      console.log("При достижении соответсвующего положения отправьте next");
 
-  //     const rl = readline.createInterface({ input, output });
+      const rl = readline.createInterface({ input, output });
 
-  //     rl.prompt();
+      rl.prompt();
 
-  //     rl.on("line", async inputRaw => {
-  //       const input = inputRaw.trim();
+      rl.on("line", async inputRaw => {
+        const input = inputRaw.trim();
 
-  //       switch (input) {
-  //         case "f":
-  //           this.back();
-  //           await sleep(100);
-  //           this.stop();
-  //         case "b":
+        switch (input) {
+          case "f":
+            this.back();
+            await sleep(50);
+            this.stop();
+            console.log("pos", await PS.readPosition());
+            break;
 
-  //         case "next":
-  //           break;
+          case "b":
+            this.forward();
+            await sleep(50);
+            this.stop();
+            console.log("pos", await PS.readPosition());
+            break;
 
-  //         default:
-  //           break;
-  //       }
-  //       if (input.trim() === "exit") {
-  //       }
+          case "next":
+            const positionSum = 0;
+            for (let i = 0; i < 3; i++) {
+              positionSum += await PS.readPosition();
+            }
+            const positionRes = Math.round(positionSum / 3);
+            if (!this.minPosition) {
+              this.minPosition = positionRes;
 
-  //       cb(...args);
-  //     }).on("close", () => {
-  //       console.log("readline closed");
-  //     });
+              console.log("Ура, значение записано", positionRes);
+              console.log("");
 
-  //     consoleOnLine();
-  //   }
+              console.log(
+                "Нужно найти положение двигателя соответствующее максимальной нагрузке",
+              );
+              console.log(
+                "Отправляйте f (вперед) или b (назад) для управления мотором",
+              );
+              console.log(
+                "При достижении соответсвующего положения отправьте next",
+              );
+            } else if (!this.maxPosition) {
+              this.maxPosition = positionRes;
 
-  //   // minPosition
-  //   // maxPosition
-  //   // resistanceLevels
-  // }
+              console.log("Ура, значение записано", positionRes);
+              console.log("");
+
+              fs.writeFileSync(
+                "./motor_settings.json",
+                JSON.stringify({
+                  minPosition: this.minPosition,
+                  maxPosition: this.maxPosition,
+                }),
+              );
+
+              rl.close();
+            }
+            break;
+
+          default:
+            break;
+        }
+        if (input.trim() === "exit") {
+        }
+
+        cb(...args);
+      }).on("close", () => {
+        console.log("readline closed");
+      });
+
+      consoleOnLine();
+    }
+
+    // minPosition
+    // maxPosition
+    // resistanceLevels
+  }
 
   forward() {
     this.motorIn1.writeSync(0);
@@ -107,6 +162,8 @@ try {
   console.log("Gpio error", error);
 }
 
-const motor = new MotorDriver({ motorIn1, motorIn2 });
+const motor = new MotorDriver({ ...(motorSettings || {}), motorIn1, motorIn2 });
+
+motor.initialize();
 
 exports.motor = motor;
