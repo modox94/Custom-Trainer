@@ -17,6 +17,8 @@ try {
   motorSettings = {};
 }
 
+const DELAY = 100;
+
 const write = (value, cb = () => {}) => {
   console.log("write", value);
   cb();
@@ -72,14 +74,14 @@ class MotorDriver {
 
           case "f":
             this.back();
-            await sleep(50);
+            await sleep(DELAY);
             this.stop();
             console.log("pos", await PS.readPosition());
             break;
 
           case "b":
             this.forward();
-            await sleep(50);
+            await sleep(DELAY);
             this.stop();
             console.log("pos", await PS.readPosition());
             break;
