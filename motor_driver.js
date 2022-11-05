@@ -64,6 +64,12 @@ class MotorDriver {
         const input = inputRaw.trim();
 
         switch (input) {
+          case "exit":
+            console.log("экстренная остановка");
+            this.stop();
+            rl.close();
+            break;
+
           case "f":
             this.back();
             await sleep(50);
