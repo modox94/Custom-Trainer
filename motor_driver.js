@@ -89,6 +89,10 @@ class MotorDriver {
           );
           break;
 
+        case "g":
+          console.log("pos", await PS.readPosition());
+          break;
+
         case "f": {
           const posCur = await PS.readPosition();
 
