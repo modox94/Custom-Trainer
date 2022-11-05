@@ -18,7 +18,7 @@ try {
 }
 
 // const DELAY = 100;
-const DELAY = 500;
+const DELAY = 2000;
 
 const write = (value, cb = () => {}) => {
   console.log("write", value);
