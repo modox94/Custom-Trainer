@@ -74,10 +74,19 @@ class MotorDriver {
           break;
 
         case "reset":
-          console.log("сброс настроек");
+          console.log("Cброс настроек...");
           this.stop();
           this.minPosition = undefined;
           this.maxPosition = undefined;
+          console.log(
+            "Нужно найти положение двигателя соответствующее минимальной нагрузке",
+          );
+          console.log(
+            "Отправляйте f (вперед) или b (назад) для управления мотором",
+          );
+          console.log(
+            "При достижении соответсвующего положения отправьте next",
+          );
           break;
 
         case "f": {
