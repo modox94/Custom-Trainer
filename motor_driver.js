@@ -77,6 +77,7 @@ class MotorDriver {
 
             if (posCur >= 95) {
               console.log("Дальше нельзя!");
+              break;
             }
 
             this.forward();
@@ -91,6 +92,7 @@ class MotorDriver {
 
             if (posCur <= 5) {
               console.log("Дальше нельзя!");
+              break;
             }
 
             this.back();
