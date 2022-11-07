@@ -35,7 +35,8 @@ const motorIn1Pin = PHYSICAL_TO_GPIO[16];
 const motorIn2Pin = PHYSICAL_TO_GPIO[18];
 const motorPWMPin = PHYSICAL_TO_GPIO[32];
 
-const range = 1024;
+// const range = 1024;
+const range = 4096;
 // const clockDivider = 8; /* Clock divider (PWM refresh rate), 8 == 2.4MHz */
 // const clockDivider = 64;
 const clockDivider = 2;
