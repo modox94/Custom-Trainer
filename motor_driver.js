@@ -55,6 +55,7 @@ class MotorDriver {
       rpio.open(motorPWMPin, rpio.PWM);
       rpio.pwmSetClockDivider(clockDivider);
       rpio.pwmSetRange(motorPWMPin, range);
+      console.log("speed", this.speed);
       this.setSpeed(this.speed);
     } catch (error) {
       this.motorIn1 = motorInNoop;
