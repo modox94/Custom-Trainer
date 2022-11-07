@@ -34,6 +34,7 @@ const motorInNoop = { write, writeSync };
 const motorIn1Pin = PHYSICAL_TO_GPIO[16];
 const motorIn2Pin = PHYSICAL_TO_GPIO[18];
 const motorPWMPin = PHYSICAL_TO_GPIO[32];
+console.log("motorPWMPin", motorPWMPin);
 
 // const range = 1024;
 const range = 4096;
