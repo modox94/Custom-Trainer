@@ -217,6 +217,7 @@ class MotorDriver {
   }
 
   setSpeed(percentage) {
+    console.log("setSpeed", percentage);
     rpio.pwmSetData(motorPWMPin, getSpeedValue(percentage));
   }
 
