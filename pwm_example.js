@@ -1,6 +1,6 @@
 var rpio = require("rpio");
 
-var pin = 12; /* P12/GPIO18 */
+var pin = 32; /* P32/GPIO12 */
 var range = 1024; /* LEDs can quickly hit max brightness, so only use */
 var max = 128; /*   the bottom 8th of a larger scale */
 var clockdiv = 8; /* Clock divider (PWM refresh rate), 8 == 2.4MHz */
