@@ -38,8 +38,7 @@ const motorPWMPin = PHYSICAL_TO_GPIO[32];
 // const range = 1024;
 const range = 4096;
 // const clockDivider = 8; /* Clock divider (PWM refresh rate), 8 == 2.4MHz */
-// const clockDivider = 64;
-const clockDivider = 2;
+const clockDivider = 64;
 
 const defaultSpeed = 50;
 const speedStep = 5;
@@ -223,7 +222,9 @@ class MotorDriver {
 
   setSpeed(percentage) {
     console.log("setSpeed", percentage);
-    rpio.pwmSetData(motorPWMPin, getSpeedValue(percentage));
+    const value = getSpeedValue(percentage);
+    console.log("value", value);
+    rpio.pwmSetData(motorPWMPin, value);
     this.speed = percentage;
   }
 
