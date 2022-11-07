@@ -1,5 +1,5 @@
 const { Gpio } = require("onoff");
-const rpio = require("rpio");
+// const rpio = require("rpio");
 const { DIRECTION, PHYSICAL_TO_GPIO } = require("./constants.js");
 const readline = require("node:readline");
 const fs = require("fs");
@@ -19,7 +19,7 @@ try {
 }
 
 // const DELAY = 100;
-const DELAY = 2000;
+const DELAY = 500;
 
 const write = (value, cb = () => {}) => {
   console.log("write", value);
@@ -56,11 +56,11 @@ class MotorDriver {
       this.motorIn1 = new Gpio(motorIn1Pin, DIRECTION.low);
       this.motorIn2 = new Gpio(motorIn2Pin, DIRECTION.low);
 
-      rpio.open(motorPWMPin, rpio.PWM);
-      rpio.pwmSetClockDivider(clockDivider);
-      rpio.pwmSetRange(motorPWMPin, range);
+      // rpio.open(motorPWMPin, rpio.PWM);
+      // rpio.pwmSetClockDivider(clockDivider);
+      // rpio.pwmSetRange(motorPWMPin, range);
 
-      this.setSpeed(this.speed);
+      // this.setSpeed(this.speed);
     } catch (error) {
       this.motorIn1 = motorInNoop;
       this.motorIn2 = motorInNoop;
@@ -195,40 +195,40 @@ class MotorDriver {
           break;
         }
 
-        case "sm":
-          if (this.speed < 100) {
-            this.setSpeed(this.speed + speedStep);
-          } else {
-            console.log("Скорость уже максимальная!");
-          }
-          break;
+        // case "sm":
+        //   if (this.speed < 100) {
+        //     this.setSpeed(this.speed + speedStep);
+        //   } else {
+        //     console.log("Скорость уже максимальная!");
+        //   }
+        //   break;
 
-        case "sl":
-          if (this.speed > speedStep) {
-            this.setSpeed(this.speed - speedStep);
-          } else {
-            console.log("Скорость уже минимальная!");
-          }
-          break;
+        // case "sl":
+        //   if (this.speed > speedStep) {
+        //     this.setSpeed(this.speed - speedStep);
+        //   } else {
+        //     console.log("Скорость уже минимальная!");
+        //   }
+        //   break;
 
         default:
           console.log("Не знаю таких команд.");
           break;
       }
     }).on("close", () => {
-      rpio.close(motorPWMPin, rpio.PIN_RESET);
-      rpio.exit();
+      // rpio.close(motorPWMPin, rpio.PIN_RESET);
+      // rpio.exit();
       console.log("readline closed");
     });
   }
 
-  setSpeed(percentage) {
-    console.log("setSpeed", percentage);
-    const value = getSpeedValue(percentage);
-    console.log("value", value);
-    rpio.pwmSetData(motorPWMPin, value);
-    this.speed = percentage;
-  }
+  // setSpeed(percentage) {
+  //   console.log("setSpeed", percentage);
+  //   const value = getSpeedValue(percentage);
+  //   console.log("value", value);
+  //   rpio.pwmSetData(motorPWMPin, value);
+  //   this.speed = percentage;
+  // }
 
   forward() {
     this.motorIn1.writeSync(0);
