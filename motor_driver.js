@@ -1,4 +1,5 @@
 const { Gpio } = require("onoff");
+const rpio = require("rpio");
 const { DIRECTION, PHYSICAL_TO_GPIO } = require("./constants.js");
 const readline = require("node:readline");
 const fs = require("fs");
@@ -30,12 +31,37 @@ const writeSync = (value, cb = () => {}) => {
 };
 const motorInNoop = { write, writeSync };
 
+const motorIn1Pin = PHYSICAL_TO_GPIO[16];
+const motorIn2Pin = PHYSICAL_TO_GPIO[18];
+const motorPWMPin = PHYSICAL_TO_GPIO[32];
+
+const range = 1024;
+const clockDivider = 8; /* Clock divider (PWM refresh rate), 8 == 2.4MHz */
+
+const defaultSpeed = 50;
+const speedStep = 5;
+const getSpeedValue = percentage => Math.floor((percentage / 100) * range);
+
 class MotorDriver {
   constructor(options) {
     Object.assign(this, options);
 
-    this.motorIn1 = this.motorIn1 || motorInNoop;
-    this.motorIn2 = this.motorIn2 || motorInNoop;
+    this.speed = this.speed || defaultSpeed;
+
+    try {
+      this.motorIn1 = new Gpio(motorIn1Pin, DIRECTION.low);
+      this.motorIn2 = new Gpio(motorIn2Pin, DIRECTION.low);
+
+      rpio.open(motorPWMPin, rpio.PWM);
+      rpio.pwmSetClockDivider(clockDivider);
+      rpio.pwmSetRange(motorPWMPin, range);
+      this.setSpeed(this.speed);
+    } catch (error) {
+      this.motorIn1 = motorInNoop;
+      this.motorIn2 = motorInNoop;
+
+      console.log("Gpio error", error);
+    }
 
     this.motorIn1.writeSync(0);
     this.motorIn2.writeSync(0);
@@ -164,6 +190,22 @@ class MotorDriver {
           break;
         }
 
+        case "sm":
+          if (this.speed < 100) {
+            this.setSpeed(this.speed + speedStep);
+          } else {
+            console.log("Скорость уже максимальная!");
+          }
+          break;
+
+        case "sl":
+          if (this.speed > speedStep) {
+            this.setSpeed(this.speed - speedStep);
+          } else {
+            console.log("Скорость уже минимальная!");
+          }
+          break;
+
         default:
           console.log("Не знаю таких команд.");
           break;
@@ -171,6 +213,10 @@ class MotorDriver {
     }).on("close", () => {
       console.log("readline closed");
     });
+  }
+
+  setSpeed(percentage) {
+    rpio.pwmSetData(motorPWMPin, getSpeedValue(percentage));
   }
 
   forward() {
@@ -189,22 +235,7 @@ class MotorDriver {
   }
 }
 
-const motorIn1Pin = PHYSICAL_TO_GPIO[16];
-const motorIn2Pin = PHYSICAL_TO_GPIO[18];
-
-let motorIn1;
-let motorIn2;
-try {
-  motorIn1 = new Gpio(motorIn1Pin, DIRECTION.low);
-  motorIn2 = new Gpio(motorIn2Pin, DIRECTION.low);
-} catch (error) {
-  motorIn1 = motorInNoop;
-  motorIn2 = motorInNoop;
-
-  console.log("Gpio error", error);
-}
-
-const motor = new MotorDriver({ ...motorSettings, motorIn1, motorIn2 });
+const motor = new MotorDriver(motorSettings);
 
 motor.initialize();
 
