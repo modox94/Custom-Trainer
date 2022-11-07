@@ -214,6 +214,7 @@ class MotorDriver {
       }
     }).on("close", () => {
       rpio.close(motorPWMPin, rpio.PIN_RESET);
+      rpio.exit();
       console.log("readline closed");
     });
   }
