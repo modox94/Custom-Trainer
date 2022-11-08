@@ -219,7 +219,7 @@ class MotorDriver {
       return "error";
     }
 
-    const loops = 1;
+    const loops = 5;
     let loopsCounter = loops;
     let driveTimeSum = 0;
 

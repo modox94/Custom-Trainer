@@ -111,8 +111,13 @@ const checkSetLevel = () => {
         return console.log(await motor.readPosition());
       }
 
-      if (input === "c") {
-        return console.log(await motor.calibration());
+      if (input.startsWith("c")) {
+        let loops = Number(input.slice(1).trim());
+
+        if (Number.isNaN(loops) || loops <= 0) {
+          loops = 1;
+        }
+        return console.log(await motor.calibration(loops));
       }
 
       return console.log("invalid value");
