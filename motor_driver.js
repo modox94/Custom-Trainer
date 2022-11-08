@@ -237,7 +237,7 @@ class MotorDriver {
     }
 
     const sleepRatio =
-      Math.round(driveTimeSum / 2 / loops / RESIST_LEVELS) * 0.9;
+      Math.round(driveTimeSum / 2 / loops / (RESIST_LEVELS - 1)) * 0.9;
 
     this.sleepRatio = sleepRatio;
 
@@ -280,6 +280,12 @@ class MotorDriver {
 
     const start = Date.now();
 
+    let firstTime = false;
+
+    if (this.sleepRatio) {
+      firstTime = (Math.abs(posCur - targetPos) / interval) * this.sleepRatio;
+    }
+
     while (
       Math.abs(posCur - targetPos) > 1
       // && counter > 0
@@ -292,8 +298,12 @@ class MotorDriver {
       } else {
         this.forward();
       }
-
-      await sleep(DELAY);
+      if (firstTime) {
+        await sleep(firstTime);
+        firstTime = false;
+      } else {
+        await sleep(DELAY);
+      }
 
       this.stop();
 
