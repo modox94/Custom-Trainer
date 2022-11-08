@@ -98,4 +98,4 @@ const createProgramm = () => {
 
 // motor.initialize();
 
-motor.setLevel(2);
+motor.setLevel(5);

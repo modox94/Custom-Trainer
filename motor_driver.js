@@ -231,7 +231,7 @@ class MotorDriver {
       this.stop();
 
       // const start = Date.now();
-      await sleep(100);
+      await sleep(200);
       // const finish = Date.now();
       // console.log("wait", finish - start);
 
