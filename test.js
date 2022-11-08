@@ -2,6 +2,7 @@ const readline = require("node:readline");
 const { stdin: input, stdout: output } = require("node:process");
 const fs = require("fs");
 const path = require("node:path");
+const { motor } = require("./motor_driver");
 
 // const { getTimecodes, Frequency } = require("./utils.js");
 // const { cadenceSignal, counter } = require("./cadence_sensor.js");
@@ -94,3 +95,5 @@ const createProgramm = () => {
   rl.prompt();
   rl.on("line", rlOnFn).on("close", () => console.log("readline closed"));
 };
+
+motor.initialize();

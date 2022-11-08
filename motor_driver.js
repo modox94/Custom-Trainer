@@ -13,6 +13,7 @@ try {
 }
 
 const DELAY = 100;
+const RESIST_LEVELS = 10;
 
 const write = (value, cb = () => {}) => {
   console.log("write", value);
@@ -34,22 +35,22 @@ class MotorDriver {
     this.potentiometer = new PotentiometerSensor();
 
     try {
-      this.motorIn1 = new Gpio(motorIn1Pin, DIRECTION.low);
-      this.motorIn2 = new Gpio(motorIn2Pin, DIRECTION.low);
+      this.in1 = new Gpio(motorIn1Pin, DIRECTION.low);
+      this.in2 = new Gpio(motorIn2Pin, DIRECTION.low);
     } catch (error) {
-      this.motorIn1 = motorInNoop;
-      this.motorIn2 = motorInNoop;
+      this.in1 = motorInNoop;
+      this.in2 = motorInNoop;
 
       console.log("Gpio error", error);
     }
 
-    this.motorIn1.writeSync(0);
-    this.motorIn2.writeSync(0);
+    this.in1.writeSync(0);
+    this.in2.writeSync(0);
   }
 
   async initialize() {
-    this.motorIn1.writeSync(0);
-    this.motorIn2.writeSync(0);
+    this.in1.writeSync(0);
+    this.in2.writeSync(0);
 
     if (!this.minPosition && !this.maxPosition) {
       console.log(
@@ -180,23 +181,27 @@ class MotorDriver {
   }
 
   forward() {
-    this.motorIn1.writeSync(0);
-    this.motorIn2.writeSync(1);
+    this.in1.writeSync(0);
+    this.in2.writeSync(1);
   }
 
   back() {
-    this.motorIn2.writeSync(0);
-    this.motorIn1.writeSync(1);
+    this.in2.writeSync(0);
+    this.in1.writeSync(1);
   }
 
   stop() {
-    this.motorIn1.writeSync(0);
-    this.motorIn2.writeSync(0);
+    this.in1.writeSync(0);
+    this.in2.writeSync(0);
+  }
+
+  setLevel(level) {
+    //
   }
 }
 
 const motor = new MotorDriver(motorSettings);
 
-motor.initialize();
+// motor.initialize();
 
 exports.motor = motor;
