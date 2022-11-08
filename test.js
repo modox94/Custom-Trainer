@@ -147,13 +147,16 @@ const startProgramm = () => {
       return console.log("invalid value");
     }
 
-    if (!dir[value]) {
+    if (!dir[value - 1]) {
       return console.log("Нет такой программы");
     }
 
-    const programmRaw = fs.readFileSync(`./training_programs/${dir[value]}`, {
-      encoding: "utf-8",
-    });
+    const programmRaw = fs.readFileSync(
+      `./training_programs/${dir[value - 1]}`,
+      {
+        encoding: "utf-8",
+      },
+    );
     const programm = JSON.parse(programmRaw);
 
     for (let index = 0; index < programm.length; index++) {
