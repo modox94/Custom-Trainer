@@ -237,7 +237,7 @@ class MotorDriver {
       // const finish = Date.now();
       // console.log("wait pos", finish - start);
 
-      counter -= 1;
+      // counter -= 1;
       // console.log("counter", counter);
     }
   }
