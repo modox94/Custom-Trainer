@@ -284,7 +284,8 @@ class MotorDriver {
       Math.abs(posCur - targetPos) > 1
       // && counter > 0
     ) {
-      // console.log("counter3", ++counter3);
+      ++counter3;
+      // console.log("counter3", counter3);
 
       if (posCur > targetPos) {
         this.back();
