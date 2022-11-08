@@ -214,7 +214,7 @@ class MotorDriver {
     const finish = Date.now();
     console.log("wait pos", finish - start);
 
-    let counter = 20;
+    let counter = 100;
 
     while (Math.abs(posCur - targetPos) > 1 && counter > 0) {
       if (posCur > targetPos) {
