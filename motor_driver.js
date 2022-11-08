@@ -240,6 +240,20 @@ class MotorDriver {
       // counter -= 1;
       // console.log("counter", counter);
     }
+
+    let counter2 = 3;
+
+    console.log("maxPosition", this.maxPosition);
+    console.log("minPosition", this.minPosition);
+    console.log("targetPos", targetPos);
+
+    while (counter2 > 0) {
+      const pos = await this.potentiometer.readPosition();
+      console.log("pos", counter2, pos);
+      await sleep(200);
+
+      counter2 -= 1;
+    }
   }
 }
 
