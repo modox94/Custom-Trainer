@@ -236,8 +236,9 @@ class MotorDriver {
       loopsCounter -= 1;
     }
 
-    const sleepRatio =
-      Math.round(driveTimeSum / 2 / loops / (RESIST_LEVELS - 1)) * 0.9;
+    const sleepRatio = Math.round(
+      (driveTimeSum / 2 / loops / (RESIST_LEVELS - 1)) * 0.95,
+    );
 
     this.sleepRatio = sleepRatio;
 
