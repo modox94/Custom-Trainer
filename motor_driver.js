@@ -219,18 +219,20 @@ class MotorDriver {
       return "error";
     }
 
-    let loopsCount = 5;
+    let loopsCount = 1;
     let driveTimeSum = 0;
 
     while (loopsCount > 0) {
+      console.log("driveTimeSum", driveTimeSum);
       const { driveTime: driveTimeUp } = await this.setLevel(
         RESIST_LEVELS,
         true,
       );
       driveTimeSum += driveTimeUp;
+      console.log("driveTimeSum", driveTimeSum);
       const { driveTime: driveTimeDown } = await this.setLevel(1, true);
       driveTimeSum += driveTimeDown;
-
+      console.log("driveTimeSum", driveTimeSum);
       loopsCount -= 1;
     }
 
@@ -282,7 +284,7 @@ class MotorDriver {
       Math.abs(posCur - targetPos) > 1
       // && counter > 0
     ) {
-      console.log("counter3", ++counter3);
+      // console.log("counter3", ++counter3);
 
       if (posCur > targetPos) {
         this.back();
@@ -321,6 +323,8 @@ class MotorDriver {
 
       counter2 -= 1;
     }
+
+    console.log("counter3", counter3);
 
     return isCalibration ? { driveTime: counter3 * DELAY } : "done";
   }
