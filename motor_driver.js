@@ -207,7 +207,7 @@ class MotorDriver {
 
     const interval =
       (this.maxPosition - this.minPosition) / (RESIST_LEVELS - 1);
-    const targetPos = interval * level;
+    const targetPos = this.minPosition + interval * level;
 
     const start = Date.now();
     let posCur = await this.potentiometer.readPosition();
