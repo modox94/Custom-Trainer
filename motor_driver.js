@@ -217,11 +217,14 @@ class MotorDriver {
     // console.log("wait pos", finish - start);
 
     // let counter = 10;
+    let counter3 = 0;
 
     while (
       Math.abs(posCur - targetPos) > 1
       // && counter > 0
     ) {
+      console.log("counter3", ++counter3);
+
       if (posCur > targetPos) {
         this.back();
       } else {
