@@ -3,6 +3,7 @@ const { stdin: input, stdout: output } = require("node:process");
 const fs = require("fs");
 const path = require("node:path");
 const { motor } = require("./motor_driver");
+const { sleep } = require("./utils");
 
 // const { getTimecodes, Frequency } = require("./utils.js");
 // const { cadenceSignal, counter } = require("./cadence_sensor.js");
@@ -124,7 +125,47 @@ const checkSetLevel = () => {
     }
 
     motor.setLevel(value);
-  }).on("close", () => console.log("readline closed"));
+  }).on("close", () => {
+    motor.stop();
+    console.log("readline closed");
+  });
 };
 
-checkSetLevel();
+// checkSetLevel();
+
+const startProgramm = () => {
+  const rl = readline.createInterface({ input, output });
+  const dir = fs.readdirSync("./training_programs");
+
+  console.log("Выберете номер программы для запуска.");
+  rl.prompt();
+  rl.on("line", async inputRaw => {
+    const input = inputRaw.trim();
+    const value = Number(String(input).trim());
+
+    if (Number.isNaN(value) || value <= 0) {
+      return console.log("invalid value");
+    }
+
+    if (!dir[value]) {
+      return console.log("Нет такой программы");
+    }
+
+    const programm = fs.readFileSync(`./training_programs/${dir[value]}`, {
+      encoding: "utf-8",
+    });
+
+    for (let index = 0; index < programm.length; index++) {
+      const { resistanceLevel, targetRpm } = programm[index];
+      motor.setLevel(resistanceLevel);
+      console.log("---------------------------");
+      console.log("targetRpm", targetRpm);
+      await sleep(60000);
+    }
+  }).on("close", () => {
+    motor.stop();
+    console.log("readline closed");
+  });
+};
+
+startProgramm();
