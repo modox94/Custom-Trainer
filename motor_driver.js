@@ -219,10 +219,11 @@ class MotorDriver {
       return "error";
     }
 
-    let loopsCount = 1;
+    const loops = 1;
+    let loopsCounter = loops;
     let driveTimeSum = 0;
 
-    while (loopsCount > 0) {
+    while (loopsCounter > 0) {
       console.log("driveTimeSum", driveTimeSum);
       const { driveTime: driveTimeUp } = await this.setLevel(
         RESIST_LEVELS,
@@ -233,11 +234,11 @@ class MotorDriver {
       const { driveTime: driveTimeDown } = await this.setLevel(1, true);
       driveTimeSum += driveTimeDown;
       console.log("driveTimeSum", driveTimeSum);
-      loopsCount -= 1;
+      loopsCounter -= 1;
     }
 
     const sleepRatio =
-      Math.round(driveTimeSum / 2 / loopsCount / RESIST_LEVELS) * 0.9;
+      Math.round(driveTimeSum / 2 / loops / RESIST_LEVELS) * 0.9;
 
     this.sleepRatio = sleepRatio;
 
