@@ -98,4 +98,19 @@ const createProgramm = () => {
 
 // motor.initialize();
 
-motor.setLevel(5);
+const checkSetLevel = () => {
+  const rl = readline.createInterface({ input, output });
+
+  rl.prompt();
+  rl.on("line", inputRaw => {
+    const input = inputRaw.trim();
+    const value = Number(String(input).trim());
+    if (Number.isNaN(value) || value <= 0) {
+      return console.log("invalid value");
+    }
+
+    motor.setLevel(value);
+  }).on("close", () => console.log("readline closed"));
+};
+
+checkSetLevel();
