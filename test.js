@@ -111,6 +111,10 @@ const checkSetLevel = () => {
         return console.log(await motor.readPosition());
       }
 
+      if (input === "c") {
+        return console.log(await motor.calibration());
+      }
+
       return console.log("invalid value");
     }
 

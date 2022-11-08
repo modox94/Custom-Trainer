@@ -84,8 +84,8 @@ class MotorDriver {
         case "reset":
           console.log("Cброс настроек...");
           this.stop();
-          this.minPosition = undefined;
-          this.maxPosition = undefined;
+          delete this.minPosition;
+          delete this.maxPosition;
           console.log(
             "Нужно найти положение двигателя соответствующее минимальной нагрузке",
           );
@@ -98,11 +98,11 @@ class MotorDriver {
           break;
 
         case "g":
-          console.log("pos", await this.potentiometer.readPosition());
+          console.log("pos", await this.readPosition());
           break;
 
         case "f": {
-          const posCur = await this.potentiometer.readPosition();
+          const posCur = await this.readPosition();
 
           if (posCur >= 95) {
             console.log("Дальше нельзя!");
@@ -112,12 +112,12 @@ class MotorDriver {
           this.forward();
           await sleep(DELAY);
           this.stop();
-          console.log("pos", await this.potentiometer.readPosition());
+          console.log("pos", await this.readPosition());
           break;
         }
 
         case "b": {
-          const posCur = await this.potentiometer.readPosition();
+          const posCur = await this.readPosition();
 
           if (posCur <= 5) {
             console.log("Дальше нельзя!");
@@ -127,14 +127,14 @@ class MotorDriver {
           this.back();
           await sleep(DELAY);
           this.stop();
-          console.log("pos", await this.potentiometer.readPosition());
+          console.log("pos", await this.readPosition());
           break;
         }
 
         case "next": {
           let positionSum = 0;
           for (let i = 0; i < 3; i++) {
-            positionSum += await this.potentiometer.readPosition();
+            positionSum += await this.readPosition();
           }
           const positionRes = Math.round(positionSum / 3);
           if (!this.minPosition) {
@@ -203,9 +203,58 @@ class MotorDriver {
     return await this.potentiometer.readPosition();
   }
 
-  async setLevel(level) {
+  async calibration() {
+    if (!this.minPosition || !this.maxPosition) {
+      return console.log("Невозможно проводить калибровку без инициализации!");
+    }
+
+    if (this.sleepRatio) {
+      delete this.sleepRatio;
+    }
+
+    const result = await this.setLevel(1);
+    if (result === "error") {
+      console.log("Что-то не так с двигателем!");
+      this.stop();
+      return "error";
+    }
+
+    let loopsCount = 5;
+    let driveTimeSum = 0;
+
+    while (loopsCount > 0) {
+      const { driveTime: driveTimeUp } = await this.setLevel(
+        RESIST_LEVELS,
+        true,
+      );
+      driveTimeSum += driveTimeUp;
+      const { driveTime: driveTimeDown } = await this.setLevel(1, true);
+      driveTimeSum += driveTimeDown;
+
+      loopsCount -= 1;
+    }
+
+    const sleepRatio =
+      Math.round(driveTimeSum / 2 / loopsCount / RESIST_LEVELS) * 0.9;
+
+    this.sleepRatio = sleepRatio;
+
+    fs.writeFileSync(
+      "./motor_settings.json",
+      JSON.stringify({
+        minPosition: this.minPosition,
+        maxPosition: this.maxPosition,
+        sleepRatio: this.sleepRatio,
+      }),
+    );
+
+    return this.sleepRatio;
+  }
+
+  async setLevel(level, isCalibration) {
     if (level < 1 || level > RESIST_LEVELS) {
-      return console.log("wrong resist level");
+      console.log("wrong resist level");
+      return "error";
     }
 
     while (!this.isReady) {
@@ -241,7 +290,7 @@ class MotorDriver {
         this.forward();
       }
 
-      await sleep(100);
+      await sleep(DELAY);
 
       this.stop();
 
@@ -272,6 +321,8 @@ class MotorDriver {
 
       counter2 -= 1;
     }
+
+    return isCalibration ? { driveTime: counter3 * DELAY } : "done";
   }
 }
 
