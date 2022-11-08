@@ -235,6 +235,7 @@ class MotorDriver {
       console.log("wait pos", finish - start);
 
       counter -= 1;
+      console.log("counter", counter);
     }
   }
 }
