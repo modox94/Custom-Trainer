@@ -13,6 +13,7 @@ try {
 }
 
 const DELAY = 100;
+const DELAY_FOR_READ = 25;
 const RESIST_LEVELS = 10;
 
 const write = (value, cb = () => {}) => {
@@ -309,7 +310,7 @@ class MotorDriver {
       this.stop();
 
       // const start = Date.now();
-      await sleep(50);
+      await sleep(DELAY_FOR_READ);
       // const finish = Date.now();
       // console.log("wait", finish - start);
 
