@@ -203,7 +203,7 @@ class MotorDriver {
     return await this.potentiometer.readPosition();
   }
 
-  async calibration() {
+  async calibration(loops = 1) {
     if (!this.minPosition || !this.maxPosition) {
       return console.log("Невозможно проводить калибровку без инициализации!");
     }
@@ -219,7 +219,6 @@ class MotorDriver {
       return "error";
     }
 
-    const loops = 5;
     let loopsCounter = loops;
     let driveTimeSum = 0;
 
