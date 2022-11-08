@@ -1,7 +1,5 @@
 const fs = require("node:fs");
 const { DEV_CONSTS, DEFAULT_WINDOW, DEFAULT_M_C } = require("./constants.js");
-const readline = require("node:readline");
-const { stdin: input, stdout: output } = require("node:process");
 
 const { dataFile, LF, PL, FRQ_R, FRQ } = DEV_CONSTS;
 
@@ -79,11 +77,3 @@ exports.sleep = (delay = 1000) =>
   new Promise(resolve => {
     setTimeout(resolve, delay);
   });
-
-exports.consoleCheck = async cb => {
-  const rl = readline.createInterface({ input, output });
-
-  for await (const line of rl) {
-    cb(line);
-  }
-};

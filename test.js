@@ -1,9 +1,12 @@
-const { getTimecodes, Frequency, consoleCheck } = require("./utils.js");
-// const { cadenceSignal, counter } = require("./cadence_sensor.js");
-// const { condition, potentiometerSensor } = require("./potentiometer_sensor");
+const readline = require("node:readline");
+const { stdin: input, stdout: output } = require("node:process");
 const fs = require("fs");
+const path = require("node:path");
 
-const { frq, pl, sensorSignals } = getTimecodes();
+// const { getTimecodes, Frequency } = require("./utils.js");
+// const { cadenceSignal, counter } = require("./cadence_sensor.js");
+
+// const { frq, pl, sensorSignals } = getTimecodes();
 
 // const testAr = sensorSignals.slice(4, 11);
 
@@ -29,26 +32,31 @@ const { frq, pl, sensorSignals } = getTimecodes();
 //   console.log(result);
 // }
 
-// cadenceSignal.watch(() => console.log("MAGNET"));
-
-// setInterval(() => {
-//   console.log("isReady", condition.isReady);
-//   if (condition.isReady) {
-//     potentiometerSensor.read((err, reading) =>
-//       console.log("ptnS", reading?.value),
-//     );
-//   } else {
-//     console.log("not ready");
-//   }
-// }, 1000);
-
 const temp = [];
-const consoleCb = path => input => {
-  if (input === "stop") {
-    return fs.writeFileSync(path, JSON.stringify(temp));
+let fileName = "";
+const rlOnFn = inputRaw => {
+  const input = inputRaw.trim();
+  const value = Number(String(input).trim());
+
+  if (temp.length === 0 && !fileName) {
+    fileName = input;
+    console.log("Вводите значения нагрузки и требуемого каденса");
+    console.log("Нагрузка: ");
+    return;
   }
 
-  const value = Number(String(input).trim());
+  if (input === "finish") {
+    const filePath = path.resolve(".", "training_programs", `${fileName}.json`);
+    fs.writeFileSync(filePath, JSON.stringify(temp));
+
+    temp.length = 0;
+    fileName = "";
+
+    console.log("Программа сохранена.");
+    console.log("Введите название программы которую хотите создать.");
+    return;
+  }
+
   if (Number.isNaN(value) || value <= 0) {
     return console.log("invalid value");
   }
@@ -65,9 +73,24 @@ const consoleCb = path => input => {
 
   if (!temp[lastIdx].resistanceLevel) {
     temp[lastIdx].resistanceLevel = Number(input);
+    console.log("Каденс: ");
   } else {
     temp[lastIdx].targetRpm = Number(input);
+    const time = String(lastIdx + 1);
+    console.log(
+      `---------------------${
+        time.length > 1 ? "" : "-"
+      }${time}:00----------------------`,
+    );
+    console.log("Нагрузка: ");
   }
 };
 
-// consoleCheck(consoleCb());
+const createProgramm = () => {
+  const rl = readline.createInterface({ input, output });
+
+  console.log("Введите название программы которую хотите создать.");
+
+  rl.prompt();
+  rl.on("line", rlOnFn).on("close", () => console.log("readline closed"));
+};

@@ -1,16 +1,10 @@
 const { Gpio } = require("onoff");
-// const rpio = require("rpio");
 const { DIRECTION, PHYSICAL_TO_GPIO } = require("./constants.js");
 const readline = require("node:readline");
 const fs = require("fs");
 const { stdin: input, stdout: output } = require("node:process");
 const { sleep } = require("./utils");
-const {
-  PotentiometerSensor,
-  PS,
-  potentiometerSensor,
-  condition,
-} = require("./potentiometer_sensor");
+const { PotentiometerSensor } = require("./potentiometer_sensor");
 let motorSettings;
 try {
   motorSettings = require("./motor_settings.json");
@@ -33,34 +27,16 @@ const motorInNoop = { write, writeSync };
 
 const motorIn1Pin = PHYSICAL_TO_GPIO[16];
 const motorIn2Pin = PHYSICAL_TO_GPIO[18];
-// const motorPWMPin = PHYSICAL_TO_GPIO[32];
-const motorPWMPin = 32;
-console.log("motorPWMPin", motorPWMPin);
-
-// const range = 1024;
-const range = 4096;
-// const clockDivider = 8; /* Clock divider (PWM refresh rate), 8 == 2.4MHz */
-const clockDivider = 64;
-
-const defaultSpeed = 50;
-const speedStep = 5;
-const getSpeedValue = percentage => Math.floor((percentage / 100) * range);
 
 class MotorDriver {
   constructor(options) {
     Object.assign(this, options);
 
-    this.speed = this.speed || defaultSpeed;
+    this.potentiometer = new PotentiometerSensor();
 
     try {
       this.motorIn1 = new Gpio(motorIn1Pin, DIRECTION.low);
       this.motorIn2 = new Gpio(motorIn2Pin, DIRECTION.low);
-
-      // rpio.open(motorPWMPin, rpio.PWM);
-      // rpio.pwmSetClockDivider(clockDivider);
-      // rpio.pwmSetRange(motorPWMPin, range);
-
-      // this.setSpeed(this.speed);
     } catch (error) {
       this.motorIn1 = motorInNoop;
       this.motorIn2 = motorInNoop;
@@ -195,40 +171,14 @@ class MotorDriver {
           break;
         }
 
-        // case "sm":
-        //   if (this.speed < 100) {
-        //     this.setSpeed(this.speed + speedStep);
-        //   } else {
-        //     console.log("Скорость уже максимальная!");
-        //   }
-        //   break;
-
-        // case "sl":
-        //   if (this.speed > speedStep) {
-        //     this.setSpeed(this.speed - speedStep);
-        //   } else {
-        //     console.log("Скорость уже минимальная!");
-        //   }
-        //   break;
-
         default:
           console.log("Не знаю таких команд.");
           break;
       }
     }).on("close", () => {
-      // rpio.close(motorPWMPin, rpio.PIN_RESET);
-      // rpio.exit();
       console.log("readline closed");
     });
   }
-
-  // setSpeed(percentage) {
-  //   console.log("setSpeed", percentage);
-  //   const value = getSpeedValue(percentage);
-  //   console.log("value", value);
-  //   rpio.pwmSetData(motorPWMPin, value);
-  //   this.speed = percentage;
-  // }
 
   forward() {
     this.motorIn1.writeSync(0);
