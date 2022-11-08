@@ -212,7 +212,7 @@ class MotorDriver {
     const start = Date.now();
     let posCur = await this.potentiometer.readPosition();
     const finish = Date.now();
-    console.log("wait pos", finish - start);
+    // console.log("wait pos", finish - start);
 
     let counter = 10;
 
@@ -223,14 +223,14 @@ class MotorDriver {
         this.forward();
       }
 
-      sleep(100);
+      await sleep(100);
 
       this.stop();
 
-      const start = Date.now();
-      sleep(100);
-      const finish = Date.now();
-      console.log("wait", finish - start);
+      // const start = Date.now();
+      await sleep(100);
+      // const finish = Date.now();
+      // console.log("wait", finish - start);
 
       posCur = await this.potentiometer.readPosition();
 
