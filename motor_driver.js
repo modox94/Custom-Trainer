@@ -195,12 +195,20 @@ class MotorDriver {
     this.in2.writeSync(0);
   }
 
+  get isReady() {
+    return this.potentiometer?.condition?.isReady;
+  }
+
+  async readPosition() {
+    return await this.potentiometer.readPosition();
+  }
+
   async setLevel(level) {
     if (level < 1 || level > RESIST_LEVELS) {
       return console.log("wrong resist level");
     }
 
-    while (!this.potentiometer?.condition?.isReady) {
+    while (!this.isReady) {
       console.log("loading...");
       await sleep(200);
     }
@@ -212,7 +220,7 @@ class MotorDriver {
     const targetPos = this.minPosition + interval * (level - 1);
 
     // const start = Date.now();
-    let posCur = await this.potentiometer.readPosition();
+    let posCur = await this.readPosition();
     // const finish = Date.now();
     // console.log("wait pos", finish - start);
 
@@ -242,7 +250,7 @@ class MotorDriver {
       // const finish = Date.now();
       // console.log("wait", finish - start);
 
-      posCur = await this.potentiometer.readPosition();
+      posCur = await this.readPosition();
 
       // counter -= 1;
       // console.log("counter", counter);
@@ -258,7 +266,7 @@ class MotorDriver {
     console.log("targetPos", targetPos);
 
     while (counter2 > 0) {
-      const pos = await this.potentiometer.readPosition();
+      const pos = await this.readPosition();
       console.log("pos", counter2, pos);
       await sleep(200);
 

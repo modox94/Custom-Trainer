@@ -102,9 +102,13 @@ const checkSetLevel = () => {
   const rl = readline.createInterface({ input, output });
 
   rl.prompt();
-  rl.on("line", inputRaw => {
+  rl.on("line", async inputRaw => {
     const input = inputRaw.trim();
     const value = Number(String(input).trim());
+    if (input === "g") {
+      console.log(await motor.readPosition());
+    }
+
     if (Number.isNaN(value) || value <= 0) {
       return console.log("invalid value");
     }
