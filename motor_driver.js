@@ -200,6 +200,11 @@ class MotorDriver {
       return console.log("wrong resist level");
     }
 
+    while (!this.potentiometer?.condition?.isReady) {
+      console.log("loading...");
+      await sleep(200);
+    }
+
     const interval =
       (this.maxPosition - this.minPosition) / (RESIST_LEVELS - 1);
     const targetPos = interval * level;
