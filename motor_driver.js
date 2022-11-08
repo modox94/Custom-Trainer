@@ -195,8 +195,42 @@ class MotorDriver {
     this.in2.writeSync(0);
   }
 
-  setLevel(level) {
-    //
+  async setLevel(level) {
+    if (level < 1 || level > RESIST_LEVELS) {
+      return console.log("wrong resist level");
+    }
+
+    const interval =
+      (this.maxPosition - this.minPosition) / (RESIST_LEVELS - 1);
+    const targetPos = interval * level;
+
+    const start = Date.now();
+    let posCur = await this.potentiometer.readPosition();
+    const finish = Date.now();
+    console.log("wait pos", finish - start);
+
+    let counter = 20;
+
+    while (Math.abs(posCur - targetPos) > 1 && counter > 0) {
+      if (posCur > targetPos) {
+        this.back();
+      } else {
+        this.forward();
+      }
+
+      sleep(100);
+
+      this.stop();
+
+      sleep(100);
+
+      const start = Date.now();
+      posCur = await this.potentiometer.readPosition();
+      const finish = Date.now();
+      console.log("wait pos", finish - start);
+
+      counter -= 1;
+    }
   }
 }
 

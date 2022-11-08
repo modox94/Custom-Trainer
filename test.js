@@ -96,4 +96,6 @@ const createProgramm = () => {
   rl.on("line", rlOnFn).on("close", () => console.log("readline closed"));
 };
 
-motor.initialize();
+// motor.initialize();
+
+motor.setLevel(2);
