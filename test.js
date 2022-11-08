@@ -151,9 +151,10 @@ const startProgramm = () => {
       return console.log("Нет такой программы");
     }
 
-    const programm = fs.readFileSync(`./training_programs/${dir[value]}`, {
+    const programmRaw = fs.readFileSync(`./training_programs/${dir[value]}`, {
       encoding: "utf-8",
     });
+    const programm = JSON.parse(programmRaw);
 
     for (let index = 0; index < programm.length; index++) {
       const { resistanceLevel, targetRpm } = programm[index];
