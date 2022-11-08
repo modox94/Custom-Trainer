@@ -97,11 +97,11 @@ class MotorDriver {
           break;
 
         case "g":
-          console.log("pos", await PS.readPosition());
+          console.log("pos", await this.potentiometer.readPosition());
           break;
 
         case "f": {
-          const posCur = await PS.readPosition();
+          const posCur = await this.potentiometer.readPosition();
 
           if (posCur >= 95) {
             console.log("Дальше нельзя!");
@@ -111,12 +111,12 @@ class MotorDriver {
           this.forward();
           await sleep(DELAY);
           this.stop();
-          console.log("pos", await PS.readPosition());
+          console.log("pos", await this.potentiometer.readPosition());
           break;
         }
 
         case "b": {
-          const posCur = await PS.readPosition();
+          const posCur = await this.potentiometer.readPosition();
 
           if (posCur <= 5) {
             console.log("Дальше нельзя!");
@@ -126,14 +126,14 @@ class MotorDriver {
           this.back();
           await sleep(DELAY);
           this.stop();
-          console.log("pos", await PS.readPosition());
+          console.log("pos", await this.potentiometer.readPosition());
           break;
         }
 
         case "next": {
           let positionSum = 0;
           for (let i = 0; i < 3; i++) {
-            positionSum += await PS.readPosition();
+            positionSum += await this.potentiometer.readPosition();
           }
           const positionRes = Math.round(positionSum / 3);
           if (!this.minPosition) {
