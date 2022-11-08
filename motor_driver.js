@@ -214,12 +214,9 @@ class MotorDriver {
     const finish = Date.now();
     console.log("wait pos", finish - start);
 
-    // let counter = 100;
+    let counter = 10;
 
-    while (
-      Math.abs(posCur - targetPos) > 1
-      //  && counter > 0
-    ) {
+    while (Math.abs(posCur - targetPos) > 1 && counter > 0) {
       if (posCur > targetPos) {
         this.back();
       } else {
@@ -230,14 +227,14 @@ class MotorDriver {
 
       this.stop();
 
+      const start = Date.now();
       sleep(100);
+      const finish = Date.now();
+      console.log("wait", finish - start);
 
-      // const start = Date.now();
       posCur = await this.potentiometer.readPosition();
-      // const finish = Date.now();
-      // console.log("wait pos", finish - start);
 
-      // counter -= 1;
+      counter -= 1;
       // console.log("counter", counter);
     }
   }
