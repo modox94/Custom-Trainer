@@ -211,13 +211,15 @@ class MotorDriver {
       (this.maxPosition - this.minPosition) / (RESIST_LEVELS - 1);
     const targetPos = this.minPosition + interval * (level - 1);
 
-    const start = Date.now();
+    // const start = Date.now();
     let posCur = await this.potentiometer.readPosition();
-    const finish = Date.now();
+    // const finish = Date.now();
     // console.log("wait pos", finish - start);
 
     // let counter = 10;
     let counter3 = 0;
+
+    const start = Date.now();
 
     while (
       Math.abs(posCur - targetPos) > 1
@@ -245,6 +247,9 @@ class MotorDriver {
       // counter -= 1;
       // console.log("counter", counter);
     }
+
+    const finish = Date.now();
+    console.log("latency", finish - start);
 
     let counter2 = 3;
 
