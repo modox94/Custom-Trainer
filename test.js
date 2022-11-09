@@ -165,7 +165,7 @@ const startProgramm = () => {
     );
     const programm = JSON.parse(programmRaw);
 
-    const endTime = Date.now() + programmRaw.length * 60000;
+    const endTime = Date.now() + programm.length * 60000;
 
     const getRemainingTime = () => {
       const remainingDate = new Date(endTime - Date.now());
