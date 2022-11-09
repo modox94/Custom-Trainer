@@ -205,7 +205,7 @@ const startProgramm = () => {
       ui.resetOutput();
 
       for (const divArg of consoleOutput) {
-        ui.div(divArg);
+        ui.div(...divArg);
       }
 
       logUpdate(ui.toString());
