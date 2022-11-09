@@ -227,7 +227,7 @@ const startProgramm = () => {
         rpmCurCha = chalk.green(rpmCur);
       }
 
-      updateConsoleOut([3, 1, "text"], String(rpmCurCha));
+      updateConsoleOut([3, 1, "text"], rpmCurCha);
       updateConsoleOut([0, 1, "text"], getRemainingTime());
 
       ui.resetOutput();
