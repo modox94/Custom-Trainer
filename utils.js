@@ -57,8 +57,9 @@ exports.Frequency = class Frequency {
   }
 
   get rpm() {
+    const now = Date.now();
     const lastIndex = this.timecodes.length - 1;
-    if (lastIndex >= 0) {
+    if (lastIndex >= 0 && Math.abs(now - lastIndex) < 1000) {
       const prevMills = this.timecodes[lastIndex - 1];
       const currMills = this.timecodes[lastIndex];
 

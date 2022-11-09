@@ -165,7 +165,25 @@ const startProgramm = () => {
     );
     const programm = JSON.parse(programmRaw);
 
+    const endTime = Date.now() + programmRaw.length * 60000;
+
+    const getRemainingTime = () => {
+      const remainingDate = new Date(endTime - Date.now());
+
+      return `${remainingDate.getMinutes()}:${remainingDate.getSeconds()}`;
+    };
+
     const consoleOutput = [
+      [
+        {
+          text: "Времени осталось: ",
+          align: "center",
+        },
+        {
+          text: getRemainingTime(),
+          align: "center",
+        },
+      ],
       [
         {
           text: "Нагрузка: ",
@@ -209,7 +227,8 @@ const startProgramm = () => {
         rpmCurCha = chalk.green(rpmCur);
       }
 
-      updateConsoleOut([2, 1, "text"], String(rpmCurCha));
+      updateConsoleOut([3, 1, "text"], String(rpmCurCha));
+      updateConsoleOut([0, 1, "text"], getRemainingTime());
 
       ui.resetOutput();
 
@@ -226,8 +245,8 @@ const startProgramm = () => {
       // console.log("---------------------------");
       // console.log("targetRpm", targetRpm);
 
-      updateConsoleOut([0, 1, "text"], String(resistanceLevel));
-      updateConsoleOut([2, 0, "text"], String(targetRpm));
+      updateConsoleOut([1, 1, "text"], String(resistanceLevel));
+      updateConsoleOut([3, 0, "text"], String(targetRpm));
 
       await sleep(60000);
     }
