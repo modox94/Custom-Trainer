@@ -97,6 +97,8 @@ const createProgramm = () => {
   rl.on("line", rlOnFn).on("close", () => console.log("readline closed"));
 };
 
+// createProgramm();
+
 // motor.initialize();
 
 const checkSetLevel = () => {
