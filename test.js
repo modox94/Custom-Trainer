@@ -6,6 +6,7 @@ const logUpdate = require("log-update");
 const ui = require("cliui")();
 const chalk = require("chalk");
 const { get, set, round } = require("lodash");
+const zeroFill = require("zero-fill");
 const { motor } = require("./motor_driver");
 const { sleep } = require("./utils");
 const { cadenceSignal, counter } = require("./cadence_sensor.js");
@@ -170,7 +171,10 @@ const startProgramm = () => {
     const getRemainingTime = () => {
       const remainingDate = new Date(endTime - Date.now());
 
-      return `${remainingDate.getMinutes()}:${remainingDate.getSeconds()}`;
+      return `${zeroFill(remainingDate.getMinutes(), 2)}:${zeroFill(
+        remainingDate.getSeconds(),
+        2,
+      )}`;
     };
 
     const consoleOutput = [
