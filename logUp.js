@@ -1,4 +1,6 @@
 const logUpdate = require("log-update");
+const ui = require("cliui")();
+const chalk = require("chalk");
 
 const frames = ["-", "\\", "|", "/"];
 let index = 0;
@@ -6,23 +8,32 @@ let index = 0;
 setInterval(() => {
   const frame = frames[(index = ++index % frames.length)];
 
-  logUpdate(
-    `
-        ♥♥
-   ${frame} unicorns ${frame}
-        ♥♥
-`,
-  );
-}, 80);
+  ui.resetOutput();
 
-setInterval(() => {
-  const frame = frames[(index = ++index % frames.length)];
+  ui.div("Usage: $0 [command] [options]");
 
-  logUpdate(
-    `
-          ♥♥
-     ${frame} horse ${frame}
-          ♥♥
-  `,
+  ui.div({
+    text: frame + " Options:",
+    padding: [2, 0, 1, 0],
+  });
+
+  ui.div(
+    {
+      text: "-f, --file",
+      width: 20,
+      padding: [0, 4, 0, 4],
+    },
+    {
+      text:
+        "the file to load." +
+        chalk.green("(if this description is long it wraps)."),
+      width: 20,
+    },
+    {
+      text: chalk.red("[required]"),
+      align: "right",
+    },
   );
+
+  logUpdate(ui.toString());
 }, 80);

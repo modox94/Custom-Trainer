@@ -214,8 +214,8 @@ const startProgramm = () => {
     for (let index = 0; index < programm.length; index++) {
       const { resistanceLevel, targetRpm } = programm[index];
       motor.setLevel(resistanceLevel);
-      console.log("---------------------------");
-      console.log("targetRpm", targetRpm);
+      // console.log("---------------------------");
+      // console.log("targetRpm", targetRpm);
 
       updateConsoleOut([0, 1, "text"], resistanceLevel);
       updateConsoleOut([2, 0, "text"], targetRpm);

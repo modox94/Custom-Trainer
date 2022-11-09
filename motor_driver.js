@@ -100,7 +100,7 @@ class MotorDriver {
           break;
 
         case "g":
-          console.log("pos", await this.readPosition());
+          // console.log("pos", await this.readPosition());
           break;
 
         case "f": {
@@ -114,7 +114,7 @@ class MotorDriver {
           this.forward();
           await sleep(DELAY);
           this.stop();
-          console.log("pos", await this.readPosition());
+          // console.log("pos", await this.readPosition());
           break;
         }
 
@@ -129,7 +129,7 @@ class MotorDriver {
           this.back();
           await sleep(DELAY);
           this.stop();
-          console.log("pos", await this.readPosition());
+          // console.log("pos", await this.readPosition());
           break;
         }
 
@@ -225,16 +225,15 @@ class MotorDriver {
     let driveTimeSum = 0;
 
     while (loopsCounter > 0) {
-      console.log("driveTimeSum", driveTimeSum);
       const { driveTime: driveTimeUp } = await this.setLevel(
         RESIST_LEVELS,
         true,
       );
       driveTimeSum += driveTimeUp;
-      console.log("driveTimeSum", driveTimeSum);
+
       const { driveTime: driveTimeDown } = await this.setLevel(1, true);
       driveTimeSum += driveTimeDown;
-      console.log("driveTimeSum", driveTimeSum);
+
       loopsCounter -= 1;
     }
 
@@ -281,7 +280,7 @@ class MotorDriver {
     // let counter = 10;
     let counter3 = 0;
 
-    const start = Date.now();
+    // const start = Date.now();
 
     let firstTime = false;
 
@@ -321,24 +320,24 @@ class MotorDriver {
       // console.log("counter", counter);
     }
 
-    const finish = Date.now();
-    console.log("latency", finish - start);
+    // const finish = Date.now();
+    // console.log("latency", finish - start);
 
     let counter2 = 3;
 
-    console.log("maxPosition", this.maxPosition);
-    console.log("minPosition", this.minPosition);
-    console.log("targetPos", targetPos);
+    // console.log("maxPosition", this.maxPosition);
+    // console.log("minPosition", this.minPosition);
+    // console.log("targetPos", targetPos);
 
     while (counter2 > 0) {
       const pos = await this.readPosition();
-      console.log("pos", counter2, pos);
+      // console.log("pos", counter2, pos);
       await sleep(200);
 
       counter2 -= 1;
     }
 
-    console.log("counter3", counter3);
+    // console.log("counter3", counter3);
 
     return isCalibration ? { driveTime: counter3 * DELAY } : "done";
   }
