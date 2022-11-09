@@ -73,80 +73,24 @@ class MotorDriver {
 
     rl.prompt();
 
-    rl.on("line", async inputRaw => {
-      const input = inputRaw.trim();
+    return new Promise(resolve => {
+      rl.on("line", async inputRaw => {
+        const input = inputRaw.trim();
 
-      switch (input) {
-        case "exit":
-          console.log("экстренная остановка");
-          this.stop();
-          rl.close();
-          break;
-
-        case "reset":
-          console.log("Cброс настроек...");
-          this.stop();
-          delete this.minPosition;
-          delete this.maxPosition;
-          console.log(
-            "Нужно найти положение двигателя соответствующее минимальной нагрузке",
-          );
-          console.log(
-            "Отправляйте f (вперед) или b (назад) для управления мотором",
-          );
-          console.log(
-            "При достижении соответсвующего положения отправьте next",
-          );
-          break;
-
-        case "g":
-          // console.log("pos", await this.readPosition());
-          break;
-
-        case "f": {
-          const posCur = await this.readPosition();
-
-          if (posCur >= 95) {
-            console.log("Дальше нельзя!");
+        switch (input) {
+          case "exit":
+            console.log("Остановка...");
+            this.stop();
+            rl.close();
             break;
-          }
 
-          this.forward();
-          await sleep(DELAY);
-          this.stop();
-          // console.log("pos", await this.readPosition());
-          break;
-        }
-
-        case "b": {
-          const posCur = await this.readPosition();
-
-          if (posCur <= 5) {
-            console.log("Дальше нельзя!");
-            break;
-          }
-
-          this.back();
-          await sleep(DELAY);
-          this.stop();
-          // console.log("pos", await this.readPosition());
-          break;
-        }
-
-        case "next": {
-          let positionSum = 0;
-          for (let i = 0; i < 3; i++) {
-            positionSum += await this.readPosition();
-          }
-          const positionRes = round(positionSum / 3);
-          if (!this.minPosition) {
-            this.minPosition = positionRes;
-
-            console.log("Значение записано", positionRes);
-            console.log("");
-
+          case "reset":
+            console.log("Cброс настроек...");
+            this.stop();
+            delete this.minPosition;
+            delete this.maxPosition;
             console.log(
-              "Нужно найти положение двигателя соответствующее максимальной нагрузке",
+              "Нужно найти положение двигателя соответствующее минимальной нагрузке",
             );
             console.log(
               "Отправляйте f (вперед) или b (назад) для управления мотором",
@@ -154,31 +98,90 @@ class MotorDriver {
             console.log(
               "При достижении соответсвующего положения отправьте next",
             );
-          } else if (!this.maxPosition) {
-            this.maxPosition = positionRes;
+            break;
 
-            console.log("Значение записано", positionRes);
-            console.log("");
+          case "g":
+            // console.log("pos", await this.readPosition());
+            break;
 
-            fs.writeFileSync(
-              "./motor_settings.json",
-              JSON.stringify({
-                minPosition: this.minPosition,
-                maxPosition: this.maxPosition,
-              }),
-            );
+          case "f": {
+            const posCur = await this.readPosition();
 
-            rl.close();
+            if (posCur >= 95) {
+              console.log("Дальше нельзя!");
+              break;
+            }
+
+            this.forward();
+            await sleep(DELAY);
+            this.stop();
+            // console.log("pos", await this.readPosition());
+            break;
           }
-          break;
-        }
 
-        default:
-          console.log("Не знаю таких команд.");
-          break;
-      }
-    }).on("close", () => {
-      console.log("readline closed");
+          case "b": {
+            const posCur = await this.readPosition();
+
+            if (posCur <= 5) {
+              console.log("Дальше нельзя!");
+              break;
+            }
+
+            this.back();
+            await sleep(DELAY);
+            this.stop();
+            // console.log("pos", await this.readPosition());
+            break;
+          }
+
+          case "next": {
+            let positionSum = 0;
+            for (let i = 0; i < 3; i++) {
+              positionSum += await this.readPosition();
+            }
+            const positionRes = round(positionSum / 3);
+            if (!this.minPosition) {
+              this.minPosition = positionRes;
+
+              console.log("Значение записано", positionRes);
+              console.log("");
+
+              console.log(
+                "Нужно найти положение двигателя соответствующее максимальной нагрузке",
+              );
+              console.log(
+                "Отправляйте f (вперед) или b (назад) для управления мотором",
+              );
+              console.log(
+                "При достижении соответсвующего положения отправьте next",
+              );
+            } else if (!this.maxPosition) {
+              this.maxPosition = positionRes;
+
+              console.log("Значение записано", positionRes);
+              console.log("");
+
+              fs.writeFileSync(
+                "./motor_settings.json",
+                JSON.stringify({
+                  minPosition: this.minPosition,
+                  maxPosition: this.maxPosition,
+                }),
+              );
+
+              rl.close();
+            }
+            break;
+          }
+
+          default:
+            console.log("Не знаю таких команд.");
+            break;
+        }
+      }).on("close", () => {
+        console.log("readline closed");
+        resolve();
+      });
     });
   }
 
