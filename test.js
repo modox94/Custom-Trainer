@@ -151,20 +151,6 @@ const startProgramm = () => {
     const value = Number(String(input).trim());
 
     if (Number.isNaN(value) || value <= 0) {
-      if (input === "init") {
-        rl.pause();
-        await motor.initialize();
-        rl.resume();
-        return;
-      }
-
-      if (input === "calib") {
-        rl.pause();
-        await motor.calibration();
-        rl.resume();
-        return;
-      }
-
       return console.log("invalid value");
     }
 

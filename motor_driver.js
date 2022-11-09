@@ -169,6 +169,8 @@ class MotorDriver {
                 }),
               );
 
+              await motor.calibration();
+
               rl.close();
             }
             break;
