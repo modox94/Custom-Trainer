@@ -2,11 +2,15 @@ const readline = require("node:readline");
 const { stdin: input, stdout: output } = require("node:process");
 const fs = require("fs");
 const path = require("node:path");
+const logUpdate = require("log-update");
+const ui = require("cliui")();
+const chalk = require("chalk");
+const { set } = require("lodash");
 const { motor } = require("./motor_driver");
 const { sleep } = require("./utils");
+const { cadenceSignal, counter } = require("./cadence_sensor.js");
 
 // const { getTimecodes, Frequency } = require("./utils.js");
-// const { cadenceSignal, counter } = require("./cadence_sensor.js");
 
 // const { frq, pl, sensorSignals } = getTimecodes();
 
@@ -161,11 +165,61 @@ const startProgramm = () => {
     );
     const programm = JSON.parse(programmRaw);
 
+    const consoleOutput = [
+      [
+        {
+          text: "Нагрузка: ",
+          align: "center",
+        },
+        {
+          text: 4,
+          align: "center",
+        },
+      ],
+      [
+        {
+          text: "Требуемый RPM",
+          align: "center",
+        },
+        {
+          text: "Реальный RPM",
+          align: "center",
+        },
+      ],
+      [
+        {
+          text: 60,
+          align: "center",
+        },
+        {
+          text: 50,
+          align: "center",
+        },
+      ],
+    ];
+    const updateConsoleOut = (...args) => set(consoleOutput, ...args);
+
+    setInterval(() => {
+      updateConsoleOut([2, 1, "text"], counter.rpm);
+
+      ui.resetOutput();
+
+      for (const divArg of consoleOutput) {
+        ui.div(divArg);
+      }
+
+      logUpdate(ui.toString());
+    }, 100);
+
     for (let index = 0; index < programm.length; index++) {
       const { resistanceLevel, targetRpm } = programm[index];
       motor.setLevel(resistanceLevel);
       console.log("---------------------------");
       console.log("targetRpm", targetRpm);
+
+      updateConsoleOut([0, 1, "text"], resistanceLevel);
+      updateConsoleOut([2, 0, "text"], targetRpm);
+
       await sleep(60000);
     }
   }).on("close", () => {

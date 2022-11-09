@@ -21,8 +21,13 @@
   "homepage": "https://github.com/modox94/Custom-Trainer#readme",
   "description": "Сustom app for control the trainers",
   "dependencies": {
+    "chalk": "^4.1.2",
+    "cli-color": "^2.0.3",
+    "cliui": "^8.0.1",
+    "clui": "^0.3.6",
     "electron-squirrel-startup": "^1.0.0",
     "lodash": "^4.17.21",
+    "log-update": "^4.0.0",
     "mcp-spi-adc": "^3.2.0",
     "onoff": "^6.0.3"
   },

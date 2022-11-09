@@ -2,6 +2,7 @@ const { Gpio } = require("onoff");
 const { DIRECTION, PHYSICAL_TO_GPIO } = require("./constants.js");
 const readline = require("node:readline");
 const fs = require("fs");
+const { round } = require("lodash");
 const { stdin: input, stdout: output } = require("node:process");
 const { sleep } = require("./utils");
 const { PotentiometerSensor } = require("./potentiometer_sensor");
@@ -137,7 +138,7 @@ class MotorDriver {
           for (let i = 0; i < 3; i++) {
             positionSum += await this.readPosition();
           }
-          const positionRes = Math.round(positionSum / 3);
+          const positionRes = round(positionSum / 3);
           if (!this.minPosition) {
             this.minPosition = positionRes;
 
@@ -237,7 +238,7 @@ class MotorDriver {
       loopsCounter -= 1;
     }
 
-    const sleepRatio = Math.round(
+    const sleepRatio = round(
       (driveTimeSum / 2 / loops / (RESIST_LEVELS - 1)) * 0.95,
     );
 
