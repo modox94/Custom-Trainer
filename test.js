@@ -171,9 +171,9 @@ const startProgramm = () => {
     const getRemainingTime = () => {
       const remainingDate = new Date(endTime - Date.now());
 
-      return `${zeroFill(remainingDate.getMinutes(), 2)}:${zeroFill(
-        remainingDate.getSeconds(),
+      return `${zeroFill(2, remainingDate.getMinutes())}:${zeroFill(
         2,
+        remainingDate.getSeconds(),
       )}`;
     };
 
