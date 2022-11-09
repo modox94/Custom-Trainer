@@ -219,7 +219,7 @@ const startProgramm = () => {
 
     setInterval(() => {
       const rpmCur = round(counter.rpm);
-      const rpmTar = get(consoleOutput, [2, 0, "text"]);
+      const rpmTar = get(consoleOutput, [3, 0, "text"]);
       let rpmCurCha = "";
       if (rpmCur > rpmTar + 10 || rpmCur < rpmTar - 10) {
         rpmCurCha = chalk.red(rpmCur);
