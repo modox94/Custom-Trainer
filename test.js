@@ -5,7 +5,7 @@ const path = require("node:path");
 const logUpdate = require("log-update");
 const ui = require("cliui")();
 const chalk = require("chalk");
-const { set } = require("lodash");
+const { get, set, round } = require("lodash");
 const { motor } = require("./motor_driver");
 const { sleep } = require("./utils");
 const { cadenceSignal, counter } = require("./cadence_sensor.js");
@@ -200,7 +200,16 @@ const startProgramm = () => {
     const updateConsoleOut = (...args) => set(consoleOutput, ...args);
 
     setInterval(() => {
-      updateConsoleOut([2, 1, "text"], String(counter.rpm));
+      const rpmCur = round(counter.rpm);
+      const rpmTar = get(consoleOutput, [2, 0, "text"]);
+      let rpmCurCha = "";
+      if (curRpm > rpmTar + 10 || curRpm < rpmTar - 10) {
+        rpmCurCha = chalk.red(rpmCur);
+      } else {
+        rpmCurCha = chalk.green(rpmCur);
+      }
+
+      updateConsoleOut([2, 1, "text"], String(rpmCurCha));
 
       ui.resetOutput();
 
