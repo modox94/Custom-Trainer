@@ -172,7 +172,7 @@ const startProgramm = () => {
           align: "center",
         },
         {
-          text: 4,
+          text: "",
           align: "center",
         },
       ],
@@ -188,11 +188,11 @@ const startProgramm = () => {
       ],
       [
         {
-          text: 60,
+          text: "",
           align: "center",
         },
         {
-          text: 50,
+          text: "",
           align: "center",
         },
       ],
@@ -200,7 +200,7 @@ const startProgramm = () => {
     const updateConsoleOut = (...args) => set(consoleOutput, ...args);
 
     setInterval(() => {
-      updateConsoleOut([2, 1, "text"], counter.rpm);
+      updateConsoleOut([2, 1, "text"], String(counter.rpm));
 
       ui.resetOutput();
 
@@ -217,8 +217,8 @@ const startProgramm = () => {
       // console.log("---------------------------");
       // console.log("targetRpm", targetRpm);
 
-      updateConsoleOut([0, 1, "text"], resistanceLevel);
-      updateConsoleOut([2, 0, "text"], targetRpm);
+      updateConsoleOut([0, 1, "text"], String(resistanceLevel));
+      updateConsoleOut([2, 0, "text"], String(targetRpm));
 
       await sleep(60000);
     }
