@@ -1,14 +1,19 @@
 import React from "react";
 import { useGetCadenceQuery } from "../../api/ipc";
-import Round from "../Scales/Round";
+import SectorOfRound from "../Scales/SectorOfRound";
+import { round } from "lodash";
+
+const MAX_VALUE = 120;
 
 const CadenceGauge = props => {
-  const cadence = useGetCadenceQuery();
+  const { data } = useGetCadenceQuery() || {};
+  const percent = data / MAX_VALUE;
 
   return (
     <>
-      <Round />
-      {cadence?.data}
+      <SectorOfRound percent={percent} />
+
+      {round(data)}
     </>
   );
 };
