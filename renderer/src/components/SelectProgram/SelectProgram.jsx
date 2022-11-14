@@ -64,14 +64,13 @@ const SelectProgram = props => {
       );
 
       interval.current = setInterval(() => {
-        console.log("setInterval", counterRef.current);
         if (programArray[counterRef.current]) {
+          counterRef.current += 1;
+          setCounter(counterRef.current + 1);
           window.electron.ipcRenderer.send(
             EVENTS.MOTOR_SET_LEVEL,
             programArray[counterRef.current].resistanceLevel,
           );
-          counterRef.current += 1;
-          setCounter(counterRef.current + 1);
         } else {
           clearInterval(interval.current);
         }
