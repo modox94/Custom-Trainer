@@ -10,6 +10,7 @@ const zeroFill = require("zero-fill");
 const { motor } = require("./motor_driver");
 const { sleep } = require("./utils");
 const { cadenceSignal, counter } = require("./cadence_sensor.js");
+const trainingPrograms = require("./training_programs");
 
 // const { getTimecodes, Frequency } = require("./utils.js");
 
@@ -142,7 +143,7 @@ const checkSetLevel = () => {
 
 const startProgramm = () => {
   const rl = readline.createInterface({ input, output });
-  const dir = fs.readdirSync("./training_programs");
+  const dir = Object.keys(trainingPrograms);
 
   console.log("Выберете номер программы для запуска.");
   rl.prompt();
@@ -158,13 +159,7 @@ const startProgramm = () => {
       return console.log("Нет такой программы");
     }
 
-    const programmRaw = fs.readFileSync(
-      `./training_programs/${dir[value - 1]}`,
-      {
-        encoding: "utf-8",
-      },
-    );
-    const programm = JSON.parse(programmRaw);
+    const programm = trainingPrograms[dir[value - 1]];
 
     const endTime = Date.now() + programm.length * 60000;
 
@@ -260,4 +255,4 @@ const startProgramm = () => {
   });
 };
 
-startProgramm();
+// startProgramm();
