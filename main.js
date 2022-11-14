@@ -1,6 +1,15 @@
 const { app, BrowserWindow, ipcMain } = require("electron");
 const { cadenceSignal, counter } = require("./cadence_sensor.js");
-const path = require("path");
+const fs = require("fs");
+const path = require("node:path");
+const { motor } = require("./motor_driver");
+
+const EVENTS = {
+  CADENCE: "CADENCE",
+  GET_PROGRAMS_LIST: "GET_PROGRAMS_LIST",
+  GET_PROGRAM: "GET_PROGRAM",
+  MOTOR_SET_LEVEL: "MOTOR_SET_LEVEL",
+};
 
 let win = null;
 const createWindow = () => {
@@ -35,10 +44,38 @@ app.on("window-all-closed", () => {
   if (process.platform !== "darwin") app.quit();
 });
 
-const sendMessageFunc = () => {
+const onCadenceFn = () => {
   if (win) {
-    win.webContents.send("ipc-example", counter.rpm);
+    win.webContents.send(EVENTS.CADENCE, counter.rpm);
   }
 };
 
-cadenceSignal.watch(sendMessageFunc);
+if (win) {
+  win.webContents.send(EVENTS.CADENCE, counter.rpm);
+}
+
+cadenceSignal.watch(onCadenceFn);
+
+ipcMain.handle(EVENTS.GET_PROGRAMS_LIST, async (event, ...args) => {
+  const dir = fs.readdirSync("./training_programs");
+
+  return dir;
+});
+
+ipcMain.handle(EVENTS.GET_PROGRAM, (event, ...args) => {
+  const [program] = args;
+
+  const programmRaw = fs.readFileSync(
+    path.join("./training_programs", program),
+    {
+      encoding: "utf-8",
+    },
+  );
+
+  return JSON.parse(programmRaw);
+});
+
+ipcMain.on(EVENTS.MOTOR_SET_LEVEL, (event, ...args) => {
+  const [motorLevel] = args;
+  motor.setLevel(motorLevel);
+});

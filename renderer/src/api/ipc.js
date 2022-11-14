@@ -1,6 +1,8 @@
 import { createApi } from "@reduxjs/toolkit/query/react";
 import { noop } from "lodash";
 
+const EVENTS = { CADENCE: "CADENCE" };
+
 export const api = createApi({
   reducerPath: "ipcApi",
   endpoints: build => ({
@@ -19,7 +21,7 @@ export const api = createApi({
             });
           };
           removeListener = window.electron.ipcRenderer.on(
-            "ipc-example",
+            EVENTS.CADENCE,
             listener,
           );
         } catch (error) {
@@ -29,6 +31,7 @@ export const api = createApi({
         await cacheEntryRemoved;
         removeListener();
       },
+      // getPrograms:
     }),
   }),
 });

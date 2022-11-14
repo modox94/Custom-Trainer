@@ -1,10 +1,10 @@
 import React from "react";
-import CadenceGauge from "../CadenceGauge/CadenceGauge";
+import SelectProgram from "../SelectProgram/SelectProgram";
 
 const MainPage = props => {
   return (
     <div>
-      <CadenceGauge />
+      <SelectProgram />
     </div>
   );
 };

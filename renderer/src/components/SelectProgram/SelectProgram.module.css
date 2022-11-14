@@ -1,0 +1,31 @@
+.buttons {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: space-around;
+  align-items: baseline;
+  align-content: flex-start;
+}
+
+.button {
+  margin: 10px;
+}
+
+.red {
+  color: red;
+}
+.blue {
+  color: blue;
+}
+
+.container {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  justify-content: space-around;
+  align-items: flex-start;
+}
+
+.text {
+  font-size: xxx-large;
+}
