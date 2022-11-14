@@ -101,7 +101,7 @@ class MotorDriver {
             break;
 
           case "g":
-            // console.log("pos", await this.readPosition());
+            console.log("pos", await this.readPosition());
             break;
 
           case "f": {
@@ -115,7 +115,7 @@ class MotorDriver {
             this.forward();
             await sleep(DELAY);
             this.stop();
-            // console.log("pos", await this.readPosition());
+            console.log("pos", await this.readPosition());
             break;
           }
 
@@ -130,7 +130,7 @@ class MotorDriver {
             this.back();
             await sleep(DELAY);
             this.stop();
-            // console.log("pos", await this.readPosition());
+            console.log("pos", await this.readPosition());
             break;
           }
 
