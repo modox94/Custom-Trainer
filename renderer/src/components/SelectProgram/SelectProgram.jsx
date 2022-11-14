@@ -11,7 +11,7 @@ const EVENTS = {
   MOTOR_SET_LEVEL: "MOTOR_SET_LEVEL",
 };
 
-const minute = 5000;
+const minute = 60000;
 
 const SelectProgram = props => {
   const [programs, setPrograms] = useState();
