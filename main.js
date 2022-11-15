@@ -1,6 +1,5 @@
 const { app, BrowserWindow, ipcMain } = require("electron");
 const { cadenceSignal, counter } = require("./cadence_sensor.js");
-const fs = require("fs");
 const path = require("node:path");
 const { motor } = require("./motor_driver");
 const trainingPrograms = require("./training_programs");
