@@ -1,7 +1,7 @@
 import { configureStore } from "@reduxjs/toolkit";
 import { setupListeners } from "@reduxjs/toolkit/dist/query";
 import logger from "redux-logger";
-import { api as ipcApi } from "../api/ipc";
+import { ipcApi } from "../api/ipc";
 
 const isProduction = process.env.NODE_ENV === "production";
 

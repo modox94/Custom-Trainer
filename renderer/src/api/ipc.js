@@ -1,12 +1,17 @@
 import { createApi } from "@reduxjs/toolkit/query/react";
 import { noop } from "lodash";
 
-const EVENTS = { CADENCE: "CADENCE" };
+const EVENTS = {
+  CADENCE: "CADENCE",
+  GET_PROGRAMS_LIST: "GET_PROGRAMS_LIST",
+  GET_PROGRAM: "GET_PROGRAM",
+  MOTOR_SET_LEVEL: "MOTOR_SET_LEVEL",
+};
 
-export const api = createApi({
+export const ipcApi = createApi({
   reducerPath: "ipcApi",
-  endpoints: build => ({
-    getCadence: build.query({
+  endpoints: builder => ({
+    getCadence: builder.query({
       queryFn: () => 0,
       async onCacheEntryAdded(
         arg,
@@ -31,9 +36,16 @@ export const api = createApi({
         await cacheEntryRemoved;
         removeListener();
       },
-      // getPrograms:
+    }),
+    getPrograms: builder.query({
+      queryFn: async () => {
+        const data = await window.electron.ipcRenderer.invoke(
+          EVENTS.GET_PROGRAMS_LIST,
+        );
+        return { data };
+      },
     }),
   }),
 });
 
-export const { useGetCadenceQuery } = api;
+export const { useGetCadenceQuery, useGetProgramsQuery } = ipcApi;

@@ -1,7 +1,8 @@
+import { Button } from "@blueprintjs/core";
 import { round } from "lodash";
 import React, { useEffect, useRef, useState } from "react";
 import zeroFill from "zero-fill";
-import { useGetCadenceQuery } from "../../api/ipc";
+import { useGetCadenceQuery, useGetProgramsQuery } from "../../api/ipc";
 import classes from "./SelectProgram.module.css";
 
 const EVENTS = {
@@ -14,7 +15,6 @@ const EVENTS = {
 const minute = 60000;
 
 const SelectProgram = props => {
-  const [programs, setPrograms] = useState();
   const [curProgram, setCurProgram] = useState();
   const [programArray, setProgramArray] = useState();
   const interval = useRef();
@@ -23,18 +23,8 @@ const SelectProgram = props => {
   const [timer, setTimer] = useState();
   const [counter, setCounter] = useState();
 
-  const { data } = useGetCadenceQuery() || {};
-
-  useEffect(() => {
-    const getProgramsList = async () => {
-      const programsList = await window.electron.ipcRenderer.invoke(
-        EVENTS.GET_PROGRAMS_LIST,
-      );
-      setPrograms(programsList);
-    };
-
-    getProgramsList();
-  }, []);
+  const { data: currentRpm } = useGetCadenceQuery() || {};
+  const { data: programs } = useGetProgramsQuery() || {};
 
   useEffect(() => {
     const getProgram = async () => {
@@ -123,13 +113,13 @@ const SelectProgram = props => {
               Текущий RPM:{" "}
               <span
                 className={
-                  data > Number(programArray[counter]?.targetRpm) + 10 ||
-                  data < Number(programArray[counter]?.targetRpm) - 10
+                  currentRpm > Number(programArray[counter]?.targetRpm) + 10 ||
+                  currentRpm < Number(programArray[counter]?.targetRpm) - 10
                     ? classes.red
                     : classes.blue
                 }
               >
-                {data >= 0 ? round(data) : "---"}
+                {currentRpm >= 0 ? round(currentRpm) : "---"}
               </span>
             </p>
           </div>
@@ -143,12 +133,7 @@ const SelectProgram = props => {
       <div className={classes.buttons}>
         {programs.map(program => (
           <div key={program} className={classes.button}>
-            <button
-              className={classes.text}
-              onClick={() => setCurProgram(program)}
-            >
-              {program}
-            </button>
+            <Button onClick={() => setCurProgram(program)}>{program}</Button>
           </div>
         ))}
       </div>
