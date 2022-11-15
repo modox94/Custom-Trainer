@@ -52,7 +52,7 @@ const SelectProgram = props => {
   }, [curProgram]);
 
   useEffect(() => {
-    if (programArray && !interval.current && !(counter >= 0)) {
+    if (programArray && !(interval.current >= 0) && !(counter >= 0)) {
       const endTime = Date.now() + programArray.length * minute;
 
       counterRef.current = 0;
@@ -66,7 +66,8 @@ const SelectProgram = props => {
       interval.current = setInterval(() => {
         if (programArray[counterRef.current]) {
           counterRef.current += 1;
-          setCounter(counterRef.current + 1);
+          setCounter(counterRef.current);
+
           window.electron.ipcRenderer.send(
             EVENTS.MOTOR_SET_LEVEL,
             programArray[counterRef.current].resistanceLevel,

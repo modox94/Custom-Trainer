@@ -14,6 +14,7 @@ const store = configureStore({
     isProduction
       ? getDefaultMiddleware().concat(ipcApi.middleware)
       : getDefaultMiddleware().concat(ipcApi.middleware, logger),
+  // : getDefaultMiddleware().concat(ipcApi.middleware),
 });
 
 setupListeners(store.dispatch);
