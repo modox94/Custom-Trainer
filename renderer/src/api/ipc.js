@@ -5,7 +5,9 @@ const EVENTS = {
   CADENCE: "CADENCE",
   GET_PROGRAMS_LIST: "GET_PROGRAMS_LIST",
   GET_PROGRAM: "GET_PROGRAM",
-  MOTOR_SET_LEVEL: "MOTOR_SET_LEVEL",
+  SET_FULLSCREEN: "SET_FULLSCREEN",
+  SET_MOTOR_LEVEL: "SET_MOTOR_LEVEL",
+  STOP_MOTOR: "STOP_MOTOR",
 };
 
 export const ipcApi = createApi({
@@ -37,7 +39,7 @@ export const ipcApi = createApi({
         removeListener();
       },
     }),
-    getPrograms: builder.query({
+    getProgramsList: builder.query({
       queryFn: async () => {
         const data = await window.electron.ipcRenderer.invoke(
           EVENTS.GET_PROGRAMS_LIST,
@@ -45,7 +47,29 @@ export const ipcApi = createApi({
         return { data };
       },
     }),
+    getProgram: builder.query({
+      queryFn: async programTitle => {
+        const data = await window.electron.ipcRenderer.invoke(
+          EVENTS.GET_PROGRAM,
+          programTitle,
+        );
+        return { data };
+      },
+    }),
   }),
 });
 
-export const { useGetCadenceQuery, useGetProgramsQuery } = ipcApi;
+export const setFullScreen = () =>
+  window.electron.ipcRenderer.send(EVENTS.SET_FULLSCREEN);
+
+export const setMotorLevel = motorLevel =>
+  window.electron.ipcRenderer.send(EVENTS.SET_MOTOR_LEVEL, motorLevel);
+
+export const stopMotor = () =>
+  window.electron.ipcRenderer.send(EVENTS.STOP_MOTOR);
+
+export const {
+  useGetCadenceQuery,
+  useGetProgramsListQuery,
+  useGetProgramQuery,
+} = ipcApi;

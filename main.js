@@ -8,7 +8,9 @@ const EVENTS = {
   CADENCE: "CADENCE",
   GET_PROGRAMS_LIST: "GET_PROGRAMS_LIST",
   GET_PROGRAM: "GET_PROGRAM",
-  MOTOR_SET_LEVEL: "MOTOR_SET_LEVEL",
+  SET_FULLSCREEN: "SET_FULLSCREEN",
+  SET_MOTOR_LEVEL: "SET_MOTOR_LEVEL",
+  STOP_MOTOR: "STOP_MOTOR",
 };
 
 let win = null;
@@ -66,7 +68,16 @@ ipcMain.handle(EVENTS.GET_PROGRAM, (event, ...args) => {
   return trainingPrograms[program];
 });
 
-ipcMain.on(EVENTS.MOTOR_SET_LEVEL, (event, ...args) => {
+ipcMain.on(EVENTS.SET_FULLSCREEN, (event, ...args) => {
+  const isFullScreen = win.isFullScreen();
+  win.setFullScreen(!isFullScreen);
+});
+
+ipcMain.on(EVENTS.SET_MOTOR_LEVEL, (event, ...args) => {
   const [motorLevel] = args;
   motor.setLevel(motorLevel);
+});
+
+ipcMain.on(EVENTS.STOP_MOTOR, (event, ...args) => {
+  motor.stop();
 });
