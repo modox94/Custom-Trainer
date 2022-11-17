@@ -51,6 +51,26 @@ const resources = {
       [en]: "Program mode",
       [ru]: "Режим программы",
     },
+    [TK[COMMON].remainingTime]: {
+      [en]: "Remaining time",
+      [ru]: "Оставшееся время",
+    },
+    [TK[COMMON].elapsedTime]: {
+      [en]: "Elapsed time",
+      [ru]: "Прошедшее время",
+    },
+    [TK[COMMON].resistance]: {
+      [en]: "Resistance",
+      [ru]: "Нагрузка",
+    },
+    [TK[COMMON].currentRPM]: {
+      [en]: "Current RPM",
+      [ru]: "Текущий каденс",
+    },
+    [TK[COMMON].targetRPM]: {
+      [en]: "Target RPM",
+      [ru]: "Требуемый каденс",
+    },
   },
 };
 

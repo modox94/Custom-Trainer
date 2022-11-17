@@ -22,5 +22,10 @@ export const TRANSLATION_KEYS = {
     [PAGES.SETTINGS]: PAGES.SETTINGS,
     [PAGES.SELECT_PROGRAM]: PAGES.SELECT_PROGRAM,
     programMode: "programMode",
+    remainingTime: "remainingTime",
+    elapsedTime: "elapsedTime",
+    resistance: "resistance",
+    currentRPM: "currentRPM",
+    targetRPM: "targetRPM",
   },
 };
