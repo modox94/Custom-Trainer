@@ -1,4 +1,5 @@
 import { Card } from "@blueprintjs/core";
+import clsx from "clsx";
 import { chunk, noop } from "lodash";
 import PropTypes from "prop-types";
 import React, { useMemo } from "react";
@@ -17,17 +18,16 @@ const SquareGrid = props => {
     return (
       <div key={`container_${idx}_${key}`} className={styles.container}>
         {container.map((item, idx) => {
-          const { onClick, title } = item;
+          const { onClick, title, className = "" } = item;
 
           return (
             <Card
               key={`item_${idx}_${title}`}
-              className={styles.item}
+              className={clsx(className, styles.item)}
               interactive={Boolean(onClick)}
               onClick={onClick || noop}
             >
               <h1>{title}</h1>
-              <p>Card content</p>
             </Card>
           );
         })}
