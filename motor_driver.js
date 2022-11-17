@@ -6,6 +6,11 @@ const { round } = require("lodash");
 const { stdin: input, stdout: output } = require("node:process");
 const { sleep } = require("./utils");
 const { PotentiometerSensor } = require("./potentiometer_sensor");
+const Promise = require("bluebird");
+const { isFunction } = require("lodash");
+
+Promise.config({ cancellation: true });
+
 let motorSettings;
 try {
   motorSettings = require("./motor_settings.json");
@@ -198,12 +203,19 @@ class MotorDriver {
   }
 
   stop() {
+    if (isFunction(this.action?.cancel)) {
+      this.action.cancel();
+    }
     this.in1.writeSync(0);
     this.in2.writeSync(0);
   }
 
   get isReady() {
     return this.potentiometer?.condition?.isReady;
+  }
+
+  get isError() {
+    return this.potentiometer?.condition?.error;
   }
 
   async readPosition() {
@@ -261,95 +273,68 @@ class MotorDriver {
   }
 
   async setLevel(level, isCalibration) {
-    if (level < 1 || level > RESIST_LEVELS) {
-      console.log("wrong resist level");
-      return "error";
+    if (isFunction(this.action?.cancel)) {
+      this.action.cancel();
     }
+    this.action = new Promise(async (resolve, reject, onCancel) => {
+      onCancel(() => {
+        this.stop();
+        reject("setLevel forcely stopped");
+      });
 
-    while (!this.isReady) {
-      console.log("loading...");
-      await sleep(200);
-    }
-
-    // 67
-    // 20
-    const interval =
-      (this.maxPosition - this.minPosition) / (RESIST_LEVELS - 1);
-    const targetPos = this.minPosition + interval * (level - 1);
-
-    // const start = Date.now();
-    let posCur = await this.readPosition();
-    // const finish = Date.now();
-    // console.log("wait pos", finish - start);
-
-    // let counter = 10;
-    let counter3 = 0;
-
-    // const start = Date.now();
-
-    let firstTime = false;
-
-    if (this.sleepRatio) {
-      firstTime = (Math.abs(posCur - targetPos) / interval) * this.sleepRatio;
-    }
-
-    while (
-      Math.abs(posCur - targetPos) > 1
-      // && counter > 0
-    ) {
-      ++counter3;
-      // console.log("counter3", counter3);
-
-      if (posCur > targetPos) {
-        this.back();
-      } else {
-        this.forward();
-      }
-      if (firstTime) {
-        await sleep(firstTime);
-        firstTime = false;
-      } else {
-        await sleep(DELAY);
+      if (level < 1 || level > RESIST_LEVELS) {
+        console.log("wrong resist level");
+        return "error";
       }
 
-      this.stop();
+      while (!this.isReady && !this.isError) {
+        console.log("loading...");
+        await sleep(200);
+      }
 
-      // const start = Date.now();
-      await sleep(DELAY_FOR_READ);
-      // const finish = Date.now();
-      // console.log("wait", finish - start);
+      if (this.isError) {
+        reject("potentiometer not working");
+      }
 
-      posCur = await this.readPosition();
+      const interval =
+        (this.maxPosition - this.minPosition) / (RESIST_LEVELS - 1);
+      const targetPos = this.minPosition + interval * (level - 1);
 
-      // counter -= 1;
-      // console.log("counter", counter);
-    }
+      let posCur = await this.readPosition();
+      let counter = 0;
+      let firstTime = false;
 
-    // const finish = Date.now();
-    // console.log("latency", finish - start);
+      if (this.sleepRatio) {
+        firstTime = (Math.abs(posCur - targetPos) / interval) * this.sleepRatio;
+      }
 
-    let counter2 = 3;
+      while (Math.abs(posCur - targetPos) > 1) {
+        ++counter;
 
-    // console.log("maxPosition", this.maxPosition);
-    // console.log("minPosition", this.minPosition);
-    // console.log("targetPos", targetPos);
+        if (posCur > targetPos) {
+          this.back();
+        } else {
+          this.forward();
+        }
+        if (firstTime) {
+          await sleep(firstTime);
+          firstTime = false;
+        } else {
+          await sleep(DELAY);
+        }
 
-    while (counter2 > 0) {
-      const pos = await this.readPosition();
-      // console.log("pos", counter2, pos);
-      await sleep(200);
+        this.stop();
 
-      counter2 -= 1;
-    }
+        await sleep(DELAY_FOR_READ);
 
-    // console.log("counter3", counter3);
+        posCur = await this.readPosition();
+      }
 
-    return isCalibration ? { driveTime: counter3 * DELAY } : "done";
+      return resolve(isCalibration ? { driveTime: counter * DELAY } : "done");
+    });
   }
 }
 
 const motor = new MotorDriver(motorSettings);
-
-// motor.initialize();
 
 exports.motor = motor;

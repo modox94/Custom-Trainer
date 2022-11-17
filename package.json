@@ -22,6 +22,7 @@
   "homepage": "https://github.com/modox94/Custom-Trainer#readme",
   "description": "Сustom app for control the trainers",
   "dependencies": {
+    "bluebird": "^3.7.2",
     "chalk": "^4.1.2",
     "cliui": "^8.0.1",
     "lodash": "^4.17.21",
