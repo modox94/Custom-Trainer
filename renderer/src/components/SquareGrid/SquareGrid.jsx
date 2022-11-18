@@ -1,49 +1,51 @@
 import { Card } from "@blueprintjs/core";
 import clsx from "clsx";
-import { chunk, noop } from "lodash";
+import { noop } from "lodash";
 import PropTypes from "prop-types";
-import React, { useMemo } from "react";
+import React from "react";
 import styles from "./SquareGrid.module.css";
 
-const SquareGrid = props => {
-  const { items: itemsRaw, columns } = props;
-  const items = useMemo(() => chunk(itemsRaw, columns), [itemsRaw, columns]);
+const Container = props => {
+  const { className, children } = props;
 
-  return items.map((container, idx) => {
-    const key = container.reduce(
-      (prevItem, item) => `${prevItem}_${item.title}`,
-      "",
-    );
-
-    return (
-      <div key={`container_${idx}_${key}`} className={styles.container}>
-        {container.map((item, idx) => {
-          const { onClick, title, className = "" } = item;
-
-          return (
-            <Card
-              key={`item_${idx}_${title}`}
-              className={clsx(className, styles.item)}
-              interactive={Boolean(onClick)}
-              onClick={onClick || noop}
-            >
-              <h1>{title}</h1>
-            </Card>
-          );
-        })}
-      </div>
-    );
-  });
+  return <div className={clsx(className, styles.container)}>{children}</div>;
 };
 
-SquareGrid.propTypes = {
-  items: PropTypes.arrayOf(PropTypes.object),
-  columns: PropTypes.number,
+Container.propTypes = {
+  className: PropTypes.string,
+  children: PropTypes.oneOfType([
+    PropTypes.element,
+    PropTypes.arrayOf(PropTypes.element),
+  ]),
+};
+Container.defaultProps = {
+  className: "",
 };
 
-SquareGrid.defaultProps = {
-  items: [],
-  columns: 3,
+const Item = props => {
+  const { className, onClick, children } = props;
+
+  return (
+    <Card
+      className={clsx(className, styles.item)}
+      interactive={Boolean(onClick)}
+      onClick={onClick || noop}
+    >
+      {children}
+    </Card>
+  );
 };
 
-export default SquareGrid;
+Item.propTypes = {
+  className: PropTypes.string,
+  onClick: PropTypes.func,
+  children: PropTypes.oneOfType([
+    PropTypes.element,
+    PropTypes.arrayOf(PropTypes.element),
+  ]),
+};
+Item.defaultProps = {
+  className: "",
+};
+
+export { Container, Item };
