@@ -1,31 +1,22 @@
-import { round } from "lodash";
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useLocation } from "react-router-dom";
 import zeroFill from "zero-fill";
-import {
-  setMotorLevel,
-  stopMotor,
-  useGetCadenceQuery,
-  useGetProgramQuery,
-} from "../../api/ipc";
+import { setMotorLevel, stopMotor, useGetProgramQuery } from "../../api/ipc";
 import { PAGES, PAGES_PATHS } from "../../constants/pathConst";
 import {
   TRANSLATION_KEYS,
   TRANSLATION_ROOT_KEYS,
 } from "../../constants/translationConst";
 import { getTranslationPath } from "../../utils/translationUtils";
+import CadenceGauge from "../CadenceGauge/CadenceGauge";
 import { Container, Item } from "../SquareGrid/SquareGrid";
 import styles from "./ProgramMode.module.css";
 
 const { SELECT_PROGRAM } = PAGES;
 const { COMMON } = TRANSLATION_ROOT_KEYS;
-const {
-  remainingTime: remainingTime_T,
-  resistance,
-  currentRPM: currentRPM_T,
-  targetRPM,
-} = TRANSLATION_KEYS[COMMON];
+const { remainingTime: remainingTime_T, resistance: resistance_T } =
+  TRANSLATION_KEYS[COMMON];
 
 const getTPath = (...args) => getTranslationPath(COMMON, ...args);
 
@@ -50,11 +41,9 @@ const ProgramMode = props => {
     () => location.pathname.slice(PAGES_PATHS[SELECT_PROGRAM].length + 1),
     [location],
   );
-  const { data: currentRpm } = useGetCadenceQuery() || {};
-  const { data: programArray } = useGetProgramQuery(programTitle) || {};
 
+  const { data: programArray } = useGetProgramQuery(programTitle) || {};
   const { resistanceLevel, targetRpm } = programArray?.[counter] || {};
-  const isGoodRpm = currentRpm < targetRpm + 10 && currentRpm > targetRpm - 10;
 
   useEffect(() => {
     return () => {
@@ -107,19 +96,15 @@ const ProgramMode = props => {
         <Item>
           <h1> {`${t(getTPath(remainingTime_T))}: ${timer}`}</h1>
         </Item>
+        <Item className={styles.paddingReduced}>
+          <CadenceGauge targetRpm={targetRpm} />
+        </Item>
         <Item>
-          <h1> {`${t(getTPath(resistance))}: ${resistanceLevel}`}</h1>
+          <h1> {`${t(getTPath(resistance_T))}: ${resistanceLevel}`}</h1>
         </Item>
       </Container>
 
-      <Container>
-        <Item>
-          <h1> {`${t(getTPath(targetRPM))}: ${targetRpm}`}</h1>
-        </Item>
-        <Item className={isGoodRpm ? styles.rpmGreen : styles.rpmRed}>
-          <h1> {`${t(getTPath(currentRPM_T))}: ${round(currentRpm)}`}</h1>
-        </Item>
-      </Container>
+      <Container>TODO</Container>
     </>
   );
 };

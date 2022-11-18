@@ -1,4 +1,5 @@
 import { round } from "lodash";
+import PropTypes from "prop-types";
 import React from "react";
 
 const arrayOfSectors = [
@@ -49,26 +50,46 @@ const arrayOfSectors = [
 ];
 
 const sectorsCount = arrayOfSectors.length;
-
-const filledColor = "red";
-const emptyColor = "grey";
+const filledBadColor = "darkorange";
+const filledGoodColor = "forestgreen";
+const emptyColor = "whitesmoke";
+const edgeColor = "darkgrey";
 
 const SectorOfRound = props => {
-  const { percent } = props;
-  // const percent = 0.5;
-  const edgeSector = round(sectorsCount * percent);
+  const { value, leftEdge, rightEdge } = props;
+
+  const valueSector = round(sectorsCount * value);
+  const leftEdgeSector = round(sectorsCount * leftEdge);
+  const rightEdgeSector = round(sectorsCount * rightEdge);
+  const isGoodValue =
+    (value > leftEdge && value < rightEdge) || !(leftEdge && rightEdge);
 
   return (
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 666">
-      {arrayOfSectors.map((d, index) => (
-        <path
-          key={d}
-          d={d}
-          fill={index < edgeSector ? filledColor : emptyColor}
-        />
-      ))}
+      {arrayOfSectors.map((d, idx) => {
+        const sectorIdx = idx + 1;
+        let fill = "";
+
+        if (sectorIdx <= valueSector) {
+          fill = isGoodValue ? filledGoodColor : filledBadColor;
+        } else {
+          fill = emptyColor;
+        }
+        if (sectorIdx === leftEdgeSector || sectorIdx === rightEdgeSector) {
+          fill = edgeColor;
+        }
+
+        return <path key={d} d={d} fill={fill} />;
+      })}
     </svg>
   );
 };
+
+SectorOfRound.propTypes = {
+  value: PropTypes.number,
+  leftEdge: PropTypes.number,
+  rightEdge: PropTypes.number,
+};
+SectorOfRound.defaultProps = {};
 
 export default SectorOfRound;

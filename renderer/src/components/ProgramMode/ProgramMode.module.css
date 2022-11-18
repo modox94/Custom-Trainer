@@ -1,7 +1,4 @@
-.rpmRed {
-  color: red;
-}
-
-.rpmGreen {
-  color: green;
+.paddingReduced {
+  position: relative;
+  padding: 5px;
 }
