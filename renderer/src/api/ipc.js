@@ -22,11 +22,7 @@ export const ipcApi = createApi({
         let removeListener = noop;
         try {
           await cacheDataLoaded;
-          const listener = rpmValue => {
-            updateCachedData(() => {
-              return rpmValue;
-            });
-          };
+          const listener = rpmValue => updateCachedData(() => rpmValue);
           removeListener = window.electron.ipcRenderer.on(
             EVENTS.CADENCE,
             listener,

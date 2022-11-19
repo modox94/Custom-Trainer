@@ -10,7 +10,7 @@ const MAX_VALUE = 120;
 
 const CadenceGauge = props => {
   const { className, targetRpm } = props;
-  const { data } = useGetCadenceQuery() || {};
+  const { data = 0 } = useGetCadenceQuery() || {};
   const value = useMemo(() => round(data / MAX_VALUE, 2), [data]);
   const leftEdge = useMemo(
     () => round((targetRpm - 10) / MAX_VALUE, 2),
