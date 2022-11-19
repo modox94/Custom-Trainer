@@ -1,0 +1,28 @@
+.container {
+  padding: 5px;
+  overflow: hidden;
+}
+
+.barContainer {
+  height: 100%;
+  display: flex;
+  overflow: scroll;
+  flex-wrap: nowrap;
+  justify-content: flex-start;
+  align-items: flex-end;
+}
+
+.bar {
+  min-width: calc(5vh - 3.5px);
+  /* the width is equal to 10% of the maximum height */
+  background-color: darkcyan;
+  margin: 0 2px;
+}
+
+.barActive {
+  background-color: blueviolet;
+}
+
+.spacerBar {
+  min-width: 50%;
+}

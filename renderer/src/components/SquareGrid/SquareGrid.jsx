@@ -23,13 +23,14 @@ Container.defaultProps = {
 };
 
 const Item = props => {
-  const { className, onClick, children } = props;
+  const { className, onClick, children, ...otherProps } = props;
 
   return (
     <Card
       className={clsx(className, styles.item)}
       interactive={Boolean(onClick)}
       onClick={onClick || noop}
+      {...otherProps}
     >
       {children}
     </Card>
@@ -39,10 +40,7 @@ const Item = props => {
 Item.propTypes = {
   className: PropTypes.string,
   onClick: PropTypes.func,
-  children: PropTypes.oneOfType([
-    PropTypes.element,
-    PropTypes.arrayOf(PropTypes.element),
-  ]),
+  children: PropTypes.oneOfType([PropTypes.element, PropTypes.array]),
 };
 Item.defaultProps = {
   className: "",

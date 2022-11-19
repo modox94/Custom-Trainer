@@ -9,6 +9,7 @@ import {
   TRANSLATION_ROOT_KEYS,
 } from "../../constants/translationConst";
 import { getTranslationPath } from "../../utils/translationUtils";
+import BarChart from "../BarChart/BarChart";
 import CadenceGauge from "../CadenceGauge/CadenceGauge";
 import { Container, Item } from "../SquareGrid/SquareGrid";
 import styles from "./ProgramMode.module.css";
@@ -104,7 +105,9 @@ const ProgramMode = props => {
         </Item>
       </Container>
 
-      <Container>TODO</Container>
+      <Container>
+        <BarChart programArray={programArray} currentStep={counter} />
+      </Container>
     </>
   );
 };
