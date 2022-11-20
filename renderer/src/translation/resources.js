@@ -51,13 +51,21 @@ const resources = {
       [en]: "Program mode",
       [ru]: "Режим программы",
     },
-    [TK[COMMON].remainingTime]: {
-      [en]: "Remaining time",
-      [ru]: "Оставшееся время",
+    [TK[COMMON].current]: {
+      [en]: "Current",
+      [ru]: "Текущее",
     },
-    [TK[COMMON].elapsedTime]: {
-      [en]: "Elapsed time",
-      [ru]: "Прошедшее время",
+    [TK[COMMON].remaining]: {
+      [en]: "Remaining",
+      [ru]: "Оставшееся",
+    },
+    [TK[COMMON].elapsed]: {
+      [en]: "Elapsed",
+      [ru]: "Прошедшее",
+    },
+    [TK[COMMON].time]: {
+      [en]: "time",
+      [ru]: "время",
     },
     [TK[COMMON].resistance]: {
       [en]: "Resistance",

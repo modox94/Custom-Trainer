@@ -1,0 +1,19 @@
+.clock {
+  display: flex;
+  flex-direction: column;
+  flex-wrap: nowrap;
+  align-content: center;
+  justify-content: space-between;
+  align-items: center;
+  font-size: calc((100vh - 50px) / 14);
+  text-align: center;
+}
+
+.clock p {
+  margin: 0;
+}
+
+.clock p b {
+  font-size: calc((100vh - 50px) / 10);
+  margin: 0;
+}

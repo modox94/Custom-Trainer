@@ -1,9 +1,9 @@
-import { Container, Item } from "../SquareGrid/SquareGrid";
 import clsx from "clsx";
-import React, { useEffect, useMemo, useRef, useState } from "react";
-import styles from "./BarChart.module.css";
+import { get, isNumber } from "lodash";
 import PropTypes from "prop-types";
-import { noop, isNumber } from "lodash";
+import React, { useEffect, useMemo, useRef } from "react";
+import { Item } from "../SquareGrid/SquareGrid";
+import styles from "./BarChart.module.css";
 
 const BarChart = props => {
   const { currentStep, programArray } = props;
@@ -48,14 +48,15 @@ const BarChart = props => {
   useEffect(() => {
     const element = ref.current;
 
-    const targetEl = element?.children?.[currentStep + 1];
-
-    console.log("targetEl", targetEl);
-    // offsetLeft
-
-    // parent
-    // offsetLeft
-    // offsetWidth
+    if (get(element, ["children", "length"], 0) > 0) {
+      const barElement = get(element, ["children", 1]);
+      const styles = window.getComputedStyle(barElement);
+      const barWidth =
+        parseFloat(styles.marginLeft) +
+        parseFloat(styles.width) +
+        parseFloat(styles.marginRight);
+      element.scrollTo({ left: barWidth * currentStep, behavior: "smooth" });
+    }
   }, [currentStep]);
 
   return (

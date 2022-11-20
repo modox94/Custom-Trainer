@@ -1,0 +1,19 @@
+.timer {
+  display: flex;
+  flex-direction: column;
+  flex-wrap: nowrap;
+  align-content: center;
+  justify-content: space-between;
+  align-items: center;
+  font-size: calc((100vh - 50px) / 14);
+  text-align: center;
+}
+
+.timer p {
+  margin: 0;
+}
+
+.timer p b {
+  font-size: calc((100vh - 50px) / 10);
+  margin: 0;
+}
