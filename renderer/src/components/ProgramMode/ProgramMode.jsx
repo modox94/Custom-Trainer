@@ -1,6 +1,11 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { useLocation } from "react-router-dom";
-import { setMotorLevel, stopMotor, useGetProgramQuery } from "../../api/ipc";
+import {
+  preventDisplaySleep,
+  setMotorLevel,
+  stopMotor,
+  useGetProgramQuery,
+} from "../../api/ipc";
 import { PAGES, PAGES_PATHS } from "../../constants/pathConst";
 import BarChart from "../BarChart/BarChart";
 import CadenceGauge from "../CadenceGauge/CadenceGauge";
@@ -28,6 +33,8 @@ const ProgramMode = props => {
   const { targetRpm } = programArray?.[counter] || {};
 
   useEffect(() => {
+    preventDisplaySleep(true);
+
     return () => {
       clearInterval(intervalRef.current);
       intervalRef.current = undefined;
@@ -35,6 +42,7 @@ const ProgramMode = props => {
       setCounter(undefined);
       setEndTime(undefined);
       stopMotor();
+      preventDisplaySleep(false);
     };
   }, []);
 

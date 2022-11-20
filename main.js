@@ -1,4 +1,4 @@
-const { app, BrowserWindow, ipcMain } = require("electron");
+const { app, BrowserWindow, ipcMain, powerSaveBlocker } = require("electron");
 const { cadenceSignal, counter } = require("./cadence_sensor.js");
 const path = require("node:path");
 const { motor } = require("./motor_driver");
@@ -11,6 +11,7 @@ const EVENTS = {
   SET_FULLSCREEN: "SET_FULLSCREEN",
   SET_MOTOR_LEVEL: "SET_MOTOR_LEVEL",
   STOP_MOTOR: "STOP_MOTOR",
+  PREVENT_DISPLAY_SLEEP: "PREVENT_DISPLAY_SLEEP",
 };
 
 let win = null;
@@ -47,15 +48,13 @@ app.on("window-all-closed", () => {
 });
 
 const onCadenceFn = () => {
-  if (win) {
+  console.log("win", win);
+  if (win?.webContents?.send) {
     win.webContents.send(EVENTS.CADENCE, counter.rpm);
   }
 };
 
-if (win) {
-  win.webContents.send(EVENTS.CADENCE, counter.rpm);
-}
-
+onCadenceFn();
 cadenceSignal.watch(onCadenceFn);
 
 ipcMain.handle(EVENTS.GET_PROGRAMS_LIST, async (event, ...args) => {
@@ -73,11 +72,20 @@ ipcMain.on(EVENTS.SET_FULLSCREEN, (event, ...args) => {
   win.setFullScreen(!isFullScreen);
 });
 
-ipcMain.on(EVENTS.SET_MOTOR_LEVEL, (event, ...args) => {
-  const [motorLevel] = args;
+ipcMain.on(EVENTS.SET_MOTOR_LEVEL, (event, motorLevel) => {
   motor.setLevel(motorLevel);
 });
 
-ipcMain.on(EVENTS.STOP_MOTOR, (event, ...args) => {
+ipcMain.on(EVENTS.STOP_MOTOR, () => {
   motor.stop();
+});
+
+let preventDisplaySleepID = false;
+ipcMain.on(EVENTS.PREVENT_DISPLAY_SLEEP, (event, flag) => {
+  if (flag && !preventDisplaySleepID) {
+    preventDisplaySleepID = powerSaveBlocker.start("prevent-display-sleep");
+  } else if (!flag && preventDisplaySleepID) {
+    powerSaveBlocker.stop(preventDisplaySleepID);
+    preventDisplaySleepID = false;
+  }
 });

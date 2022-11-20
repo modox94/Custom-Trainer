@@ -8,6 +8,7 @@ const EVENTS = {
   SET_FULLSCREEN: "SET_FULLSCREEN",
   SET_MOTOR_LEVEL: "SET_MOTOR_LEVEL",
   STOP_MOTOR: "STOP_MOTOR",
+  PREVENT_DISPLAY_SLEEP: "PREVENT_DISPLAY_SLEEP",
 };
 
 export const ipcApi = createApi({
@@ -63,6 +64,9 @@ export const setMotorLevel = motorLevel =>
 
 export const stopMotor = () =>
   window.electron.ipcRenderer.send(EVENTS.STOP_MOTOR);
+
+export const preventDisplaySleep = flag =>
+  window.electron.ipcRenderer.send(EVENTS.PREVENT_DISPLAY_SLEEP, flag);
 
 export const {
   useGetCadenceQuery,
