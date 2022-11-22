@@ -1,0 +1,21 @@
+export const NAMES = {
+  ipcApi: "ipcApi",
+  environment: "environment",
+};
+
+export const EVENTS = {
+  WATCH_CADENCE: "WATCH_CADENCE",
+  GET_PROGRAMS_LIST: "GET_PROGRAMS_LIST",
+  GET_PROGRAM: "GET_PROGRAM",
+  SET_FULLSCREEN: "SET_FULLSCREEN",
+  SET_MOTOR_LEVEL: "SET_MOTOR_LEVEL",
+  STOP_MOTOR: "STOP_MOTOR",
+  PREVENT_DISPLAY_SLEEP: "PREVENT_DISPLAY_SLEEP",
+};
+
+export const RUNNINIG_STATUS = {
+  RUN: "RUN",
+  PAUSE: "PAUSE",
+};
+
+export const PAUSE_DELAY = 2500;

@@ -50,3 +50,5 @@ exports.DEV_CONSTS = {
 exports.DEFAULT_WINDOW = 60;
 
 exports.DEFAULT_M_C = 1;
+
+exports.PAUSE_DELAY = 2500;

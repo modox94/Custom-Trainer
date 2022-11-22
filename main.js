@@ -4,8 +4,10 @@ const path = require("node:path");
 const { motor } = require("./motor_driver");
 const trainingPrograms = require("./training_programs");
 
+const isProduction = process.env.NODE_ENV === "production";
+
 const EVENTS = {
-  CADENCE: "CADENCE",
+  WATCH_CADENCE: "WATCH_CADENCE",
   GET_PROGRAMS_LIST: "GET_PROGRAMS_LIST",
   GET_PROGRAM: "GET_PROGRAM",
   SET_FULLSCREEN: "SET_FULLSCREEN",
@@ -20,7 +22,7 @@ const createWindow = () => {
     width: 800,
     height: 600,
     fullscreenable: true,
-    // fullscreen: true,
+    fullscreen: isProduction,
     webPreferences: {
       preload: path.join(__dirname, "preload.js"),
       contextIsolation: true,
@@ -48,9 +50,8 @@ app.on("window-all-closed", () => {
 });
 
 const onCadenceFn = () => {
-  console.log("win", win);
   if (win?.webContents?.send) {
-    win.webContents.send(EVENTS.CADENCE, counter.rpm);
+    win.webContents.send(EVENTS.WATCH_CADENCE, counter.rpm);
   }
 };
 

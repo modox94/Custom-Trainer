@@ -1,5 +1,10 @@
 const fs = require("node:fs");
-const { DEV_CONSTS, DEFAULT_WINDOW, DEFAULT_M_C } = require("./constants.js");
+const {
+  DEV_CONSTS,
+  DEFAULT_WINDOW,
+  DEFAULT_M_C,
+  PAUSE_DELAY,
+} = require("./constants.js");
 
 const { dataFile, LF, PL, FRQ_R, FRQ } = DEV_CONSTS;
 
@@ -59,7 +64,10 @@ exports.Frequency = class Frequency {
   get rpm() {
     const now = Date.now();
     const lastIndex = this.timecodes.length - 1;
-    if (lastIndex >= 0 && Math.abs(now - this.timecodes[lastIndex]) < 1000) {
+    if (
+      lastIndex >= 0 &&
+      Math.abs(now - this.timecodes[lastIndex]) < PAUSE_DELAY
+    ) {
       const prevMills = this.timecodes[lastIndex - 1];
       const currMills = this.timecodes[lastIndex];
 
@@ -67,10 +75,10 @@ exports.Frequency = class Frequency {
       const distance = (1 / this.magnetsCount) * this.gearRatio;
       const result = distance / duration;
 
-      return result;
+      return { lastTimecode: this.timecodes[lastIndex], result };
     }
 
-    return 0;
+    return { lastTimecode: this.timecodes[lastIndex], result: 0 };
   }
 };
 
