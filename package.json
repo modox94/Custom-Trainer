@@ -43,7 +43,12 @@
       "makers": [
         {
           "name": "@electron-forge/maker-deb",
-          "config": {}
+          "config": {
+            "options": {
+              "maintainer": "Nikita Novoselov",
+              "homepage": "https://github.com/modox94"
+            }
+          }
         }
       ]
     }
