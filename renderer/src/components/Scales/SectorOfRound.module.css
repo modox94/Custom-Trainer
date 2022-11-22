@@ -1,0 +1,15 @@
+.bad {
+  fill: var(--red3);
+}
+
+.good {
+  fill: var(--green3);
+}
+
+.edge {
+  fill: var(--gray3);
+}
+
+.empty {
+  fill: var(--light-gray3);
+}

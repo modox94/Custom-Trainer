@@ -1,6 +1,8 @@
+import clsx from "clsx";
 import { round } from "lodash";
 import PropTypes from "prop-types";
 import React from "react";
+import styles from "./SectorOfRound.module.css";
 
 const arrayOfSectors = [
   "M18.46,634.68l-.17,.05c.98,3.5,1.99,7,3.05,10.47,1.05,3.49,2.14,6.96,3.28,10.42,1.13,3.46,2.3,6.91,3.5,10.33l.18-.06,471.67-165.92L18.46,634.68Z",
@@ -50,10 +52,6 @@ const arrayOfSectors = [
 ];
 
 const sectorsCount = arrayOfSectors.length;
-const filledBadColor = "darkorange";
-const filledGoodColor = "forestgreen";
-const emptyColor = "whitesmoke";
-const edgeColor = "darkgrey";
 
 const SectorOfRound = props => {
   const { value, leftEdge, rightEdge } = props;
@@ -68,18 +66,21 @@ const SectorOfRound = props => {
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 666">
       {arrayOfSectors.map((d, idx) => {
         const sectorIdx = idx + 1;
-        let fill = "";
+        const isEdge =
+          sectorIdx === leftEdgeSector || sectorIdx === rightEdgeSector;
 
-        if (sectorIdx <= valueSector) {
-          fill = isGoodValue ? filledGoodColor : filledBadColor;
-        } else {
-          fill = emptyColor;
-        }
-        if (sectorIdx === leftEdgeSector || sectorIdx === rightEdgeSector) {
-          fill = edgeColor;
-        }
-
-        return <path key={d} d={d} fill={fill} />;
+        return (
+          <path
+            key={d}
+            className={clsx({
+              [styles.bad]: sectorIdx <= valueSector && !isGoodValue && !isEdge,
+              [styles.good]: sectorIdx <= valueSector && isGoodValue && !isEdge,
+              [styles.edge]: isEdge,
+              [styles.empty]: sectorIdx > valueSector && !isEdge,
+            })}
+            d={d}
+          />
+        );
       })}
     </svg>
   );

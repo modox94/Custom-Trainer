@@ -3,7 +3,7 @@ import "@blueprintjs/icons/lib/css/blueprint-icons.css";
 import "@blueprintjs/select/lib/css/blueprint-select.css";
 import "normalize.css";
 import { MemoryRouter, Route, Routes } from "react-router-dom";
-import styles from "./App.module.css";
+import "./App.css";
 import MainPage from "./components/MainPage/MainPage";
 import ManualMode from "./components/ManualMode/ManualMode";
 import Navigation from "./components/Navigation/Navigation";
@@ -17,7 +17,7 @@ const { MAIN, MANUAL_MODE, SETTINGS, SELECT_PROGRAM } = PAGES;
 const App = () => {
   return (
     <MemoryRouter>
-      <div className={styles.root}>
+      <div className="root">
         <Navigation />
 
         <Routes>

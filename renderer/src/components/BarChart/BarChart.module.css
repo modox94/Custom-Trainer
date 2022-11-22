@@ -15,12 +15,12 @@
 .bar {
   min-width: calc(5vh - 3.5px);
   /* the width is equal to 10% of the maximum height */
-  background-color: darkgrey;
+  background-color: var(--gray3);
   margin: 0 2px;
 }
 
 .barActive {
-  background-color: forestgreen;
+  background-color: var(--green3);
 }
 
 .spacerBar {
