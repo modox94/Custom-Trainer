@@ -1,3 +1,5 @@
+import { Icon } from "@blueprintjs/core";
+import { IconNames } from "@blueprintjs/icons";
 import clsx from "clsx";
 import { get, round } from "lodash";
 import PropTypes from "prop-types";
@@ -40,7 +42,11 @@ const CadenceGauge = props => {
   return (
     <div className={clsx(className, styles.container)}>
       <div className={styles.digitalValue}>
-        {runningStatus === PAUSE ? "||" : round(currentCadence)}
+        {runningStatus === PAUSE ? (
+          <Icon className={styles.pause} icon={IconNames.PAUSE} />
+        ) : (
+          round(currentCadence)
+        )}
       </div>
       <SectorOfRound value={value} leftEdge={leftEdge} rightEdge={rightEdge} />
     </div>
