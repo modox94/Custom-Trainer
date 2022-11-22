@@ -66,8 +66,11 @@ const ProgramMode = props => {
 
   useEffect(() => {
     const programLength = get(programArray, ["length"], 0);
+    if (isDone || programLength === 0) {
+      return;
+    }
 
-    if (counter === undefined && programLength > 0) {
+    if (counter === undefined) {
       const stepEndTime = new Date();
       stepEndTime.setMilliseconds(stepEndTime.getMilliseconds() + minute);
       const newTotalEndTime = new Date();
@@ -78,13 +81,6 @@ const ProgramMode = props => {
       setMotorLevel(programArray[0].resistanceLevel);
       setCounter(0);
       setTotalEndTime(newTotalEndTime);
-    }
-  }, [programArray, counter, restart]);
-
-  useEffect(() => {
-    const programLength = get(programArray, ["length"], 0);
-    if (isDone || programLength === 0) {
-      return;
     }
 
     const isExpired =
@@ -148,9 +144,6 @@ const ProgramMode = props => {
     <>
       <Container>
         <Clock />
-        {/* <Item>
-          {isDone ? `${counter}_DONE` : `${counter}__${minutes}:${seconds}`}
-        </Item> */}
         <Item className={styles.paddingReduced}>
           <CadenceGauge targetRpm={targetRpm} />
         </Item>
@@ -158,7 +151,11 @@ const ProgramMode = props => {
       </Container>
 
       <Container>
-        <BarChart programArray={programArray} currentStep={counter} />
+        <BarChart
+          programArray={programArray}
+          currentStep={counter}
+          isDone={isDone}
+        />
       </Container>
     </>
   );

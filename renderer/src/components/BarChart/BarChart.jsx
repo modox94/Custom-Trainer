@@ -6,7 +6,7 @@ import { Item } from "../SquareGrid/SquareGrid";
 import styles from "./BarChart.module.css";
 
 const BarChart = props => {
-  const { currentStep, programArray } = props;
+  const { currentStep, programArray, isDone } = props;
   const ref = useRef();
 
   const barsArray = useMemo(
@@ -69,7 +69,8 @@ const BarChart = props => {
             <div
               key={key}
               className={clsx(styles.bar, {
-                [styles.barActive]: currentStep === idx,
+                [styles.barActive]: currentStep === idx && !isDone,
+                [styles.barDone]: idx < currentStep || isDone,
               })}
               style={style}
             />
@@ -84,9 +85,11 @@ const BarChart = props => {
 BarChart.propTypes = {
   programArray: PropTypes.array,
   currentStep: PropTypes.number,
+  isDone: PropTypes.bool,
 };
 BarChart.defaultProps = {
   programArray: [],
+  isDone: false,
 };
 
 export default BarChart;

@@ -23,6 +23,10 @@
   background-color: var(--green3);
 }
 
+.barDone {
+  background-color: var(--blue3);
+}
+
 .spacerBar {
   min-width: calc(50% - ((5vh - 3.5px) / 2) - 2px);
 }
