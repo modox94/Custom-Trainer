@@ -59,6 +59,8 @@ export const stopMotor = () =>
 export const preventDisplaySleep = flag =>
   window.electron.ipcRenderer.send(EVENTS.PREVENT_DISPLAY_SLEEP, flag);
 
+export const appQuit = () => window.electron.ipcRenderer.send(EVENTS.APP_QUIT);
+
 export const {
   useGetCadenceQuery,
   useGetProgramsListQuery,

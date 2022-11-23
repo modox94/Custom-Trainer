@@ -14,9 +14,20 @@ const EVENTS = {
   SET_MOTOR_LEVEL: "SET_MOTOR_LEVEL",
   STOP_MOTOR: "STOP_MOTOR",
   PREVENT_DISPLAY_SLEEP: "PREVENT_DISPLAY_SLEEP",
+  APP_QUIT: "APP_QUIT",
 };
 
 let win = null;
+let preventDisplaySleepID = false;
+const preventDisplaySleepFn = (event, flag) => {
+  if (flag && !preventDisplaySleepID) {
+    preventDisplaySleepID = powerSaveBlocker.start("prevent-display-sleep");
+  } else if (!flag && preventDisplaySleepID) {
+    powerSaveBlocker.stop(preventDisplaySleepID);
+    preventDisplaySleepID = false;
+  }
+};
+
 const createWindow = () => {
   win = new BrowserWindow({
     width: 800,
@@ -45,8 +56,7 @@ app.whenReady().then(() => {
   });
 });
 
-app.on("window-all-closed", () => {
-  console.log("closing...");
+const onQuit = () => {
   try {
     motor.off();
   } catch (error) {
@@ -58,8 +68,15 @@ app.on("window-all-closed", () => {
   } catch (error) {
     console.log("rate.off error", error);
   }
-  console.log("done!");
-});
+
+  preventDisplaySleepFn();
+
+  app.quit();
+};
+
+app.on("window-all-closed", onQuit);
+
+app.on("will-quit", onQuit);
 
 const onCadenceFn = () => {
   if (win?.webContents?.send) {
@@ -93,12 +110,6 @@ ipcMain.on(EVENTS.STOP_MOTOR, () => {
   motor.stop();
 });
 
-let preventDisplaySleepID = false;
-ipcMain.on(EVENTS.PREVENT_DISPLAY_SLEEP, (event, flag) => {
-  if (flag && !preventDisplaySleepID) {
-    preventDisplaySleepID = powerSaveBlocker.start("prevent-display-sleep");
-  } else if (!flag && preventDisplaySleepID) {
-    powerSaveBlocker.stop(preventDisplaySleepID);
-    preventDisplaySleepID = false;
-  }
-});
+ipcMain.on(EVENTS.PREVENT_DISPLAY_SLEEP, preventDisplaySleepFn);
+
+ipcMain.on(EVENTS.APP_QUIT, onQuit);
