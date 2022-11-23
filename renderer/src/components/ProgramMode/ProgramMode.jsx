@@ -1,7 +1,9 @@
+import { Button, Classes, Dialog } from "@blueprintjs/core";
 import { get } from "lodash";
 import React, { useEffect, useMemo, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { useSelector } from "react-redux";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { useTimer } from "react-timer-hook";
 import {
   preventDisplaySleep,
@@ -11,7 +13,12 @@ import {
 } from "../../api/ipc";
 import { PAGES, PAGES_PATHS } from "../../constants/pathConst";
 import { RUNNINIG_STATUS } from "../../constants/reduxConst";
+import {
+  TRANSLATION_KEYS,
+  TRANSLATION_ROOT_KEYS,
+} from "../../constants/translationConst";
 import { getRunningStatus } from "../../selectors/environmentSelectors";
+import { getTranslationPath } from "../../utils/translationUtils";
 import BarChart from "../BarChart/BarChart";
 import CadenceGauge from "../CadenceGauge/CadenceGauge";
 import Clock from "../Clock/Clock";
@@ -19,13 +26,19 @@ import { Container, Item } from "../SquareGrid/SquareGrid";
 import Timer from "../Timer/Timer";
 import styles from "./ProgramMode.module.css";
 
+const { COMMON } = TRANSLATION_ROOT_KEYS;
+const { back } = TRANSLATION_KEYS[COMMON];
 const { RUN } = RUNNINIG_STATUS;
 const { SELECT_PROGRAM } = PAGES;
 
+const getTPath = (...args) => getTranslationPath(COMMON, ...args);
+
+// const minute = 500;
 // const minute = 3000;
 const minute = 60000;
 
 const ProgramMode = props => {
+  const { t } = useTranslation();
   const {
     seconds,
     minutes,
@@ -43,6 +56,7 @@ const ProgramMode = props => {
   const [isDone, setIsDone] = useState(false);
   const [totalEndTime, setTotalEndTime] = useState(undefined);
   const location = useLocation();
+  const navigate = useNavigate();
   const runningStatus = useSelector(getRunningStatus);
 
   const programTitle = useMemo(
@@ -140,8 +154,50 @@ const ProgramMode = props => {
     seconds,
   ]);
 
+  const goBack = () => {
+    navigate(-1);
+  };
+
+  const repeatProgram = () => {
+    setCounter(undefined);
+    setIsDone(false);
+    setTotalEndTime(undefined);
+    stopMotor();
+    preventDisplaySleep(false);
+  };
+
   return (
     <>
+      <Dialog
+        isOpen={isDone}
+        title="TODO program done"
+        canOutsideClickClose={false}
+        isCloseButtonShown={false}
+      >
+        <div className={Classes.DIALOG_BODY}>
+          <p>
+            <strong>TODO Тренировка окончена.</strong>
+          </p>
+          <p>
+            TODO Нажмите кнопку "назад", чтобы вернуться к списку програм или
+            кнопку "повторить", чтобы начать эту програму заново.
+          </p>
+        </div>
+        <div className={Classes.DIALOG_FOOTER}>
+          <div className={Classes.DIALOG_FOOTER_ACTIONS}>
+            <Button
+              icon="repeat"
+              text="TODO повторить"
+              onClick={repeatProgram}
+            />
+            <Button
+              icon="arrow-left"
+              text={t(getTPath(back))}
+              onClick={goBack}
+            />
+          </div>
+        </div>
+      </Dialog>
       <Container>
         <Clock />
         <Item className={styles.paddingReduced}>

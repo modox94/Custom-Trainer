@@ -1,3 +1,4 @@
+import { PortalProvider } from "@blueprintjs/core";
 import "@blueprintjs/core/lib/css/blueprint.css";
 import "@blueprintjs/icons/lib/css/blueprint-icons.css";
 import "@blueprintjs/select/lib/css/blueprint-select.css";
@@ -16,25 +17,27 @@ const { MAIN, MANUAL_MODE, SETTINGS, SELECT_PROGRAM } = PAGES;
 
 const App = () => {
   return (
-    <MemoryRouter>
-      <div className="root">
-        <Navigation />
+    <PortalProvider>
+      <MemoryRouter>
+        <div className="root">
+          <Navigation />
 
-        <Routes>
-          <Route path={PAGES_PATHS[MAIN]} element={<MainPage />} />
-          <Route path={PAGES_PATHS[MANUAL_MODE]} element={<ManualMode />} />
-          <Route path={PAGES_PATHS[SETTINGS]} element={<Settings />} />
-          <Route
-            path={PAGES_PATHS[SELECT_PROGRAM] + "/:programTitle"}
-            element={<ProgramMode />}
-          />
-          <Route
-            path={PAGES_PATHS[SELECT_PROGRAM]}
-            element={<SelectProgram />}
-          />
-        </Routes>
-      </div>
-    </MemoryRouter>
+          <Routes>
+            <Route path={PAGES_PATHS[MAIN]} element={<MainPage />} />
+            <Route path={PAGES_PATHS[MANUAL_MODE]} element={<ManualMode />} />
+            <Route path={PAGES_PATHS[SETTINGS]} element={<Settings />} />
+            <Route
+              path={PAGES_PATHS[SELECT_PROGRAM] + "/:programTitle"}
+              element={<ProgramMode />}
+            />
+            <Route
+              path={PAGES_PATHS[SELECT_PROGRAM]}
+              element={<SelectProgram />}
+            />
+          </Routes>
+        </div>
+      </MemoryRouter>
+    </PortalProvider>
   );
 };
 
