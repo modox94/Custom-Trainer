@@ -1,10 +1,5 @@
 const fs = require("node:fs");
-const {
-  DEV_CONSTS,
-  DEFAULT_WINDOW,
-  DEFAULT_M_C,
-  PAUSE_DELAY,
-} = require("./constants.js");
+const { DEV_CONSTS } = require("./constants.js");
 
 const { dataFile, LF, PL, FRQ_R, FRQ } = DEV_CONSTS;
 
@@ -41,45 +36,6 @@ exports.getTimecodes = () => {
   }
 
   return resultObject;
-};
-
-exports.Frequency = class Frequency {
-  constructor(options) {
-    this.timecodes = options?.timecodes || [];
-    this.window = options?.window || DEFAULT_WINDOW;
-    this.magnetsCount = options?.magnetsCount || DEFAULT_M_C;
-    this.gearRatio = options?.gearRatio || 1;
-  }
-
-  inc(milliseconds) {
-    if (!milliseconds) {
-      milliseconds = Date.now();
-    }
-
-    this.timecodes.push(milliseconds);
-
-    return this.rpm;
-  }
-
-  get rpm() {
-    const now = Date.now();
-    const lastIndex = this.timecodes.length - 1;
-    if (
-      lastIndex >= 0 &&
-      Math.abs(now - this.timecodes[lastIndex]) < PAUSE_DELAY
-    ) {
-      const prevMills = this.timecodes[lastIndex - 1];
-      const currMills = this.timecodes[lastIndex];
-
-      const duration = (currMills - prevMills) / (1000 * this.window);
-      const distance = (1 / this.magnetsCount) * this.gearRatio;
-      const result = distance / duration;
-
-      return { lastTimecode: this.timecodes[lastIndex], result };
-    }
-
-    return { lastTimecode: this.timecodes[lastIndex], result: 0 };
-  }
 };
 
 exports.sleep = (delay = 1000) =>

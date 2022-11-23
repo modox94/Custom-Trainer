@@ -24,6 +24,14 @@ class PotentiometerSensor {
       }
     });
   }
+
+  off() {
+    try {
+      this.sensor.close();
+    } catch (error) {
+      console.log("sensor.close error", error);
+    }
+  }
 }
 
 exports.PotentiometerSensor = PotentiometerSensor;

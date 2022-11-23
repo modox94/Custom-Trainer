@@ -1,6 +1,6 @@
 const { app, BrowserWindow, ipcMain, powerSaveBlocker } = require("electron");
-const { cadenceSignal, counter } = require("./cadence_sensor.js");
 const path = require("node:path");
+const { rate } = require("./cadence_sensor.js");
 const { motor } = require("./motor_driver");
 const trainingPrograms = require("./training_programs");
 
@@ -46,17 +46,29 @@ app.whenReady().then(() => {
 });
 
 app.on("window-all-closed", () => {
-  motor.stop();
+  console.log("closing...");
+  try {
+    motor.off();
+  } catch (error) {
+    console.log("motor.off error", error);
+  }
+
+  try {
+    rate.off();
+  } catch (error) {
+    console.log("rate.off error", error);
+  }
+  console.log("done!");
 });
 
 const onCadenceFn = () => {
   if (win?.webContents?.send) {
-    win.webContents.send(EVENTS.WATCH_CADENCE, counter.rpm);
+    win.webContents.send(EVENTS.WATCH_CADENCE, rate.rpm);
   }
 };
 
 onCadenceFn();
-cadenceSignal.watch(onCadenceFn);
+rate.cadenceSensor.watch(onCadenceFn);
 
 ipcMain.handle(EVENTS.GET_PROGRAMS_LIST, async (event, ...args) => {
   return Object.keys(trainingPrograms);

@@ -2,8 +2,8 @@ const { Gpio } = require("onoff");
 const { DIRECTION, PHYSICAL_TO_GPIO } = require("./constants.js");
 const readline = require("node:readline");
 const fs = require("fs");
-const { round } = require("lodash");
-const { stdin: input, stdout: output } = require("node:process");
+const { round, noop } = require("lodash");
+const { stdin: input, stdout: output, off } = require("node:process");
 const { sleep } = require("./utils");
 const { PotentiometerSensor } = require("./potentiometer_sensor");
 const Promise = require("bluebird");
@@ -22,15 +22,19 @@ const DELAY = 100;
 const DELAY_FOR_READ = 25;
 const RESIST_LEVELS = 10;
 
-const write = (value, cb = () => {}) => {
+const write = (value, cb = noop) => {
   console.log("write", value);
   cb();
 };
-const writeSync = (value, cb = () => {}) => {
+const writeSync = (value, cb = noop) => {
   console.log("writeSync", value);
   cb();
 };
-const motorInNoop = { write, writeSync };
+const unexport = (value, cb = noop) => {
+  console.log("unexport", value);
+  cb();
+};
+const motorInNoop = { write, writeSync, unexport };
 
 const motorIn1Pin = PHYSICAL_TO_GPIO[16];
 const motorIn2Pin = PHYSICAL_TO_GPIO[18];
@@ -53,6 +57,16 @@ class MotorDriver {
 
     this.in1.writeSync(0);
     this.in2.writeSync(0);
+  }
+
+  async off() {
+    if (isFunction(this.action?.cancel)) {
+      this.action.cancel();
+    }
+    this.stop();
+    this.in1.unexport();
+    this.in2.unexport();
+    this.potentiometer.off();
   }
 
   async initialize() {
