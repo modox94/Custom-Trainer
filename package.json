@@ -28,6 +28,7 @@
     "lodash": "^4.17.21",
     "log-update": "^4.0.0",
     "mcp-spi-adc": "^3.2.0",
+    "node-ble": "^1.9.0",
     "onoff": "^6.0.3",
     "zero-fill": "^2.2.4"
   },
