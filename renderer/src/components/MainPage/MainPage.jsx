@@ -1,9 +1,10 @@
 import { Icon } from "@blueprintjs/core";
 import { IconNames } from "@blueprintjs/icons";
 import React, { useCallback } from "react";
+import { useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
-import { appQuit } from "../../api/ipc";
+import { appQuit, storeTest } from "../../api/ipc";
 import { PAGES, PAGES_PATHS } from "../../constants/pathConst";
 import { TRANSLATION_ROOT_KEYS } from "../../constants/translationConst";
 import { getTranslationPath } from "../../utils/translationUtils";
@@ -18,6 +19,12 @@ const getTPath = (...args) => getTranslationPath(COMMON, ...args);
 const MainPage = props => {
   const { t } = useTranslation();
   const navigate = useNavigate();
+
+  useEffect(() => {
+    (async () => {
+      console.log("storeTest", await storeTest());
+    })();
+  }, []);
 
   const onClickMM = useCallback(
     () => navigate(PAGES_PATHS[MANUAL_MODE]),

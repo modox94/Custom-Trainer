@@ -3,6 +3,9 @@ const path = require("node:path");
 const { rate } = require("./cadence_sensor.js");
 const { motor } = require("./motor_driver");
 const trainingPrograms = require("./training_programs");
+const { DIR_CONST, StoreDir, StoreFile } = require("./store");
+
+const dir = new StoreDir();
 
 const isProduction = process.env.NODE_ENV === "production";
 
@@ -15,7 +18,11 @@ const EVENTS = {
   STOP_MOTOR: "STOP_MOTOR",
   PREVENT_DISPLAY_SLEEP: "PREVENT_DISPLAY_SLEEP",
   APP_QUIT: "APP_QUIT",
+
+  STORE_TEST: "STORE_TEST",
 };
+
+console.log("testt", app.getPath("userData"));
 
 let win = null;
 let preventDisplaySleepID = false;
@@ -87,14 +94,21 @@ const onCadenceFn = () => {
 onCadenceFn();
 rate.cadenceSensor.watch(onCadenceFn);
 
-ipcMain.handle(EVENTS.GET_PROGRAMS_LIST, async (event, ...args) => {
+ipcMain.handle(EVENTS.GET_PROGRAMS_LIST, async () => {
   return Object.keys(trainingPrograms);
 });
 
-ipcMain.handle(EVENTS.GET_PROGRAM, (event, ...args) => {
-  const [program] = args;
+ipcMain.handle(
+  EVENTS.GET_PROGRAM,
+  (event, program) => trainingPrograms[program],
+);
 
-  return trainingPrograms[program];
+ipcMain.handle(EVENTS.STORE_TEST, (event, testArg) => {
+  console.log("testArg", testArg);
+
+  const res = dir.read([DIR_CONST.SETTINGS]);
+
+  return res;
 });
 
 ipcMain.on(EVENTS.SET_FULLSCREEN, (event, ...args) => {
