@@ -21,6 +21,8 @@ export const TRANSLATION_KEYS = {
     [PAGES.MANUAL_MODE]: PAGES.MANUAL_MODE,
     [PAGES.SETTINGS]: PAGES.SETTINGS,
     [PAGES.SELECT_PROGRAM]: PAGES.SELECT_PROGRAM,
+    [PAGES.PROGRAM_EDITOR]: PAGES.PROGRAM_EDITOR,
+    newProgram: "newProgram",
     programMode: "programMode",
     current: "current",
     remaining: "remaining",

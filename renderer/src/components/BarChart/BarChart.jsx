@@ -7,7 +7,7 @@ import { Item } from "../SquareGrid/SquareGrid";
 import styles from "./BarChart.module.css";
 
 const BarChart = props => {
-  const { currentStep, steps, maxResistanceLevel, isDone } = props;
+  const { className, currentStep, steps, maxResistanceLevel, isDone } = props;
   const ref = useRef();
 
   const barsArray = useMemo(
@@ -64,7 +64,7 @@ const BarChart = props => {
   }, [currentStep]);
 
   return (
-    <Item className={styles.container}>
+    <Item className={clsx(className, styles.container)}>
       <div ref={ref} className={styles.barContainer}>
         <div className={styles.spacerBar} />
         {barsArray.map((bar, idx) => {
@@ -87,12 +87,17 @@ const BarChart = props => {
 };
 
 BarChart.propTypes = {
+  className: PropTypes.string,
   steps: PropTypes.array,
   currentStep: PropTypes.number,
+  maxResistanceLevel: PropTypes.number,
   isDone: PropTypes.bool,
 };
 BarChart.defaultProps = {
+  className: "",
   steps: [],
+  currentStep: 0,
+  maxResistanceLevel: MAX_RES_LEVEL,
   isDone: false,
 };
 

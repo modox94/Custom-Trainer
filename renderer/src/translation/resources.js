@@ -47,6 +47,14 @@ const resources = {
       [en]: "Select program",
       [ru]: "Выбор программы",
     },
+    [PAGES.PROGRAM_EDITOR]: {
+      [en]: "Program editor",
+      [ru]: "Редактор программ",
+    },
+    [TK[COMMON].newProgram]: {
+      [en]: "New program",
+      [ru]: "Новая программа",
+    },
     [TK[COMMON].programMode]: {
       [en]: "Program mode",
       [ru]: "Режим программы",
