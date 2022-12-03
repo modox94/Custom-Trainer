@@ -1,4 +1,4 @@
 .paddingReduced {
   position: relative;
-  padding: 5px;
+  padding: var(--small-gap);
 }

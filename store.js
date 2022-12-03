@@ -3,10 +3,6 @@ const path = require("path");
 const fs = require("fs");
 const { get, set } = require("lodash");
 
-console.log("userData", app.getPath("userData"));
-
-console.log("parse", path.parse(app.getPath("userData")));
-
 const DIR_CONST = {
   SETTINGS: "settings",
   EXERCISES: "exercises",
@@ -18,7 +14,7 @@ const parseDataFile = filePath => {
 
   if (!isValid) {
     try {
-      fs.writeFileSync(filePath, "");
+      fs.writeFileSync(filePath, JSON.stringify({}));
     } catch (error) {
       console.log("Invalid path, can't write empty file", error);
       return {};
@@ -38,9 +34,9 @@ class StoreDir {
     this.userDataPath = app.getPath("userData");
   }
 
-  read(pathArray = []) {
+  read(pathArray = [], fileName = "") {
     console.log("pathArray", pathArray);
-    const fullPath = path.join(this.userDataPath, ...pathArray);
+    const fullPath = path.join(this.userDataPath, ...pathArray, fileName);
     const isValid = fs.existsSync(fullPath);
 
     if (!isValid) {
@@ -56,7 +52,7 @@ class StoreDir {
           console.log(error);
         }
 
-        return new StoreFile({ innerPath: dir, fileName: base });
+        return new StoreFile({ pathArray, fileName });
       } else {
         try {
           fs.mkdirSync(fullPath, { recursive: true });
@@ -78,7 +74,7 @@ class StoreDir {
 
     if (isFile) {
       const { dir, base } = path.parse(fullPath) || {};
-      return new StoreFile({ innerPath: dir, fileName: base });
+      return new StoreFile({ pathArray, fileName });
     }
 
     return { error: "Invalid path" };
@@ -89,7 +85,7 @@ class StoreFile {
   constructor(opts) {
     const userDataPath = app.getPath("userData");
     this.fileName = get(opts, ["fileName"]);
-    this.innerPath = get(opts, ["innerPath"], []);
+    this.pathArray = get(opts, ["pathArray"], []);
 
     if (!this.fileName) {
       this.error = "Invalid file name";
@@ -97,11 +93,8 @@ class StoreFile {
       this.data = null;
       throw new Error(this.error);
     } else {
-      this.path = path.join(
-        userDataPath,
-        ...this.innerPath,
-        this.fileName + ".json",
-      );
+      this.path = path.join(userDataPath, ...this.pathArray, this.fileName);
+
       this.data = parseDataFile(this.path);
     }
   }

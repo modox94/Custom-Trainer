@@ -1,5 +1,5 @@
 import { Button, Classes, Dialog } from "@blueprintjs/core";
-import { get } from "lodash";
+import { get, round } from "lodash";
 import React, { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useSelector } from "react-redux";
@@ -13,6 +13,7 @@ import {
 } from "../../api/ipc";
 import { PAGES, PAGES_PATHS } from "../../constants/pathConst";
 import { RUNNINIG_STATUS } from "../../constants/reduxConst";
+import { MAX_RES_LEVEL } from "../../constants/TODOconst";
 import {
   TRANSLATION_KEYS,
   TRANSLATION_ROOT_KEYS,
@@ -59,12 +60,14 @@ const ProgramMode = props => {
   const navigate = useNavigate();
   const runningStatus = useSelector(getRunningStatus);
 
-  const programTitle = useMemo(
+  const fileName = useMemo(
     () => location.pathname.slice(PAGES_PATHS[SELECT_PROGRAM].length + 1),
     [location],
   );
-  const { data: programArray } = useGetProgramQuery(programTitle) || {};
-  const { targetRpm } = programArray?.[counter] || {};
+  const { data: programObject } = useGetProgramQuery(fileName) || {};
+  const targetRpm = get(programObject, ["steps", counter, "targetRpm"], 0);
+  const steps = get(programObject, ["steps"], []);
+  const maxResistanceLevel = get(programObject, ["maxResistanceLevel"], 0);
 
   useEffect(() => {
     preventDisplaySleep(true);
@@ -79,7 +82,7 @@ const ProgramMode = props => {
   }, []);
 
   useEffect(() => {
-    const programLength = get(programArray, ["length"], 0);
+    const programLength = get(steps, ["length"], 0);
     if (isDone || programLength === 0) {
       return;
     }
@@ -92,7 +95,9 @@ const ProgramMode = props => {
         newTotalEndTime.getMilliseconds() + programLength * minute,
       );
       restart(stepEndTime);
-      setMotorLevel(programArray[0].resistanceLevel);
+      setMotorLevel(
+        round((steps[0].resistanceLevel / maxResistanceLevel) * MAX_RES_LEVEL),
+      );
       setCounter(0);
       setTotalEndTime(newTotalEndTime);
     }
@@ -113,7 +118,12 @@ const ProgramMode = props => {
       counter < programLength - 1
     ) {
       const newCounter = counter + 1;
-      setMotorLevel(programArray[newCounter].resistanceLevel);
+      setMotorLevel(
+        round(
+          (steps[newCounter].resistanceLevel / maxResistanceLevel) *
+            MAX_RES_LEVEL,
+        ),
+      );
       const stepEndTime = new Date();
       stepEndTime.setMilliseconds(stepEndTime.getMilliseconds() + minute);
       restart(stepEndTime);
@@ -124,11 +134,13 @@ const ProgramMode = props => {
     days,
     hours,
     isDone,
+    maxResistanceLevel,
     minutes,
-    programArray,
+    programObject,
     restart,
     runningStatus,
     seconds,
+    steps,
   ]);
 
   useEffect(() => {
@@ -208,7 +220,8 @@ const ProgramMode = props => {
 
       <Container>
         <BarChart
-          programArray={programArray}
+          steps={steps}
+          maxResistanceLevel={maxResistanceLevel}
           currentStep={counter}
           isDone={isDone}
         />

@@ -1,8 +1,10 @@
 import { Button, Navbar, NavbarGroup, NavbarHeading } from "@blueprintjs/core";
+import { skipToken } from "@reduxjs/toolkit/dist/query";
+import { get } from "lodash";
 import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useLocation, useNavigate } from "react-router-dom";
-import { setFullScreen } from "../../api/ipc";
+import { setFullScreen, useGetProgramQuery } from "../../api/ipc";
 import { PAGES, PAGES_PATHS } from "../../constants/pathConst";
 import {
   TRANSLATION_KEYS,
@@ -22,6 +24,14 @@ const Navigation = () => {
   const [title, setTitle] = useState("");
   const location = useLocation();
   const navigate = useNavigate();
+  const { data: programObject } =
+    useGetProgramQuery(
+      location.pathname.startsWith(PAGES_PATHS[SELECT_PROGRAM])
+        ? location.pathname.slice(PAGES_PATHS[SELECT_PROGRAM].length + 1) ||
+            skipToken
+        : skipToken,
+    ) || {};
+  const programTitle = get(programObject, ["title"], "");
 
   useEffect(() => {
     const { pathname } = location;
@@ -45,15 +55,12 @@ const Navigation = () => {
 
       default:
         if (pathname.startsWith(PAGES_PATHS[SELECT_PROGRAM])) {
-          const programTitle = pathname.slice(
-            PAGES_PATHS[SELECT_PROGRAM].length + 1,
-          );
           const newTitle = `${t(getTPath(programMode))}: ${programTitle}`;
           setTitle(newTitle);
         }
         break;
     }
-  }, [location, location.pathname, t, i18n.language]);
+  }, [location, location.pathname, t, i18n.language, programTitle]);
 
   const goBack = () => {
     navigate(-1);

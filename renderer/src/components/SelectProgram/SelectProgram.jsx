@@ -13,10 +13,9 @@ const SelectProgram = props => {
 
   const items = useMemo(() => {
     return chunk(
-      (programs || []).map((programTitle, idx) => ({
-        key: `${idx}_${programTitle}`,
-        onClick: () =>
-          navigate(`${PAGES_PATHS[SELECT_PROGRAM]}/${programTitle}`),
+      (programs || []).map(([fileName, programTitle], idx) => ({
+        key: fileName,
+        onClick: () => navigate(`${PAGES_PATHS[SELECT_PROGRAM]}/${fileName}`),
         children: <h1>{programTitle}</h1>,
       })),
       3,

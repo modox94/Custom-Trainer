@@ -1,9 +1,13 @@
-.bad {
-  fill: var(--red3);
+.slow {
+  fill: var(--blue3);
 }
 
 .good {
   fill: var(--green3);
+}
+
+.fast {
+  fill: var(--red3);
 }
 
 .edge {

@@ -1,7 +1,10 @@
 .root {
-  padding-top: 50px; /* pt-navbar-height */
-  height: 100%;
-  width: 100%;
+  --header-height: 50px; /* pt-navbar-height */
+  --large-gap: 20px;
+  --medium-gap: 10px;
+  --small-gap: 5px;
+  --tiny-gap: 2px;
+  --available-height: calc((100vh - var(--header-height) - var(--medium-gap)));
 
   --black: #111418;
   --dark-gray1: #1c2127;
@@ -95,4 +98,8 @@
   --cobalt3: #147eb3;
   --cobalt4: #3fa6da;
   --cobalt5: #68c1ee;
+
+  padding-top: calc(100vh - var(--available-height));
+  height: 100%;
+  width: 100%;
 }

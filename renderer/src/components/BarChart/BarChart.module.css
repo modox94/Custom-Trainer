@@ -1,9 +1,21 @@
 .container {
-  padding: 5px;
+  padding: var(--small-gap);
   overflow: hidden;
 }
 
 .barContainer {
+  /* equal to 1/30 of container height */
+  --scroll-height: calc(
+    (var(--g-c-available-height) - (var(--small-gap) * 2)) / 30
+  );
+  /* equal to ~10% of container height */
+  --bar-min-width: calc(
+    (
+        var(--g-c-available-height) - (var(--small-gap) * 2) -
+          var(--scroll-height)
+      ) / 10
+  );
+
   height: 100%;
   display: flex;
   overflow: scroll;
@@ -12,11 +24,23 @@
   align-items: flex-end;
 }
 
+.barContainer::-webkit-scrollbar {
+  width: 0px;
+  height: var(--scroll-height);
+}
+
+.barContainer::-webkit-scrollbar-track {
+  background: var(--gray3);
+}
+
+.barContainer::-webkit-scrollbar-thumb {
+  background-color: var(--blue3);
+}
+
 .bar {
-  min-width: calc(5vh - 3.5px);
-  /* the width is equal to 10% of the maximum height */
+  min-width: var(--bar-min-width);
   background-color: var(--gray3);
-  margin: 0 2px;
+  margin: 0 var(--tiny-gap);
 }
 
 .barActive {
@@ -28,5 +52,5 @@
 }
 
 .spacerBar {
-  min-width: calc(50% - ((5vh - 3.5px) / 2) - 2px);
+  min-width: calc(50% - (var(--bar-min-width) / 2) - var(--tiny-gap));
 }

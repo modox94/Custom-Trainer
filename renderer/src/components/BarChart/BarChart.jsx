@@ -1,25 +1,29 @@
 import clsx from "clsx";
-import { get, isNumber } from "lodash";
+import { get, isNumber, round } from "lodash";
 import PropTypes from "prop-types";
 import React, { useEffect, useMemo, useRef } from "react";
+import { MAX_RES_LEVEL } from "../../constants/TODOconst";
 import { Item } from "../SquareGrid/SquareGrid";
 import styles from "./BarChart.module.css";
 
 const BarChart = props => {
-  const { currentStep, programArray, isDone } = props;
+  const { currentStep, steps, maxResistanceLevel, isDone } = props;
   const ref = useRef();
 
   const barsArray = useMemo(
     () =>
-      programArray.map((programStep, idx) => {
+      steps.map((programStep, idx) => {
         const { resistanceLevel, targetRpm } = programStep;
+        const height = `${round(
+          (resistanceLevel / maxResistanceLevel) * MAX_RES_LEVEL * 10,
+        )}%`;
 
         return {
           key: `${idx}_${resistanceLevel}_${targetRpm}`,
-          style: { height: `${resistanceLevel * 10}%` },
+          style: { height },
         };
       }),
-    [programArray],
+    [maxResistanceLevel, steps],
   );
 
   useEffect(() => {
@@ -83,12 +87,12 @@ const BarChart = props => {
 };
 
 BarChart.propTypes = {
-  programArray: PropTypes.array,
+  steps: PropTypes.array,
   currentStep: PropTypes.number,
   isDone: PropTypes.bool,
 };
 BarChart.defaultProps = {
-  programArray: [],
+  steps: [],
   isDone: false,
 };
 

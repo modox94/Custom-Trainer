@@ -2,8 +2,9 @@ const { app, BrowserWindow, ipcMain, powerSaveBlocker } = require("electron");
 const path = require("node:path");
 const { rate } = require("./cadence_sensor.js");
 const { motor } = require("./motor_driver");
-const trainingPrograms = require("./training_programs");
+const defaultTrainingPrograms = require("./default_training_programs");
 const { DIR_CONST, StoreDir, StoreFile } = require("./store");
+const { camelCase } = require("lodash");
 
 const dir = new StoreDir();
 
@@ -22,7 +23,20 @@ const EVENTS = {
   STORE_TEST: "STORE_TEST",
 };
 
-console.log("testt", app.getPath("userData"));
+const seedPrograms = () => {
+  defaultTrainingPrograms.forEach(programObj => {
+    const { title } = programObj;
+
+    const file = dir.read([DIR_CONST.SETTINGS], `${camelCase(title)}.json`);
+
+    for (const key in programObj) {
+      if (Object.hasOwnProperty.call(programObj, key)) {
+        const value = programObj[key];
+        file.set([key], value);
+      }
+    }
+  });
+};
 
 let win = null;
 let preventDisplaySleepID = false;
@@ -95,13 +109,27 @@ onCadenceFn();
 rate.cadenceSensor.watch(onCadenceFn);
 
 ipcMain.handle(EVENTS.GET_PROGRAMS_LIST, async () => {
-  return Object.keys(trainingPrograms);
+  let programsDir = dir.read([DIR_CONST.SETTINGS]);
+  const isEmptyDir = programsDir.length === 0;
+
+  if (isEmptyDir) {
+    seedPrograms();
+    programsDir = dir.read([DIR_CONST.SETTINGS]);
+  }
+
+  const programsTitles = programsDir.map(fileName => {
+    const file = new StoreFile({ pathArray: [DIR_CONST.SETTINGS], fileName });
+    const title = file.get(["title"]);
+    return [fileName, title];
+  });
+
+  return programsTitles;
 });
 
-ipcMain.handle(
-  EVENTS.GET_PROGRAM,
-  (event, program) => trainingPrograms[program],
-);
+ipcMain.handle(EVENTS.GET_PROGRAM, (event, fileName) => {
+  const file = new StoreFile({ pathArray: [DIR_CONST.SETTINGS], fileName });
+  return file.data;
+});
 
 ipcMain.handle(EVENTS.STORE_TEST, (event, testArg) => {
   console.log("testArg", testArg);

@@ -59,8 +59,8 @@ const SectorOfRound = props => {
   const valueSector = round(sectorsCount * value);
   const leftEdgeSector = round(sectorsCount * leftEdge);
   const rightEdgeSector = round(sectorsCount * rightEdge);
-  const isGoodValue =
-    (value > leftEdge && value < rightEdge) || !(leftEdge && rightEdge);
+  const isTooFast = value < leftEdge && leftEdge && rightEdge;
+  const isTooSlow = value > rightEdge && leftEdge && rightEdge;
 
   return (
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 666">
@@ -73,8 +73,9 @@ const SectorOfRound = props => {
           <path
             key={d}
             className={clsx({
-              [styles.bad]: sectorIdx <= valueSector && !isGoodValue && !isEdge,
-              [styles.good]: sectorIdx <= valueSector && isGoodValue && !isEdge,
+              [styles.slow]: isTooFast && !isEdge,
+              [styles.good]: !isTooFast && !isTooSlow && !isEdge,
+              [styles.fast]: isTooSlow && !isEdge,
               [styles.edge]: isEdge,
               [styles.empty]: sectorIdx > valueSector && !isEdge,
             })}
