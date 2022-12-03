@@ -61,14 +61,6 @@ export const preventDisplaySleep = flag =>
 
 export const appQuit = () => window.electron.ipcRenderer.send(EVENTS.APP_QUIT);
 
-export const storeTest = async () => {
-  const data = await window.electron.ipcRenderer.invoke(
-    EVENTS.STORE_TEST,
-    "test arg",
-  );
-  return data;
-};
-
 export const {
   useGetCadenceQuery,
   useGetProgramsListQuery,

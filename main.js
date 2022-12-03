@@ -19,8 +19,6 @@ const EVENTS = {
   STOP_MOTOR: "STOP_MOTOR",
   PREVENT_DISPLAY_SLEEP: "PREVENT_DISPLAY_SLEEP",
   APP_QUIT: "APP_QUIT",
-
-  STORE_TEST: "STORE_TEST",
 };
 
 const seedPrograms = () => {
@@ -129,14 +127,6 @@ ipcMain.handle(EVENTS.GET_PROGRAMS_LIST, async () => {
 ipcMain.handle(EVENTS.GET_PROGRAM, (event, fileName) => {
   const file = new StoreFile({ pathArray: [DIR_CONST.SETTINGS], fileName });
   return file.data;
-});
-
-ipcMain.handle(EVENTS.STORE_TEST, (event, testArg) => {
-  console.log("testArg", testArg);
-
-  const res = dir.read([DIR_CONST.SETTINGS]);
-
-  return res;
 });
 
 ipcMain.on(EVENTS.SET_FULLSCREEN, (event, ...args) => {
