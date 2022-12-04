@@ -6,7 +6,8 @@ const defaultTrainingPrograms = require("./default_training_programs");
 const { DIR_CONST, StoreDir, StoreFile } = require("./store");
 const { camelCase } = require("lodash");
 const filenamify = require("filenamify");
-// const { unusedFilenameSync } = require("unused-filename");
+const unusedFilename = require("unused-filename");
+const fs = require("fs");
 
 const dir = new StoreDir();
 
@@ -28,7 +29,7 @@ const seedPrograms = () => {
   defaultTrainingPrograms.forEach(programObj => {
     const { title } = programObj;
 
-    const file = dir.read([DIR_CONST.SETTINGS], `${camelCase(title)}.json`);
+    const file = dir.read([DIR_CONST.PROGRAMS], `${camelCase(title)}.json`);
 
     for (const key in programObj) {
       if (Object.hasOwnProperty.call(programObj, key)) {
@@ -110,16 +111,16 @@ onCadenceFn();
 rate.cadenceSensor.watch(onCadenceFn);
 
 ipcMain.handle(EVENTS.GET_PROGRAMS_LIST, async () => {
-  let programsDir = dir.read([DIR_CONST.SETTINGS]);
+  let programsDir = dir.read([DIR_CONST.PROGRAMS]);
   const isEmptyDir = programsDir.length === 0;
 
   if (isEmptyDir) {
     seedPrograms();
-    programsDir = dir.read([DIR_CONST.SETTINGS]);
+    programsDir = dir.read([DIR_CONST.PROGRAMS]);
   }
 
   const programsTitles = programsDir.map(fileName => {
-    const file = new StoreFile({ pathArray: [DIR_CONST.SETTINGS], fileName });
+    const file = new StoreFile({ pathArray: [DIR_CONST.PROGRAMS], fileName });
     const title = file.get(["title"]);
     return [fileName, title];
   });
@@ -128,7 +129,7 @@ ipcMain.handle(EVENTS.GET_PROGRAMS_LIST, async () => {
 });
 
 ipcMain.handle(EVENTS.GET_PROGRAM, (event, fileName) => {
-  const file = new StoreFile({ pathArray: [DIR_CONST.SETTINGS], fileName });
+  const file = new StoreFile({ pathArray: [DIR_CONST.PROGRAMS], fileName });
   return file.data;
 });
 
@@ -147,19 +148,15 @@ ipcMain.on(EVENTS.STOP_MOTOR, () => {
 
 ipcMain.on(EVENTS.PREVENT_DISPLAY_SLEEP, preventDisplaySleepFn);
 
-ipcMain.on(EVENTS.SAVE_NEW_PROGRAM, (event, programObject) => {
-  // unusedFilenameSync
-
+ipcMain.on(EVENTS.SAVE_NEW_PROGRAM, async (event, programObject) => {
+  const userDataPath = app.getPath("userData");
   const { title } = programObject;
-  const filename = filenamify(title, { replacement: "_" });
+  const fileName = filenamify(title, { replacement: "_" });
+  const filePath = await unusedFilename(
+    path.join(userDataPath, DIR_CONST.PROGRAMS, `${fileName}.json`),
+  );
 
-  const file = dir.read([DIR_CONST.SETTINGS], `${filename}.json`);
-  for (const key in programObject) {
-    if (Object.hasOwnProperty.call(programObject, key)) {
-      const value = programObject[key];
-      file.set([key], value);
-    }
-  }
+  fs.writeFileSync(filePath, JSON.stringify(programObject));
 });
 
 ipcMain.on(EVENTS.APP_QUIT, onQuit);
