@@ -1,5 +1,6 @@
 .root {
   --header-height: 50px; /* pt-navbar-height */
+  --keyboard-height: 185px;
   --large-gap: 20px;
   --medium-gap: 10px;
   --small-gap: 5px;

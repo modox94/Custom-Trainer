@@ -5,6 +5,8 @@ const { motor } = require("./motor_driver");
 const defaultTrainingPrograms = require("./default_training_programs");
 const { DIR_CONST, StoreDir, StoreFile } = require("./store");
 const { camelCase } = require("lodash");
+const filenamify = require("filenamify");
+// const { unusedFilenameSync } = require("unused-filename");
 
 const dir = new StoreDir();
 
@@ -18,6 +20,7 @@ const EVENTS = {
   SET_MOTOR_LEVEL: "SET_MOTOR_LEVEL",
   STOP_MOTOR: "STOP_MOTOR",
   PREVENT_DISPLAY_SLEEP: "PREVENT_DISPLAY_SLEEP",
+  SAVE_NEW_PROGRAM: "SAVE_NEW_PROGRAM",
   APP_QUIT: "APP_QUIT",
 };
 
@@ -143,5 +146,20 @@ ipcMain.on(EVENTS.STOP_MOTOR, () => {
 });
 
 ipcMain.on(EVENTS.PREVENT_DISPLAY_SLEEP, preventDisplaySleepFn);
+
+ipcMain.on(EVENTS.SAVE_NEW_PROGRAM, (event, programObject) => {
+  // unusedFilenameSync
+
+  const { title } = programObject;
+  const filename = filenamify(title, { replacement: "_" });
+
+  const file = dir.read([DIR_CONST.SETTINGS], `${filename}.json`);
+  for (const key in programObject) {
+    if (Object.hasOwnProperty.call(programObject, key)) {
+      const value = programObject[key];
+      file.set([key], value);
+    }
+  }
+});
 
 ipcMain.on(EVENTS.APP_QUIT, onQuit);

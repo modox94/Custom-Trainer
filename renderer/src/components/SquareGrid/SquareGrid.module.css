@@ -1,5 +1,5 @@
 .container {
-  --g-c-available-height: calc(
+  --grid-container-height: calc(
     (var(--available-height) / 2) - var(--medium-gap)
   );
 

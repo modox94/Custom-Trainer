@@ -1,29 +1,43 @@
 import clsx from "clsx";
-import { get, isNumber, round } from "lodash";
+import { get, isNumber, round, unset } from "lodash";
 import PropTypes from "prop-types";
 import React, { useEffect, useMemo, useRef } from "react";
-import { MAX_RES_LEVEL } from "../../constants/TODOconst";
+import { MAX_RES_LEVEL, MAX_RPM_LEVEL } from "../../constants/TODOconst";
 import { Item } from "../SquareGrid/SquareGrid";
 import styles from "./BarChart.module.css";
 
 const BarChart = props => {
-  const { className, currentStep, steps, maxResistanceLevel, isDone } = props;
+  const {
+    className,
+    currentStep,
+    steps,
+    maxResistanceLevel,
+    isDone,
+    isEditor,
+  } = props;
   const ref = useRef();
 
   const barsArray = useMemo(
     () =>
       steps.map((programStep, idx) => {
         const { resistanceLevel, targetRpm } = programStep;
-        const height = `${round(
+        const heightResistance = `${round(
           (resistanceLevel / maxResistanceLevel) * MAX_RES_LEVEL * 10,
         )}%`;
+        const heightRpm = `${round((targetRpm / MAX_RPM_LEVEL) * 100)}%`;
 
-        return {
+        const result = {
           key: `${idx}_${resistanceLevel}_${targetRpm}`,
-          style: { height },
+          styleResistance: { height: heightResistance },
+          styleRpm: { display: "none", height: heightRpm },
         };
+        if (isEditor) {
+          unset(result, ["styleRpm", "display"]);
+        }
+
+        return result;
       }),
-    [maxResistanceLevel, steps],
+    [isEditor, maxResistanceLevel, steps],
   );
 
   useEffect(() => {
@@ -68,16 +82,18 @@ const BarChart = props => {
       <div ref={ref} className={styles.barContainer}>
         <div className={styles.spacerBar} />
         {barsArray.map((bar, idx) => {
-          const { key, style } = bar;
+          const { key, styleResistance, styleRpm } = bar;
           return (
             <div
               key={key}
               className={clsx(styles.bar, {
                 [styles.barActive]: currentStep === idx && !isDone,
-                [styles.barDone]: idx < currentStep || isDone,
+                [styles.barDone]: !isEditor && (idx < currentStep || isDone),
               })}
-              style={style}
-            />
+            >
+              <div className={styles.barResistance} style={styleResistance} />
+              <div className={styles.barRpm} style={styleRpm} />
+            </div>
           );
         })}
         <div className={styles.spacerBar} />
@@ -92,6 +108,7 @@ BarChart.propTypes = {
   currentStep: PropTypes.number,
   maxResistanceLevel: PropTypes.number,
   isDone: PropTypes.bool,
+  isEditor: PropTypes.bool,
 };
 BarChart.defaultProps = {
   className: "",
@@ -99,6 +116,7 @@ BarChart.defaultProps = {
   currentStep: 0,
   maxResistanceLevel: MAX_RES_LEVEL,
   isDone: false,
+  isEditor: false,
 };
 
 export default BarChart;

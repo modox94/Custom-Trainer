@@ -1,0 +1,7 @@
+.inputContainer {
+  height: calc(var(--available-height) - var(--keyboard-height));
+}
+
+.mediumPadding {
+  padding: var(--medium-gap);
+}

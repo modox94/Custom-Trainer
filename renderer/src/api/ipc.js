@@ -59,6 +59,9 @@ export const stopMotor = () =>
 export const preventDisplaySleep = flag =>
   window.electron.ipcRenderer.send(EVENTS.PREVENT_DISPLAY_SLEEP, flag);
 
+export const saveNewProgram = programObject =>
+  window.electron.ipcRenderer.send(EVENTS.SAVE_NEW_PROGRAM, programObject);
+
 export const appQuit = () => window.electron.ipcRenderer.send(EVENTS.APP_QUIT);
 
 export const {

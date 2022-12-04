@@ -12,6 +12,7 @@
     "clsx": "^1.2.1",
     "i18next": "^22.0.5",
     "lodash": "^4.17.21",
+    "luxon": "^3.1.1",
     "prop-types": "^15.8.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
@@ -22,6 +23,7 @@
     "react-simple-keyboard": "^3.4.243",
     "react-timer-hook": "^3.0.5",
     "redux-logger": "^3.0.6",
+    "simple-keyboard-layouts": "^3.1.236",
     "web-vitals": "^2.1.4",
     "zero-fill": "^2.2.4"
   },

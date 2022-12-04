@@ -6,12 +6,12 @@
 .barContainer {
   /* equal to 1/30 of container height */
   --scroll-height: calc(
-    (var(--g-c-available-height) - (var(--small-gap) * 2)) / 30
+    (var(--grid-container-height) - (var(--small-gap) * 2)) / 30
   );
   /* equal to ~10% of container height */
   --bar-min-width: calc(
     (
-        var(--g-c-available-height) - (var(--small-gap) * 2) -
+        var(--grid-container-height) - (var(--small-gap) * 2) -
           var(--scroll-height)
       ) / 10
   );
@@ -38,16 +38,32 @@
 }
 
 .bar {
+  position: relative;
+  height: 100%;
+  min-width: calc(var(--bar-min-width) + var(--tiny-gap) * 2);
+}
+
+.barResistance {
+  position: absolute;
+  bottom: 0;
   min-width: var(--bar-min-width);
   background-color: var(--gray3);
   margin: 0 var(--tiny-gap);
 }
 
-.barActive {
+.barRpm {
+  position: absolute;
+  bottom: 0;
+  width: calc(var(--bar-min-width) / 3);
+  margin: 0 calc((var(--bar-min-width) / 3) + var(--tiny-gap));
+  background-color: var(--lime3);
+}
+
+.barActive .barResistance {
   background-color: var(--green3);
 }
 
-.barDone {
+.barDone .barResistance {
   background-color: var(--blue3);
 }
 
