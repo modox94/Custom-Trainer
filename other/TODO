@@ -13,4 +13,6 @@ Q/A: увеличить/уменьшить рекомендуемый каден
 
 сделать управление в меню с клавиатуры стрелочками (подумать как избежать конфликтов с управлением в редакторе уровней)
 
-Перевести electron на ESM (https://github.com/studioalex/electron-vue-template/tree/ESM)
+Перевести electron на ESM
+https://github.com/studioalex/electron-vue-template/tree/ESM
+https://www.npmjs.com/package/esm
