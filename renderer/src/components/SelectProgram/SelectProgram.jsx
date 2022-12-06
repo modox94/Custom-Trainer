@@ -1,7 +1,7 @@
 import { chunk } from "lodash";
-import React, { useEffect, useMemo } from "react";
+import React, { useMemo } from "react";
 import { useNavigate } from "react-router-dom";
-import ipcApi, { useGetProgramsListQuery } from "../../api/ipc";
+import { useGetProgramsListQuery } from "../../api/ipc";
 import { PAGES, PAGES_PATHS } from "../../constants/pathConst";
 import { Container, Item } from "../SquareGrid/SquareGrid";
 
@@ -9,10 +9,9 @@ const { SELECT_PROGRAM } = PAGES;
 
 const SelectProgram = props => {
   const navigate = useNavigate();
-  const { data: programs } = useGetProgramsListQuery() || {};
-  const { refetch } = ipcApi.endpoints.getProgramsList.useQuerySubscription();
-
-  useEffect(() => refetch(), [refetch]);
+  const { data: programs } =
+    useGetProgramsListQuery(undefined, { refetchOnMountOrArgChange: true }) ||
+    {};
 
   const items = useMemo(() => {
     return chunk(
