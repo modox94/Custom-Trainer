@@ -344,8 +344,10 @@ class MotorDriver {
         posCur = await this.readPosition();
       }
 
-      return resolve(isCalibration ? { driveTime: counter * DELAY } : "done");
+      resolve(isCalibration ? { driveTime: counter * DELAY } : "done");
     });
+
+    return this.action;
   }
 }
 
