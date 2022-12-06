@@ -1,13 +1,13 @@
 const { app, BrowserWindow, ipcMain, powerSaveBlocker } = require("electron");
 const path = require("node:path");
-const { rate } = require("./cadence_sensor.js");
-const { motor } = require("./motor_driver");
+const { rate } = require("./src/hardware/cadence_sensor.js");
+const { motor } = require("./src/hardware/motor_driver");
 const defaultTrainingPrograms = require("./default_training_programs");
-const { DIR_CONST, StoreDir, StoreFile } = require("./store");
+const { DIR_CONST, StoreDir, StoreFile } = require("./src/software/store");
 const { camelCase } = require("lodash");
 const filenamify = require("filenamify");
 const unusedFilename = require("unused-filename");
-const fs = require("fs");
+const fs = require("node:fs");
 
 const dir = new StoreDir();
 

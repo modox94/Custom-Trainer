@@ -1,5 +1,5 @@
 const fs = require("node:fs");
-const { DEV_CONSTS } = require("./constants.js");
+const { DEV_CONSTS } = require("../constants/constants.js");
 
 const { dataFile, LF, PL, FRQ_R, FRQ } = DEV_CONSTS;
 

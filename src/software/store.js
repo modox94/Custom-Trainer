@@ -1,6 +1,6 @@
 const { app } = require("electron");
-const path = require("path");
-const fs = require("fs");
+const path = require("node:path");
+const fs = require("node:fs");
 const { get, set } = require("lodash");
 
 const DIR_CONST = {

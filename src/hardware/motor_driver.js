@@ -1,10 +1,10 @@
 const { Gpio } = require("onoff");
-const { DIRECTION, PHYSICAL_TO_GPIO } = require("./constants.js");
+const { DIRECTION, PHYSICAL_TO_GPIO } = require("../constants/constants.js");
 const readline = require("node:readline");
-const fs = require("fs");
+const fs = require("node:fs");
 const { round, noop } = require("lodash");
 const { stdin: input, stdout: output, off } = require("node:process");
-const { sleep } = require("./utils");
+const { sleep } = require("../utils/utils");
 const { PotentiometerSensor } = require("./potentiometer_sensor");
 const Promise = require("bluebird");
 const { isFunction } = require("lodash");
@@ -13,7 +13,7 @@ Promise.config({ cancellation: true });
 
 let motorSettings;
 try {
-  motorSettings = require("./motor_settings.json");
+  motorSettings = require("../../motor_settings.json");
 } catch (error) {
   motorSettings = {};
 }

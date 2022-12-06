@@ -7,7 +7,7 @@ const {
   PAUSE_DELAY,
   DEFAULT_WINDOW,
   DEFAULT_M_C,
-} = require("./constants.js");
+} = require("../constants/constants.js");
 
 const cadenceSensorPin = PHYSICAL_TO_GPIO[11];
 
