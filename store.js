@@ -39,6 +39,8 @@ class StoreDir {
     const fullPath = path.join(this.userDataPath, ...pathArray, fileName);
     const isValid = fs.existsSync(fullPath);
 
+    console.log("fullPath", fullPath);
+
     if (!isValid) {
       const { dir, base, ext } = path.parse(fullPath) || {};
 
