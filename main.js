@@ -1,6 +1,6 @@
 const { app, BrowserWindow, ipcMain, powerSaveBlocker } = require("electron");
 const path = require("node:path");
-const { rate } = require("./src/hardware/cadence_sensor.js");
+const { rate } = require("./src/hardware/cadence_sensor");
 const { motor } = require("./src/hardware/motor_driver");
 const defaultTrainingPrograms = require("./default_training_programs");
 const { DIR_CONST, StoreDir, StoreFile } = require("./src/software/store");
@@ -133,7 +133,7 @@ ipcMain.handle(EVENTS.GET_PROGRAM, (event, fileName) => {
   return file.data;
 });
 
-ipcMain.on(EVENTS.SET_FULLSCREEN, (event, ...args) => {
+ipcMain.on(EVENTS.SET_FULLSCREEN, () => {
   const isFullScreen = win.isFullScreen();
   win.setFullScreen(!isFullScreen);
 });
