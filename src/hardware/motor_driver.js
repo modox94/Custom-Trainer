@@ -298,7 +298,7 @@ class MotorDriver {
 
       if (level < 1 || level > RESIST_LEVELS) {
         console.log("wrong resist level");
-        return "error";
+        return resolve("error");
       }
 
       while (!this.isReady && !this.isError) {
@@ -344,10 +344,10 @@ class MotorDriver {
         posCur = await this.readPosition();
       }
 
-      resolve(isCalibration ? { driveTime: counter * DELAY } : "done");
+      return resolve(isCalibration ? { driveTime: counter * DELAY } : "done");
     });
 
-    return this.action;
+    return await this.action;
   }
 }
 
