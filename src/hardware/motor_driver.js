@@ -287,10 +287,17 @@ class MotorDriver {
   }
 
   async setLevel(level, isCalibration) {
+    console.log("setLevel", level);
+    console.log("isCalibration", isCalibration);
+
     if (isFunction(this.action?.cancel)) {
+      console.log("cancel");
+
       this.action.cancel();
     }
     this.action = new Promise(async (resolve, reject, onCancel) => {
+      console.log("promise");
+
       onCancel(() => {
         this.stop();
         reject("setLevel forcely stopped");
@@ -343,6 +350,11 @@ class MotorDriver {
 
         posCur = await this.readPosition();
       }
+
+      console.log(
+        "promise res",
+        isCalibration ? { driveTime: counter * DELAY } : "done",
+      );
 
       return resolve(isCalibration ? { driveTime: counter * DELAY } : "done");
     });
