@@ -218,9 +218,14 @@ class MotorDriver {
   }
 
   stop() {
-    if (isFunction(this.action?.cancel)) {
+    if (
+      isFunction(this.action?.isFulfilled) &&
+      !this.action.isFulfilled() &&
+      isFunction(this.action?.cancel)
+    ) {
       this.action.cancel();
     }
+
     this.in1.writeSync(0);
     this.in2.writeSync(0);
   }
@@ -381,16 +386,15 @@ class MotorDriver {
         this.action = localAction;
 
         firstTime = false;
-        await localAction;
       } else {
         localAction = new Promise((resolve, reject, onCancel) => {
           onCancel(onCancelFn);
           sleepCb(resolve, DELAY);
         });
         this.action = localAction;
-
-        await localAction;
       }
+
+      await localAction;
 
       this.stop();
 
