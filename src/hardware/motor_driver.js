@@ -1,5 +1,5 @@
 const { Gpio } = require("onoff");
-const { DIRECTION, PHYSICAL_TO_GPIO } = require("../constants/constants.js");
+const { DIRECTION, PHYSICAL_TO_GPIO } = require("../constants/constants");
 const readline = require("node:readline");
 const fs = require("node:fs");
 const { round, noop } = require("lodash");
@@ -291,85 +291,15 @@ class MotorDriver {
     return this.sleepRatio;
   }
 
-  async setLevelOld(level, isCalibration) {
-    if (isFunction(this.action?.cancel)) {
-      console.log("cancel");
-
-      this.action.cancel();
-    }
-    this.action = new Promise(async (resolve, reject, onCancel) => {
-      console.log("promise");
-
-      onCancel(() => {
-        this.stop();
-        reject("setLevel forcely stopped");
-      });
-
-      if (level < 1 || level > RESIST_LEVELS) {
-        console.log("wrong resist level");
-        return resolve("error");
-      }
-
-      while (!this.isReady && !this.isError) {
-        console.log("loading...");
-        await sleep(200);
-      }
-
-      if (this.isError) {
-        reject("potentiometer not working");
-      }
-
-      const interval =
-        (this.maxPosition - this.minPosition) / (RESIST_LEVELS - 1);
-      const targetPos = this.minPosition + interval * (level - 1);
-
-      let posCur = await this.readPosition();
-      let counter = 0;
-      let firstTime = false;
-
-      if (this.sleepRatio) {
-        firstTime = (Math.abs(posCur - targetPos) / interval) * this.sleepRatio;
-      }
-
-      while (Math.abs(posCur - targetPos) > 1) {
-        ++counter;
-
-        if (posCur > targetPos) {
-          this.back();
-        } else {
-          this.forward();
-        }
-        if (firstTime) {
-          await sleep(firstTime);
-          firstTime = false;
-        } else {
-          await sleep(DELAY);
-        }
-
-        this.stop();
-
-        await sleep(DELAY_FOR_READ);
-
-        posCur = await this.readPosition();
-      }
-
-      console.log(
-        "promise res",
-        isCalibration ? { driveTime: counter * DELAY } : "done",
-      );
-
-      return resolve(isCalibration ? { driveTime: counter * DELAY } : "done");
-    });
-
-    return await this.action;
-  }
-
   async setLevel(level, isCalibration) {
-    if (isFunction(this.action?.cancel)) {
-      console.log("cancel");
-
+    if (
+      isFunction(this.action?.isFulfilled) &&
+      !this.action.isFulfilled() &&
+      isFunction(this.action?.cancel)
+    ) {
       this.action.cancel();
       this.action = null;
+      console.log("setLevel canceled previous action");
     }
 
     const onCancelFn = () => this.stop();

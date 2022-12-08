@@ -1,5 +1,5 @@
 const fs = require("node:fs");
-const { DEV_CONSTS } = require("../constants/constants.js");
+const { DEV_CONSTS } = require("../constants/constants");
 
 const { dataFile, LF, PL, FRQ_R, FRQ } = DEV_CONSTS;
 
@@ -37,11 +37,6 @@ exports.getTimecodes = () => {
 
   return resultObject;
 };
-
-exports.sleep = (delay = 1000) =>
-  new Promise(resolve => {
-    setTimeout(resolve, delay);
-  });
 
 exports.sleepCb = (cb, delay = 1000) =>
   new Promise(resolve => {
