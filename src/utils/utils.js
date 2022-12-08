@@ -42,3 +42,11 @@ exports.sleep = (delay = 1000) =>
   new Promise(resolve => {
     setTimeout(resolve, delay);
   });
+
+exports.sleepCb = (cb, delay = 1000) =>
+  new Promise(resolve => {
+    setTimeout(() => {
+      resolve();
+      cb();
+    }, delay);
+  });

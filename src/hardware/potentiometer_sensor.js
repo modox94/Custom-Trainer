@@ -25,6 +25,16 @@ class PotentiometerSensor {
     });
   }
 
+  readPositionCb(cb) {
+    if (this.condition.isReady) {
+      this.sensor.read((err, reading) => {
+        cb(reading?.value * 100);
+      });
+    } else {
+      cb(NaN);
+    }
+  }
+
   off() {
     try {
       this.sensor.close();

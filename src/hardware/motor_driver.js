@@ -4,7 +4,7 @@ const readline = require("node:readline");
 const fs = require("node:fs");
 const { round, noop } = require("lodash");
 const { stdin: input, stdout: output } = require("node:process");
-const { sleep } = require("../utils/utils");
+const { sleep, sleepCb } = require("../utils/utils");
 const { PotentiometerSensor } = require("./potentiometer_sensor");
 const Promise = require("bluebird");
 const { isFunction } = require("lodash");
@@ -43,6 +43,7 @@ class MotorDriver {
   constructor(options) {
     Object.assign(this, options);
 
+    this.action = null;
     this.potentiometer = new PotentiometerSensor();
 
     try {
@@ -236,6 +237,10 @@ class MotorDriver {
     return await this.potentiometer.readPosition();
   }
 
+  readPositionCb(cb) {
+    return this.potentiometer.readPositionCb(cb);
+  }
+
   async calibration(loops = 1) {
     if (!this.minPosition || !this.maxPosition) {
       return console.log("Невозможно проводить калибровку без инициализации!");
@@ -286,10 +291,7 @@ class MotorDriver {
     return this.sleepRatio;
   }
 
-  async setLevel(level, isCalibration) {
-    console.log("setLevel", level);
-    console.log("isCalibration", isCalibration);
-
+  async setLevelOld(level, isCalibration) {
     if (isFunction(this.action?.cancel)) {
       console.log("cancel");
 
@@ -360,6 +362,131 @@ class MotorDriver {
     });
 
     return await this.action;
+  }
+
+  async setLevel(level, isCalibration) {
+    if (isFunction(this.action?.cancel)) {
+      console.log("cancel");
+
+      this.action.cancel();
+      this.action = null;
+    }
+
+    const onCancelFn = () => this.stop();
+
+    let localAction;
+    const isCancelled = () => {
+      if (isFunction(localAction?.isCancelled) && localAction.isCancelled()) {
+        console.log("canceled");
+        return true;
+      }
+
+      return false;
+    };
+
+    if (level < 1 || level > RESIST_LEVELS) {
+      console.log("wrong resist level");
+      return "error";
+    }
+
+    while (!this.isReady && !this.isError) {
+      console.log("loading...");
+
+      if (isCancelled()) {
+        return;
+      }
+
+      localAction = new Promise((resolve, reject, onCancel) => {
+        onCancel(onCancelFn);
+        sleepCb(resolve, 200);
+      });
+      this.action = localAction;
+
+      await localAction;
+    }
+
+    if (this.isError) {
+      console.log("potentiometer not working");
+      return;
+    }
+
+    const interval =
+      (this.maxPosition - this.minPosition) / (RESIST_LEVELS - 1);
+    const targetPos = this.minPosition + interval * (level - 1);
+
+    if (isCancelled()) {
+      return;
+    }
+    localAction = new Promise((resolve, reject, onCancel) => {
+      onCancel(onCancelFn);
+      this.readPositionCb(resolve);
+    });
+    this.action = localAction;
+
+    let posCur = await localAction;
+    let counter = 0;
+    let firstTime = false;
+
+    if (this.sleepRatio) {
+      firstTime = (Math.abs(posCur - targetPos) / interval) * this.sleepRatio;
+    }
+
+    while (Math.abs(posCur - targetPos) > 1) {
+      if (isCancelled()) {
+        return;
+      }
+      ++counter;
+
+      if (posCur > targetPos) {
+        this.back();
+      } else {
+        this.forward();
+      }
+
+      if (firstTime) {
+        localAction = new Promise((resolve, reject, onCancel) => {
+          onCancel(onCancelFn);
+          sleepCb(resolve, firstTime);
+        });
+        this.action = localAction;
+
+        firstTime = false;
+        await localAction;
+      } else {
+        localAction = new Promise((resolve, reject, onCancel) => {
+          onCancel(onCancelFn);
+          sleepCb(resolve, DELAY);
+        });
+        this.action = localAction;
+
+        await localAction;
+      }
+
+      this.stop();
+
+      if (isCancelled()) {
+        return;
+      }
+      localAction = new Promise((resolve, reject, onCancel) => {
+        onCancel(onCancelFn);
+        sleepCb(resolve, DELAY_FOR_READ);
+      });
+      this.action = localAction;
+      await localAction;
+
+      if (isCancelled()) {
+        return;
+      }
+      localAction = new Promise((resolve, reject, onCancel) => {
+        onCancel(onCancelFn);
+        this.readPositionCb(resolve);
+      });
+      this.action = localAction;
+
+      posCur = await localAction;
+    }
+
+    return isCalibration ? { driveTime: counter * DELAY } : "done";
   }
 }
 
