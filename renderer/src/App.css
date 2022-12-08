@@ -1,4 +1,6 @@
-.root {
+#root {
+  overflow-y: auto;
+
   --header-height: 50px; /* pt-navbar-height */
   --keyboard-height: 185px;
   --large-gap: 20px;
@@ -99,7 +101,22 @@
   --cobalt3: #147eb3;
   --cobalt4: #3fa6da;
   --cobalt5: #68c1ee;
+}
 
+#root::-webkit-scrollbar {
+  width: 1vw;
+  height: 0px;
+}
+
+#root::-webkit-scrollbar-track {
+  background: var(--gray3);
+}
+
+#root::-webkit-scrollbar-thumb {
+  background-color: var(--blue3);
+}
+
+.app {
   padding-top: calc(100vh - var(--available-height));
   height: 100%;
   width: 100%;

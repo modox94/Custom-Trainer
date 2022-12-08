@@ -23,7 +23,7 @@ const App = () => {
   return (
     <PortalProvider>
       <MemoryRouter>
-        <div className="root">
+        <div className="app">
           <Navigation />
 
           <Routes>
