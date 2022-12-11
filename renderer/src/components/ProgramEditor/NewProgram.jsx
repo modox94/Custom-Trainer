@@ -62,6 +62,11 @@ const NewProgram = props => {
     if (steps.length > 1) {
       const newSteps = [...steps];
       newSteps.splice(currentStep, 1);
+      let newCurrentStep = currentStep - 1;
+      if (newCurrentStep < 0) {
+        newCurrentStep = 0;
+      }
+      setCurrentStep(newCurrentStep);
       setSteps(newSteps);
     }
   };
