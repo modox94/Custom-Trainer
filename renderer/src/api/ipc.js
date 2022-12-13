@@ -27,21 +27,31 @@ const ipcApi = createApi({
         removeListener();
       },
     }),
-    getProgramsList: builder.query({
+    getPrograms: builder.query({
       queryFn: async () => {
         const data = await window.electron.ipcRenderer.invoke(
-          EVENTS.GET_PROGRAMS_LIST,
+          EVENTS.GET_PROGRAMS,
         );
         return { data };
       },
-    }),
-    getProgram: builder.query({
-      queryFn: async programTitle => {
-        const data = await window.electron.ipcRenderer.invoke(
-          EVENTS.GET_PROGRAM,
-          programTitle,
-        );
-        return { data };
+      async onCacheEntryAdded(
+        arg,
+        { updateCachedData, cacheDataLoaded, cacheEntryRemoved },
+      ) {
+        let removeListener = noop;
+        try {
+          await cacheDataLoaded;
+          const listener = storeData => updateCachedData(() => storeData);
+          removeListener = window.electron.ipcRenderer.on(
+            EVENTS.WATCH_PROGRAMS,
+            listener,
+          );
+        } catch (error) {
+          console.log("ipc error", error);
+        }
+
+        await cacheEntryRemoved;
+        removeListener();
       },
     }),
   }),
@@ -64,9 +74,5 @@ export const saveNewProgram = programObject =>
 
 export const appQuit = () => window.electron.ipcRenderer.send(EVENTS.APP_QUIT);
 
-export const {
-  useGetCadenceQuery,
-  useGetProgramsListQuery,
-  useGetProgramQuery,
-} = ipcApi;
+export const { useGetCadenceQuery, useGetProgramsQuery } = ipcApi;
 export default ipcApi;

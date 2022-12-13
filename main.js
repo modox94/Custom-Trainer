@@ -2,42 +2,26 @@ const { app, BrowserWindow, ipcMain, powerSaveBlocker } = require("electron");
 const path = require("node:path");
 const { rate } = require("./src/hardware/cadence_sensor");
 const { motor } = require("./src/hardware/motor_driver");
-const defaultTrainingPrograms = require("./default_training_programs");
-const { DIR_CONST, StoreDir, StoreFile } = require("./src/software/store");
-const { camelCase } = require("lodash");
+const { DIR_CONST, Store } = require("./src/software/store");
+const { isFunction } = require("lodash");
 const filenamify = require("filenamify");
 const unusedFilename = require("unused-filename");
 const fs = require("node:fs");
 
-const dir = new StoreDir();
+const store = new Store();
 
 const isProduction = process.env.NODE_ENV === "production";
 
 const EVENTS = {
   WATCH_CADENCE: "WATCH_CADENCE",
-  GET_PROGRAMS_LIST: "GET_PROGRAMS_LIST",
-  GET_PROGRAM: "GET_PROGRAM",
+  WATCH_PROGRAMS: "WATCH_PROGRAMS",
+  GET_PROGRAMS: "GET_PROGRAMS",
   SET_FULLSCREEN: "SET_FULLSCREEN",
   SET_MOTOR_LEVEL: "SET_MOTOR_LEVEL",
   STOP_MOTOR: "STOP_MOTOR",
   PREVENT_DISPLAY_SLEEP: "PREVENT_DISPLAY_SLEEP",
   SAVE_NEW_PROGRAM: "SAVE_NEW_PROGRAM",
   APP_QUIT: "APP_QUIT",
-};
-
-const seedPrograms = () => {
-  defaultTrainingPrograms.forEach(programObj => {
-    const { title } = programObj;
-
-    const file = dir.read([DIR_CONST.PROGRAMS], `${camelCase(title)}.json`);
-
-    for (const key in programObj) {
-      if (Object.hasOwnProperty.call(programObj, key)) {
-        const value = programObj[key];
-        file.set([key], value);
-      }
-    }
-  });
 };
 
 let win = null;
@@ -79,6 +63,13 @@ app.whenReady().then(() => {
   });
 });
 
+const onProgramsChange = data => {
+  if (isFunction(win?.webContents?.send)) {
+    win.webContents.send(EVENTS.WATCH_PROGRAMS, data);
+  }
+};
+const unwatchProgramsFn = store.watch(DIR_CONST.PROGRAMS, onProgramsChange);
+
 const onQuit = () => {
   try {
     motor.off();
@@ -92,6 +83,10 @@ const onQuit = () => {
     console.log("rate.off error", error);
   }
 
+  if (isFunction(unwatchProgramsFn)) {
+    unwatchProgramsFn();
+  }
+
   preventDisplaySleepFn();
 
   app.quit();
@@ -102,7 +97,7 @@ app.on("window-all-closed", onQuit);
 app.on("will-quit", onQuit);
 
 const onCadenceFn = () => {
-  if (win?.webContents?.send) {
+  if (isFunction(win?.webContents?.send)) {
     win.webContents.send(EVENTS.WATCH_CADENCE, rate.rpm);
   }
 };
@@ -110,28 +105,7 @@ const onCadenceFn = () => {
 onCadenceFn();
 rate.cadenceSensor.watch(onCadenceFn);
 
-ipcMain.handle(EVENTS.GET_PROGRAMS_LIST, async () => {
-  let programsDir = dir.read([DIR_CONST.PROGRAMS]);
-  const isEmptyDir = programsDir.length === 0;
-
-  if (isEmptyDir) {
-    seedPrograms();
-    programsDir = dir.read([DIR_CONST.PROGRAMS]);
-  }
-
-  const programsTitles = programsDir.map(fileName => {
-    const file = new StoreFile({ pathArray: [DIR_CONST.PROGRAMS], fileName });
-    const title = file.get(["title"]);
-    return [fileName, title];
-  });
-
-  return programsTitles;
-});
-
-ipcMain.handle(EVENTS.GET_PROGRAM, (event, fileName) => {
-  const file = new StoreFile({ pathArray: [DIR_CONST.PROGRAMS], fileName });
-  return file.data;
-});
+ipcMain.handle(EVENTS.GET_PROGRAMS, () => store.store[DIR_CONST.PROGRAMS]);
 
 ipcMain.on(EVENTS.SET_FULLSCREEN, () => {
   const isFullScreen = win.isFullScreen();
@@ -149,6 +123,7 @@ ipcMain.on(EVENTS.STOP_MOTOR, () => {
 ipcMain.on(EVENTS.PREVENT_DISPLAY_SLEEP, preventDisplaySleepFn);
 
 ipcMain.on(EVENTS.SAVE_NEW_PROGRAM, async (event, programObject) => {
+  // TODO
   const userDataPath = app.getPath("userData");
   const { title } = programObject;
   const fileName = filenamify(title, { replacement: "_" });

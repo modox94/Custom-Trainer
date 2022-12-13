@@ -9,7 +9,7 @@ import {
   preventDisplaySleep,
   setMotorLevel,
   stopMotor,
-  useGetProgramQuery,
+  useGetProgramsQuery,
 } from "../../api/ipc";
 import { PAGES, PAGES_PATHS } from "../../constants/pathConst";
 import { RUNNINIG_STATUS } from "../../constants/reduxConst";
@@ -64,10 +64,14 @@ const ProgramMode = props => {
     () => location.pathname.slice(PAGES_PATHS[SELECT_PROGRAM].length + 1),
     [location],
   );
-  const { data: programObject } = useGetProgramQuery(fileName) || {};
-  const targetRpm = get(programObject, ["steps", counter, "targetRpm"], 0);
-  const steps = get(programObject, ["steps"], []);
-  const maxResistanceLevel = get(programObject, ["maxResistanceLevel"], 0);
+  const { data: programs = {} } =
+    useGetProgramsQuery(undefined, {
+      refetchOnMountOrArgChange: true,
+    }) || {};
+
+  const targetRpm = get(programs, [fileName, "steps", counter, "targetRpm"], 0);
+  const steps = get(programs, [fileName, "steps"], []);
+  const maxResistanceLevel = get(programs, [fileName, "maxResistanceLevel"], 0);
 
   useEffect(() => {
     preventDisplaySleep(true);
@@ -136,7 +140,6 @@ const ProgramMode = props => {
     isDone,
     maxResistanceLevel,
     minutes,
-    programObject,
     restart,
     runningStatus,
     seconds,

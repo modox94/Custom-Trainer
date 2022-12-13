@@ -1,5 +1,6 @@
 {
   "title": "[PFEL03815] Performance #3",
+  "default": true,
   "maxResistanceLevel": 16,
   "steps": [
     { "resistanceLevel": 2, "targetRpm": 55 },

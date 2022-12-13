@@ -1,7 +1,7 @@
-import { chunk } from "lodash";
+import { chunk, get } from "lodash";
 import React, { useMemo } from "react";
 import { useNavigate } from "react-router-dom";
-import { useGetProgramsListQuery } from "../../api/ipc";
+import { useGetProgramsQuery } from "../../api/ipc";
 import { PAGES, PAGES_PATHS } from "../../constants/pathConst";
 import { Container, Item } from "../SquareGrid/SquareGrid";
 
@@ -9,16 +9,17 @@ const { SELECT_PROGRAM } = PAGES;
 
 const SelectProgram = props => {
   const navigate = useNavigate();
-  const { data: programs } =
-    useGetProgramsListQuery(undefined, { refetchOnMountOrArgChange: true }) ||
-    {};
+  const { data: programs = {} } =
+    useGetProgramsQuery(undefined, {
+      refetchOnMountOrArgChange: true,
+    }) || {};
 
   const items = useMemo(() => {
     return chunk(
-      (programs || []).map(([fileName, programTitle], idx) => ({
+      (Object.keys(programs) || []).map((fileName, idx) => ({
         key: fileName,
         onClick: () => navigate(`${PAGES_PATHS[SELECT_PROGRAM]}/${fileName}`),
-        children: <h1>{programTitle}</h1>,
+        children: <h1>{get(programs, [fileName, "title"], "")}</h1>,
       })),
       3,
     );
