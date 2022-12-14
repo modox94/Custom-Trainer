@@ -83,30 +83,24 @@ class Store {
         }
       }
 
-      let fileName = `${camelCase(defaultProgram.title)}.json`;
+      let filename = `${camelCase(defaultProgram.title)}.json`;
       let iterator = 0;
-      while (tempStore[DIR_CONST.PROGRAMS][fileName] && iterator < 100) {
+      while (tempStore[DIR_CONST.PROGRAMS][filename] && iterator < 100) {
         iterator += 1;
-        fileName = `${camelCase(defaultProgram.title)}_(${iterator}).json`;
+        filename = `${camelCase(defaultProgram.title)}_(${iterator}).json`;
       }
 
-      if (tempStore[DIR_CONST.PROGRAMS][fileName]) {
+      if (tempStore[DIR_CONST.PROGRAMS][filename]) {
         return console.log("error cant save default program");
       }
 
-      const filePath = path.join(fullPath, fileName);
-      console.log("fileName", fileName);
-      console.log("writeFileSync", filePath);
+      const filePath = path.join(fullPath, filename);
       fs.writeFileSync(filePath, JSON.stringify(defaultProgram));
       set(tempStore, [DIR_CONST.PROGRAMS, filePath], defaultProgram);
     });
   }
 
   onAddOrChange(dir, pathValue) {
-    console.log("onAddOrChange");
-    console.log("pathValue", pathValue);
-    console.log("dir", dir);
-
     const { base } = path.parse(pathValue) || {};
 
     try {
@@ -122,15 +116,9 @@ class Store {
     } catch (error) {
       console.log(error);
     }
-
-    console.log("this.store", this.store);
   }
 
   onUnlink(dir, pathValue) {
-    console.log("onUnlink");
-    console.log("pathValue", pathValue);
-    console.log("dir", dir);
-
     const { base } = path.parse(pathValue) || {};
 
     if (get(this.store, [dir, base])) {
@@ -143,8 +131,6 @@ class Store {
         }
       });
     }
-
-    console.log("this.store", this.store);
   }
 
   watch(dir, cb) {
@@ -189,6 +175,19 @@ class Store {
     return isExist;
   }
 
+  isTitleAvailable(dir, title) {
+    if (dir !== DIR_CONST.PROGRAMS) {
+      console.log("error titles only in programs dir");
+      return false;
+    }
+
+    const findResult = Object.values(this.store[dir]).find(
+      program => program.title === title,
+    );
+
+    return !findResult;
+  }
+
   create(dir, filename, data) {
     if (!DIR_CONST_ARRAY.includes(dir)) {
       console.log("error wrong dir");
@@ -203,6 +202,22 @@ class Store {
 
     const fullPath = path.join(this.userDataPath, dir, filename);
     fs.writeFileSync(fullPath, JSON.stringify(data));
+  }
+
+  createProgram(data) {
+    let filename = `${camelCase(data.title)}.json`;
+    let iterator = 0;
+    while (get(this.store, [DIR_CONST.PROGRAMS, filename]) && iterator < 100) {
+      iterator += 1;
+      filename = `${camelCase(data.title)}_(${iterator}).json`;
+    }
+
+    if (get(this.store, [DIR_CONST.PROGRAMS, filename])) {
+      console.log("error cant save program");
+      return;
+    }
+
+    this.create(DIR_CONST.PROGRAMS, filename, data);
   }
 
   edit(dir, filename, data) {

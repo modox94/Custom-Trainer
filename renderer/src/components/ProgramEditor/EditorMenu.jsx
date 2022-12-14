@@ -24,18 +24,40 @@ const EditorMenu = props => {
     [navigate],
   );
 
+  const onClickEP = useCallback(
+    () => navigate(PAGES_PATHS[PROGRAM_EDITOR] + "/edit"),
+    [navigate],
+  );
+
+  const onClickEP2 = useCallback(
+    () => navigate(PAGES_PATHS[PROGRAM_EDITOR] + "/edit/fileName.json"),
+    [navigate],
+  );
+
+  const onClickDP = useCallback(
+    () => navigate(PAGES_PATHS[PROGRAM_EDITOR] + "/delete"),
+    [navigate],
+  );
+
   return (
-    <Container>
-      <Item onClick={onClickNP}>
-        <h1>{t(getTPath(newProgram))}</h1>
-      </Item>
-      <Item>
-        <h1>TODO EDIT PROG</h1>
-      </Item>
-      <Item>
-        <h1>TODO DELETE PROG</h1>
-      </Item>
-    </Container>
+    <>
+      <Container>
+        <Item onClick={onClickNP}>
+          <h1>{t(getTPath(newProgram))}</h1>
+        </Item>
+        <Item onClick={onClickEP}>
+          <h1>TODO EDIT PROG</h1>
+        </Item>
+        <Item onClick={onClickDP}>
+          <h1>TODO DELETE PROG</h1>
+        </Item>
+      </Container>
+      <Container>
+        <Item onClick={onClickEP2}>
+          <h1>TODO filename</h1>
+        </Item>
+      </Container>
+    </>
   );
 };
 

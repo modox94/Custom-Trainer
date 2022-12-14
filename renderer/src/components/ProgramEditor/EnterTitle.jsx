@@ -1,9 +1,10 @@
-import { Button, InputGroup } from "@blueprintjs/core";
+import { Button, Callout, Divider, InputGroup } from "@blueprintjs/core";
 import { get, noop } from "lodash";
 import PropTypes from "prop-types";
 import React, { useRef, useState } from "react";
 import Keyboard from "react-simple-keyboard";
 import "react-simple-keyboard/build/css/index.css";
+import { checkProgramTitle } from "../../api/ipc";
 import { Container, Item } from "../SquareGrid/SquareGrid";
 import styles from "./EnterTitle.module.css";
 
@@ -39,8 +40,9 @@ const LAYOUT = {
 const EnterTitle = props => {
   const { setTitle } = props;
   const keyboardRef = useRef();
-  const [input, setInput] = useState("");
   const [layout, setLayout] = useState(LAYOUT_NAME.default);
+  const [input, setInput] = useState("");
+  const [error, setError] = useState("");
 
   const handleShift = () => {
     const newLayoutName =
@@ -52,8 +54,19 @@ const EnterTitle = props => {
 
   const handleDefault = () => setLayout(LAYOUT_NAME.default);
 
+  const checkTitle = async value => {
+    const isAvailableTitle = await checkProgramTitle(value.trim());
+
+    if (value.trim() && !isAvailableTitle && !error) {
+      setError("bad title error"); // TODO
+    } else if (!value.trim() || (isAvailableTitle && error)) {
+      setError("");
+    }
+  };
+
   const onKeyBoardChange = value => {
     setInput(value);
+    checkTitle(value);
   };
 
   const onKeyBoardKeyPress = button => {
@@ -73,12 +86,16 @@ const EnterTitle = props => {
   const onInputChange = event => {
     const value = get(event, ["target", "value"]);
     setInput(value);
-
     keyboardRef.current?.setInput(value);
+    checkTitle(value);
   };
 
   const onNextStep = () => {
-    setTitle(input.trim());
+    const inputTrimed = input.trim();
+
+    if (inputTrimed && !error) {
+      setTitle(inputTrimed);
+    }
   };
 
   return (
@@ -92,9 +109,12 @@ const EnterTitle = props => {
               <Button
                 large
                 rightIcon="arrow-right"
-                intent={input.trim().length > 0 ? "success" : "none"}
+                intent={
+                  (error && "danger") ||
+                  (input.trim().length > 0 ? "success" : "none")
+                }
                 text="Next step" // TODO
-                disabled={input.trim().length === 0}
+                disabled={error || input.trim().length === 0}
                 onClick={onNextStep}
               />
             }
@@ -102,6 +122,15 @@ const EnterTitle = props => {
             value={input}
             onChange={onInputChange}
           />
+
+          {error && (
+            <>
+              <Divider />
+              <Callout icon="error" intent="danger">
+                {error}
+              </Callout>
+            </>
+          )}
         </Item>
       </Container>
 

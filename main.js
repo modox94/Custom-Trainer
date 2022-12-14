@@ -16,10 +16,12 @@ const EVENTS = {
   WATCH_CADENCE: "WATCH_CADENCE",
   WATCH_PROGRAMS: "WATCH_PROGRAMS",
   GET_PROGRAMS: "GET_PROGRAMS",
+  CHECK_PROGRAM_TITLE: "CHECK_PROGRAM_TITLE",
   SET_FULLSCREEN: "SET_FULLSCREEN",
   SET_MOTOR_LEVEL: "SET_MOTOR_LEVEL",
   STOP_MOTOR: "STOP_MOTOR",
   PREVENT_DISPLAY_SLEEP: "PREVENT_DISPLAY_SLEEP",
+  EDIT_PROGRAM: "EDIT_PROGRAM",
   SAVE_NEW_PROGRAM: "SAVE_NEW_PROGRAM",
   APP_QUIT: "APP_QUIT",
 };
@@ -107,6 +109,10 @@ rate.cadenceSensor.watch(onCadenceFn);
 
 ipcMain.handle(EVENTS.GET_PROGRAMS, () => store.store[DIR_CONST.PROGRAMS]);
 
+ipcMain.handle(EVENTS.CHECK_PROGRAM_TITLE, (event, value) => {
+  return store.isTitleAvailable(DIR_CONST.PROGRAMS, value);
+});
+
 ipcMain.on(EVENTS.SET_FULLSCREEN, () => {
   const isFullScreen = win.isFullScreen();
   win.setFullScreen(!isFullScreen);
@@ -123,15 +129,7 @@ ipcMain.on(EVENTS.STOP_MOTOR, () => {
 ipcMain.on(EVENTS.PREVENT_DISPLAY_SLEEP, preventDisplaySleepFn);
 
 ipcMain.on(EVENTS.SAVE_NEW_PROGRAM, async (event, programObject) => {
-  // TODO
-  const userDataPath = app.getPath("userData");
-  const { title } = programObject;
-  const fileName = filenamify(title, { replacement: "_" });
-  const filePath = await unusedFilename(
-    path.join(userDataPath, DIR_CONST.PROGRAMS, `${fileName}.json`),
-  );
-
-  fs.writeFileSync(filePath, JSON.stringify(programObject));
+  store.createProgram(programObject);
 });
 
 ipcMain.on(EVENTS.APP_QUIT, onQuit);

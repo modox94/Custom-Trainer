@@ -29,7 +29,7 @@ const NewProgram = props => {
   const { resistanceLevel, targetRpm } = steps[currentStep];
 
   const onSaveProgram = () => {
-    saveNewProgram({ title, maxResistanceLevel: 10, steps });
+    saveNewProgram({ title, maxResistanceLevel: MAX_RES_LEVEL, steps });
     navigate(PAGES_PATHS[MAIN]);
   };
 

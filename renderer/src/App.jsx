@@ -44,6 +44,11 @@ const App = () => {
             >
               <Route path="" element={<EditorMenu />} />
               <Route path="new" element={<NewProgram />} />
+              <Route path="edit" element={<OutletProvider />}>
+                <Route path="" element={<>edit</>} />
+                <Route path=":programTitle" element={<>:programTitle</>} />
+              </Route>
+              <Route path="delete" element={<>delete</>} />
             </Route>
           </Routes>
         </div>

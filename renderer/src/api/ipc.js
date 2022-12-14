@@ -57,6 +57,9 @@ const ipcApi = createApi({
   }),
 });
 
+export const checkProgramTitle = (...args) =>
+  window.electron.ipcRenderer.invoke(EVENTS.CHECK_PROGRAM_TITLE, ...args);
+
 export const setFullScreen = () =>
   window.electron.ipcRenderer.send(EVENTS.SET_FULLSCREEN);
 
