@@ -128,8 +128,12 @@ ipcMain.on(EVENTS.STOP_MOTOR, () => {
 
 ipcMain.on(EVENTS.PREVENT_DISPLAY_SLEEP, preventDisplaySleepFn);
 
-ipcMain.on(EVENTS.SAVE_NEW_PROGRAM, async (event, programObject) => {
-  store.createProgram(programObject);
-});
+ipcMain.on(EVENTS.SAVE_NEW_PROGRAM, async (event, programObject) =>
+  store.createProgram(programObject),
+);
+
+ipcMain.on(EVENTS.EDIT_PROGRAM, async (event, filename, programObject) =>
+  store.editProgram(filename, programObject),
+);
 
 ipcMain.on(EVENTS.APP_QUIT, onQuit);

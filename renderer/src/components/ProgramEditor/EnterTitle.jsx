@@ -1,12 +1,27 @@
 import { Button, Callout, Divider, InputGroup } from "@blueprintjs/core";
 import { get, noop } from "lodash";
 import PropTypes from "prop-types";
-import React, { useRef, useState } from "react";
+import React, { useCallback, useRef, useState } from "react";
+import { useTranslation } from "react-i18next";
+import { useMatch } from "react-router-dom";
 import Keyboard from "react-simple-keyboard";
 import "react-simple-keyboard/build/css/index.css";
-import { checkProgramTitle } from "../../api/ipc";
+import { checkProgramTitle, useGetProgramsQuery } from "../../api/ipc";
+import { PAGES, PAGES_PATHS } from "../../constants/pathConst";
+import { NP_MODE } from "../../constants/TODOconst";
+import {
+  TRANSLATION_KEYS,
+  TRANSLATION_ROOT_KEYS,
+} from "../../constants/translationConst";
+import { getTranslationPath } from "../../utils/translationUtils";
 import { Container, Item } from "../SquareGrid/SquareGrid";
 import styles from "./EnterTitle.module.css";
+
+const { PROGRAM_EDITOR } = PAGES;
+const { COMMON } = TRANSLATION_ROOT_KEYS;
+const { programTitleError, typeProgramTitle, next } = TRANSLATION_KEYS[COMMON];
+
+const getTPath = (...args) => getTranslationPath(COMMON, ...args);
 
 const DISPLAY = {
   "{numbers}": "123",
@@ -38,10 +53,21 @@ const LAYOUT = {
 };
 
 const EnterTitle = props => {
-  const { setTitle } = props;
+  const { mode, setTitle } = props;
+  const { t } = useTranslation();
   const keyboardRef = useRef();
   const [layout, setLayout] = useState(LAYOUT_NAME.default);
-  const [input, setInput] = useState("");
+  const filenameMatch = useMatch(
+    `${PAGES_PATHS[PROGRAM_EDITOR]}/edit/:filename`,
+  );
+  const filename = get(filenameMatch, ["params", "filename"]);
+  const { data: programs = {} } =
+    useGetProgramsQuery(undefined, {
+      skip: mode !== NP_MODE.EDIT,
+      refetchOnMountOrArgChange: true,
+    }) || {};
+  const programTitle = get(programs, [filename, "title"], "");
+  const [input, setInput] = useState(programTitle);
   const [error, setError] = useState("");
 
   const handleShift = () => {
@@ -54,15 +80,22 @@ const EnterTitle = props => {
 
   const handleDefault = () => setLayout(LAYOUT_NAME.default);
 
-  const checkTitle = async value => {
-    const isAvailableTitle = await checkProgramTitle(value.trim());
+  const checkTitle = useCallback(
+    async value => {
+      const valueTrimed = value.trim();
 
-    if (value.trim() && !isAvailableTitle && !error) {
-      setError("bad title error"); // TODO
-    } else if (!value.trim() || (isAvailableTitle && error)) {
-      setError("");
-    }
-  };
+      const isAvailableTitle =
+        (valueTrimed === programTitle && true) ||
+        (await checkProgramTitle(valueTrimed));
+
+      if (valueTrimed && !isAvailableTitle && !error) {
+        setError(t(getTPath(programTitleError)));
+      } else if (!valueTrimed || (isAvailableTitle && error)) {
+        setError("");
+      }
+    },
+    [error, programTitle, t],
+  );
 
   const onKeyBoardChange = value => {
     setInput(value);
@@ -83,12 +116,15 @@ const EnterTitle = props => {
     }
   };
 
-  const onInputChange = event => {
-    const value = get(event, ["target", "value"]);
-    setInput(value);
-    keyboardRef.current?.setInput(value);
-    checkTitle(value);
-  };
+  const onInputChange = useCallback(
+    event => {
+      const value = get(event, ["target", "value"]);
+      setInput(value);
+      keyboardRef.current?.setInput(value);
+      checkTitle(value);
+    },
+    [checkTitle],
+  );
 
   const onNextStep = () => {
     const inputTrimed = input.trim();
@@ -104,7 +140,7 @@ const EnterTitle = props => {
         <Item className={styles.mediumPadding}>
           <InputGroup
             large
-            placeholder="Введите название программы..." // TODO
+            placeholder={t(getTPath(typeProgramTitle))}
             rightElement={
               <Button
                 large
@@ -113,7 +149,7 @@ const EnterTitle = props => {
                   (error && "danger") ||
                   (input.trim().length > 0 ? "success" : "none")
                 }
-                text="Next step" // TODO
+                text={t(getTPath(next))}
                 disabled={error || input.trim().length === 0}
                 onClick={onNextStep}
               />
@@ -148,9 +184,11 @@ const EnterTitle = props => {
 };
 
 EnterTitle.propTypes = {
+  mode: PropTypes.string,
   setTitle: PropTypes.func,
 };
 EnterTitle.defaultProps = {
+  mode: NP_MODE.NEW,
   setTitle: noop,
 };
 

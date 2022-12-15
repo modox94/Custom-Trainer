@@ -236,6 +236,17 @@ class Store {
     fs.writeFileSync(fullPath, JSON.stringify(data));
   }
 
+  editProgram(filename, data) {
+    const isExist = this.isExist(DIR_CONST.PROGRAMS, filename);
+    if (!isExist) {
+      console.log("error cant find file");
+      return;
+    }
+
+    const fullPath = path.join(this.userDataPath, DIR_CONST.PROGRAMS, filename);
+    fs.writeFileSync(fullPath, JSON.stringify(data));
+  }
+
   delete(dir, filename) {
     if (!DIR_CONST_ARRAY.includes(dir)) {
       console.log("error wrong dir");

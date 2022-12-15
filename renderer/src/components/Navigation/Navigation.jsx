@@ -2,7 +2,7 @@ import { Button, Navbar, NavbarGroup, NavbarHeading } from "@blueprintjs/core";
 import { get } from "lodash";
 import React, { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useLocation, useMatch, useNavigate } from "react-router-dom";
 import { setFullScreen, useGetProgramsQuery } from "../../api/ipc";
 import { PAGES, PAGES_PATHS } from "../../constants/pathConst";
 import {
@@ -13,7 +13,6 @@ import { getTranslationPath } from "../../utils/translationUtils";
 import styles from "./Navigation.module.css";
 
 const { MAIN, MANUAL_MODE, SETTINGS, SELECT_PROGRAM } = PAGES;
-const SELECT_PROGRAM_PATH = PAGES_PATHS[SELECT_PROGRAM];
 const { COMMON } = TRANSLATION_ROOT_KEYS;
 const { back, fullscreen, programMode } = TRANSLATION_KEYS[COMMON];
 
@@ -24,20 +23,17 @@ const Navigation = () => {
   const [title, setTitle] = useState("");
   const location = useLocation();
   const navigate = useNavigate();
+  const filenameMatch = useMatch(`${PAGES_PATHS[SELECT_PROGRAM]}/:filename`);
   const { data: programs = {} } = useGetProgramsQuery();
-
   const programTitle = useMemo(() => {
-    const isSelectProgramPage =
-      location.pathname.startsWith(SELECT_PROGRAM_PATH);
-    if (!isSelectProgramPage) {
-      return "";
+    if (filenameMatch) {
+      const filename = get(filenameMatch, ["params", "filename"]);
+
+      return get(programs, [filename, "title"], "") || "";
     }
 
-    const programFilename = location.pathname.slice(
-      PAGES_PATHS[SELECT_PROGRAM].length + 1,
-    );
-    return get(programs, [programFilename, "title"], "") || "";
-  }, [location.pathname, programs]);
+    return "";
+  }, [filenameMatch, programs]);
 
   useEffect(() => {
     const { pathname } = location;
@@ -60,15 +56,21 @@ const Navigation = () => {
         break;
 
       default: {
-        const isSelectProgramPage = pathname.startsWith(SELECT_PROGRAM_PATH);
-        if (isSelectProgramPage) {
+        if (filenameMatch) {
           const newTitle = `${t(getTPath(programMode))}: ${programTitle}`;
           setTitle(newTitle);
         }
         break;
       }
     }
-  }, [location, location.pathname, t, i18n.language, programTitle]);
+  }, [
+    location,
+    location.pathname,
+    t,
+    i18n.language,
+    filenameMatch,
+    programTitle,
+  ]);
 
   const goBack = () => {
     navigate(-1);

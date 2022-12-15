@@ -12,3 +12,14 @@ export const EDITOR_STEPS = {
 };
 
 export const DEFAULT_STEPS = [{ resistanceLevel: 6, targetRpm: 60 }];
+
+export const NP_MODE = {
+  NEW: "NEW",
+  EDIT: "EDIT",
+};
+
+export const SP_MODE = {
+  SELECT: "SELECT",
+  EDIT: "EDIT",
+  DELETE: "DELETE",
+};

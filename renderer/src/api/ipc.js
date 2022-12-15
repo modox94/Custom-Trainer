@@ -75,6 +75,13 @@ export const preventDisplaySleep = flag =>
 export const saveNewProgram = programObject =>
   window.electron.ipcRenderer.send(EVENTS.SAVE_NEW_PROGRAM, programObject);
 
+export const editProgram = (filename, programObject) =>
+  window.electron.ipcRenderer.send(
+    EVENTS.EDIT_PROGRAM,
+    filename,
+    programObject,
+  );
+
 export const appQuit = () => window.electron.ipcRenderer.send(EVENTS.APP_QUIT);
 
 export const { useGetCadenceQuery, useGetProgramsQuery } = ipcApi;
