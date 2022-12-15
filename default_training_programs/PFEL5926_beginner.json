@@ -1,5 +1,6 @@
 {
   "title": "[PFEL5926] Beginner",
+  "default": true,
   "maxResistanceLevel": 10,
   "steps": [
     { "resistanceLevel": 1, "targetRpm": 50 },

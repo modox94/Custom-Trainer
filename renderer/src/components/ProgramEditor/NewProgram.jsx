@@ -1,16 +1,22 @@
 import { Button, Icon } from "@blueprintjs/core";
 import { IconNames } from "@blueprintjs/icons";
 import clsx from "clsx";
-import { noop } from "lodash";
+import { get, noop } from "lodash";
 import { Duration } from "luxon";
+import PropTypes from "prop-types";
 import React, { useMemo, useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { saveNewProgram } from "../../api/ipc";
+import { useMatch, useNavigate } from "react-router-dom";
+import {
+  editProgram,
+  saveNewProgram,
+  useGetProgramsQuery,
+} from "../../api/ipc";
 import { PAGES, PAGES_PATHS } from "../../constants/pathConst";
 import {
   DEFAULT_STEPS,
   MAX_RES_LEVEL,
   MAX_RPM_LEVEL,
+  NP_MODE,
   RES_STEP,
   RPM_STEP,
 } from "../../constants/TODOconst";
@@ -18,19 +24,58 @@ import BarChart from "../BarChart/BarChart";
 import { Container, Item } from "../SquareGrid/SquareGrid";
 import EnterTitle from "./EnterTitle";
 import styles from "./NewProgram.module.css";
+import { useTranslation } from "react-i18next";
+import {
+  TRANSLATION_KEYS,
+  TRANSLATION_ROOT_KEYS,
+} from "../../constants/translationConst";
+import { getTranslationPath } from "../../utils/translationUtils";
 
-const { MAIN } = PAGES;
+const { MAIN, PROGRAM_EDITOR } = PAGES;
+const { COMMON } = TRANSLATION_ROOT_KEYS;
+const { add, deleteTKey, save } = TRANSLATION_KEYS[COMMON];
+
+const getTPath = (...args) => getTranslationPath(COMMON, ...args);
 
 const NewProgram = props => {
+  const { mode } = props;
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const [title, setTitle] = useState("");
-  const [steps, setSteps] = useState(DEFAULT_STEPS);
   const [currentStep, setCurrentStep] = useState(0);
+
+  const filenameMatch = useMatch(
+    `${PAGES_PATHS[PROGRAM_EDITOR]}/edit/:filename`,
+  );
+  const filename = get(filenameMatch, ["params", "filename"]);
+  const { data: programs = {} } =
+    useGetProgramsQuery(undefined, {
+      skip: mode !== NP_MODE.EDIT,
+      refetchOnMountOrArgChange: true,
+    }) || {};
+  const programSteps = get(programs, [filename, "steps"], DEFAULT_STEPS);
+  const [steps, setSteps] = useState(programSteps);
   const { resistanceLevel, targetRpm } = steps[currentStep];
 
   const onSaveProgram = () => {
-    saveNewProgram({ title, maxResistanceLevel: 10, steps });
-    navigate(PAGES_PATHS[MAIN]);
+    switch (mode) {
+      case NP_MODE.NEW:
+        saveNewProgram({ title, maxResistanceLevel: MAX_RES_LEVEL, steps });
+        navigate(PAGES_PATHS[MAIN]);
+        break;
+
+      case NP_MODE.EDIT:
+        editProgram(filename, {
+          title,
+          maxResistanceLevel: MAX_RES_LEVEL,
+          steps,
+        });
+        navigate(PAGES_PATHS[MAIN]);
+        break;
+
+      default:
+        break;
+    }
   };
 
   const onPrevStep = () => {
@@ -62,6 +107,11 @@ const NewProgram = props => {
     if (steps.length > 1) {
       const newSteps = [...steps];
       newSteps.splice(currentStep, 1);
+      let newCurrentStep = currentStep;
+      if (newCurrentStep > newSteps.length - 1) {
+        newCurrentStep -= 1;
+      }
+      setCurrentStep(newCurrentStep);
       setSteps(newSteps);
     }
   };
@@ -145,7 +195,7 @@ const NewProgram = props => {
   };
 
   if (!title) {
-    return <EnterTitle setTitle={setTitle} />;
+    return <EnterTitle mode={mode} setTitle={setTitle} />;
   }
 
   return (
@@ -253,14 +303,14 @@ const NewProgram = props => {
             large
             intent="primary"
             icon="plus"
-            text="Добавить" // TODO
+            text={t(getTPath(add))}
             onClick={onAddStep}
           />
           <Button
             large
             intent="danger"
             icon="trash"
-            text="Удалить" // TODO
+            text={t(getTPath(deleteTKey))}
             disabled={steps.length <= 1}
             onClick={onDeleteStep}
           />
@@ -268,13 +318,20 @@ const NewProgram = props => {
             large
             intent="success"
             icon="floppy-disk"
-            text="Сохранить" // TODO
+            text={t(getTPath(save))}
             onClick={onSaveProgram}
           />
         </Item>
       </Container>
     </>
   );
+};
+
+NewProgram.propTypes = {
+  mode: PropTypes.string,
+};
+NewProgram.defaultProps = {
+  mode: NP_MODE.NEW,
 };
 
 export default NewProgram;

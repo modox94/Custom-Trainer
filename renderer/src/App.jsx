@@ -14,6 +14,7 @@ import ProgramMode from "./components/ProgramMode/ProgramMode";
 import SelectProgram from "./components/SelectProgram/SelectProgram";
 import Settings from "./components/Settings/Settings";
 import { PAGES, PAGES_PATHS } from "./constants/pathConst";
+import { NP_MODE, SP_MODE } from "./constants/TODOconst";
 
 const OutletProvider = () => <Outlet />;
 
@@ -35,7 +36,10 @@ const App = () => {
               path={PAGES_PATHS[SELECT_PROGRAM]}
               element={<OutletProvider />}
             >
-              <Route path="" element={<SelectProgram />} />
+              <Route
+                path=""
+                element={<SelectProgram mode={SP_MODE.SELECT} />}
+              />
               <Route path=":programTitle" element={<ProgramMode />} />
             </Route>
             <Route
@@ -43,7 +47,21 @@ const App = () => {
               element={<OutletProvider />}
             >
               <Route path="" element={<EditorMenu />} />
-              <Route path="new" element={<NewProgram />} />
+              <Route path="new" element={<NewProgram mode={NP_MODE.NEW} />} />
+              <Route path="edit" element={<OutletProvider />}>
+                <Route
+                  path=""
+                  element={<SelectProgram mode={SP_MODE.EDIT} />}
+                />
+                <Route
+                  path=":programTitle"
+                  element={<NewProgram mode={NP_MODE.EDIT} />}
+                />
+              </Route>
+              <Route
+                path="delete"
+                element={<SelectProgram mode={SP_MODE.DELETE} />}
+              />
             </Route>
           </Routes>
         </div>

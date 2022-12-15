@@ -1,11 +1,27 @@
-import { Button, InputGroup } from "@blueprintjs/core";
+import { Button, Callout, Divider, InputGroup } from "@blueprintjs/core";
 import { get, noop } from "lodash";
 import PropTypes from "prop-types";
-import React, { useRef, useState } from "react";
+import React, { useCallback, useRef, useState } from "react";
+import { useTranslation } from "react-i18next";
+import { useMatch } from "react-router-dom";
 import Keyboard from "react-simple-keyboard";
 import "react-simple-keyboard/build/css/index.css";
+import { checkProgramTitle, useGetProgramsQuery } from "../../api/ipc";
+import { PAGES, PAGES_PATHS } from "../../constants/pathConst";
+import { NP_MODE } from "../../constants/TODOconst";
+import {
+  TRANSLATION_KEYS,
+  TRANSLATION_ROOT_KEYS,
+} from "../../constants/translationConst";
+import { getTranslationPath } from "../../utils/translationUtils";
 import { Container, Item } from "../SquareGrid/SquareGrid";
 import styles from "./EnterTitle.module.css";
+
+const { PROGRAM_EDITOR } = PAGES;
+const { COMMON } = TRANSLATION_ROOT_KEYS;
+const { programTitleError, typeProgramTitle, next } = TRANSLATION_KEYS[COMMON];
+
+const getTPath = (...args) => getTranslationPath(COMMON, ...args);
 
 const DISPLAY = {
   "{numbers}": "123",
@@ -37,10 +53,22 @@ const LAYOUT = {
 };
 
 const EnterTitle = props => {
-  const { setTitle } = props;
+  const { mode, setTitle } = props;
+  const { t } = useTranslation();
   const keyboardRef = useRef();
-  const [input, setInput] = useState("");
   const [layout, setLayout] = useState(LAYOUT_NAME.default);
+  const filenameMatch = useMatch(
+    `${PAGES_PATHS[PROGRAM_EDITOR]}/edit/:filename`,
+  );
+  const filename = get(filenameMatch, ["params", "filename"]);
+  const { data: programs = {} } =
+    useGetProgramsQuery(undefined, {
+      skip: mode !== NP_MODE.EDIT,
+      refetchOnMountOrArgChange: true,
+    }) || {};
+  const programTitle = get(programs, [filename, "title"], "");
+  const [input, setInput] = useState(programTitle);
+  const [error, setError] = useState("");
 
   const handleShift = () => {
     const newLayoutName =
@@ -52,8 +80,26 @@ const EnterTitle = props => {
 
   const handleDefault = () => setLayout(LAYOUT_NAME.default);
 
+  const checkTitle = useCallback(
+    async value => {
+      const valueTrimed = value.trim();
+
+      const isAvailableTitle =
+        (valueTrimed === programTitle && true) ||
+        (await checkProgramTitle(valueTrimed));
+
+      if (valueTrimed && !isAvailableTitle && !error) {
+        setError(t(getTPath(programTitleError)));
+      } else if (!valueTrimed || (isAvailableTitle && error)) {
+        setError("");
+      }
+    },
+    [error, programTitle, t],
+  );
+
   const onKeyBoardChange = value => {
     setInput(value);
+    checkTitle(value);
   };
 
   const onKeyBoardKeyPress = button => {
@@ -70,15 +116,22 @@ const EnterTitle = props => {
     }
   };
 
-  const onInputChange = event => {
-    const value = get(event, ["target", "value"]);
-    setInput(value);
-
-    keyboardRef.current?.setInput(value);
-  };
+  const onInputChange = useCallback(
+    event => {
+      const value = get(event, ["target", "value"]);
+      setInput(value);
+      keyboardRef.current?.setInput(value);
+      checkTitle(value);
+    },
+    [checkTitle],
+  );
 
   const onNextStep = () => {
-    setTitle(input.trim());
+    const inputTrimed = input.trim();
+
+    if (inputTrimed && !error) {
+      setTitle(inputTrimed);
+    }
   };
 
   return (
@@ -87,14 +140,17 @@ const EnterTitle = props => {
         <Item className={styles.mediumPadding}>
           <InputGroup
             large
-            placeholder="Введите название программы..." // TODO
+            placeholder={t(getTPath(typeProgramTitle))}
             rightElement={
               <Button
                 large
                 rightIcon="arrow-right"
-                intent={input.trim().length > 0 ? "success" : "none"}
-                text="Next step" // TODO
-                disabled={input.trim().length === 0}
+                intent={
+                  (error && "danger") ||
+                  (input.trim().length > 0 ? "success" : "none")
+                }
+                text={t(getTPath(next))}
+                disabled={error || input.trim().length === 0}
                 onClick={onNextStep}
               />
             }
@@ -102,6 +158,15 @@ const EnterTitle = props => {
             value={input}
             onChange={onInputChange}
           />
+
+          {error && (
+            <>
+              <Divider />
+              <Callout icon="error" intent="danger">
+                {error}
+              </Callout>
+            </>
+          )}
         </Item>
       </Container>
 
@@ -119,9 +184,11 @@ const EnterTitle = props => {
 };
 
 EnterTitle.propTypes = {
+  mode: PropTypes.string,
   setTitle: PropTypes.func,
 };
 EnterTitle.defaultProps = {
+  mode: NP_MODE.NEW,
   setTitle: noop,
 };
 

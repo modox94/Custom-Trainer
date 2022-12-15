@@ -1,28 +1,54 @@
-import { chunk } from "lodash";
+import { chunk, get } from "lodash";
+import PropTypes from "prop-types";
 import React, { useMemo } from "react";
 import { useNavigate } from "react-router-dom";
-import { useGetProgramsListQuery } from "../../api/ipc";
+import { useGetProgramsQuery } from "../../api/ipc";
 import { PAGES, PAGES_PATHS } from "../../constants/pathConst";
+import { SP_MODE } from "../../constants/TODOconst";
 import { Container, Item } from "../SquareGrid/SquareGrid";
 
-const { SELECT_PROGRAM } = PAGES;
+const { SELECT_PROGRAM, PROGRAM_EDITOR } = PAGES;
 
 const SelectProgram = props => {
+  const { mode } = props;
   const navigate = useNavigate();
-  const { data: programs } =
-    useGetProgramsListQuery(undefined, { refetchOnMountOrArgChange: true }) ||
-    {};
+  const { data: programs = {} } =
+    useGetProgramsQuery(undefined, {
+      refetchOnMountOrArgChange: true,
+    }) || {};
 
   const items = useMemo(() => {
     return chunk(
-      (programs || []).map(([fileName, programTitle], idx) => ({
-        key: fileName,
-        onClick: () => navigate(`${PAGES_PATHS[SELECT_PROGRAM]}/${fileName}`),
-        children: <h1>{programTitle}</h1>,
-      })),
+      (Object.keys(programs) || []).map((fileName, idx) => {
+        let onClick;
+        switch (mode) {
+          case SP_MODE.SELECT:
+            onClick = () =>
+              navigate(`${PAGES_PATHS[SELECT_PROGRAM]}/${fileName}`);
+            break;
+
+          case SP_MODE.EDIT:
+            onClick = () =>
+              navigate(`${PAGES_PATHS[PROGRAM_EDITOR]}/edit/${fileName}`);
+            break;
+
+          case SP_MODE.DELETE:
+            onClick = () => console.log("delete!!!");
+            break;
+
+          default:
+            break;
+        }
+
+        return {
+          key: fileName,
+          onClick,
+          children: <h1>{get(programs, [fileName, "title"], "")}</h1>,
+        };
+      }),
       3,
     );
-  }, [navigate, programs]);
+  }, [mode, navigate, programs]);
 
   return items.map(row => (
     <Container key={row.reduce((acc, item) => acc + item.key, "")}>
@@ -36,6 +62,13 @@ const SelectProgram = props => {
       })}
     </Container>
   ));
+};
+
+SelectProgram.propTypes = {
+  mode: PropTypes.string,
+};
+SelectProgram.defaultProps = {
+  mode: SP_MODE.SELECT,
 };
 
 export default SelectProgram;

@@ -4,7 +4,10 @@ import {
   TRANSLATION_KEYS as TK,
   TRANSLATION_ROOT_KEYS as TRK,
 } from "../constants/translationConst";
-import { getNormalizedTranslation } from "../utils/translationUtils";
+import {
+  getNormalizedTranslation,
+  getTranslationPath as getTP,
+} from "../utils/translationUtils";
 
 const { en, ru } = LANGS_CODES;
 const { COMMON } = TRK;
@@ -55,6 +58,42 @@ const resources = {
       [en]: "New program",
       [ru]: "Новая программа",
     },
+    [TK[COMMON].editProgram]: {
+      [en]: "Edit program",
+      [ru]: "Редактировать программу",
+    },
+    [TK[COMMON].copyProgram]: {
+      [en]: "Copy program",
+      [ru]: "Копировать программу",
+    },
+    [TK[COMMON].deleteProgram]: {
+      [en]: "Delete program",
+      [ru]: "Удалить программу",
+    },
+    [TK[COMMON].typeProgramTitle]: {
+      [en]: "Type the title of the program...",
+      [ru]: "Введите название программы...",
+    },
+    [TK[COMMON].next]: {
+      [en]: "Next",
+      [ru]: "Дальше",
+    },
+    [TK[COMMON].programTitleError]: {
+      [en]: "This title is already used, enter another one.",
+      [ru]: "Это название уже занято какой-то программой, введите другое.",
+    },
+    [TK[COMMON].add]: {
+      [en]: "Add",
+      [ru]: "Добавить",
+    },
+    [TK[COMMON].deleteTKey]: {
+      [en]: "Delete",
+      [ru]: "Удалить",
+    },
+    [TK[COMMON].save]: {
+      [en]: "Save",
+      [ru]: "Сохранить",
+    },
     [TK[COMMON].programMode]: {
       [en]: "Program mode",
       [ru]: "Режим программы",
@@ -86,6 +125,30 @@ const resources = {
     [TK[COMMON].targetRPM]: {
       [en]: "Target RPM",
       [ru]: "Требуемый каденс",
+    },
+    [TK[COMMON].repeat]: {
+      [en]: "Repeat",
+      [ru]: "Повторить",
+    },
+    [TK[COMMON].trainingDone]: {
+      [en]: "Training is done",
+      [ru]: "Тренировка окончена",
+    },
+    [TK[COMMON].trainingDoneMsg]: {
+      [en]: `Click the "$t(${getTP(
+        COMMON,
+        TK[COMMON].back,
+      )})" button to return to the list of programs or the "$t(${getTP(
+        COMMON,
+        TK[COMMON].repeat,
+      )})" button to start this program again.`,
+      [ru]: `Нажмите кнопку "$t(${getTP(
+        COMMON,
+        TK[COMMON].back,
+      )})", чтобы вернуться к списку программ или нажмите кнопку "$t(${getTP(
+        COMMON,
+        TK[COMMON].repeat,
+      )})", чтобы запустить эту программу с начала.`,
     },
   },
 };

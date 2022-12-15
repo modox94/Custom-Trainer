@@ -3,13 +3,13 @@ import { get, round } from "lodash";
 import React, { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useSelector } from "react-redux";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useMatch, useNavigate } from "react-router-dom";
 import { useTimer } from "react-timer-hook";
 import {
   preventDisplaySleep,
   setMotorLevel,
   stopMotor,
-  useGetProgramQuery,
+  useGetProgramsQuery,
 } from "../../api/ipc";
 import { PAGES, PAGES_PATHS } from "../../constants/pathConst";
 import { RUNNINIG_STATUS } from "../../constants/reduxConst";
@@ -28,7 +28,8 @@ import Timer from "../Timer/Timer";
 import styles from "./ProgramMode.module.css";
 
 const { COMMON } = TRANSLATION_ROOT_KEYS;
-const { back } = TRANSLATION_KEYS[COMMON];
+const { back, repeat, trainingDone, trainingDoneMsg } =
+  TRANSLATION_KEYS[COMMON];
 const { RUN } = RUNNINIG_STATUS;
 const { SELECT_PROGRAM } = PAGES;
 
@@ -56,18 +57,23 @@ const ProgramMode = props => {
   const [counter, setCounter] = useState(undefined);
   const [isDone, setIsDone] = useState(false);
   const [totalEndTime, setTotalEndTime] = useState(undefined);
-  const location = useLocation();
   const navigate = useNavigate();
   const runningStatus = useSelector(getRunningStatus);
 
+  const filenameMatch = useMatch(`${PAGES_PATHS[SELECT_PROGRAM]}/:filename`);
+
   const fileName = useMemo(
-    () => location.pathname.slice(PAGES_PATHS[SELECT_PROGRAM].length + 1),
-    [location],
+    () => get(filenameMatch, ["params", "filename"], ""),
+    [filenameMatch],
   );
-  const { data: programObject } = useGetProgramQuery(fileName) || {};
-  const targetRpm = get(programObject, ["steps", counter, "targetRpm"], 0);
-  const steps = get(programObject, ["steps"], []);
-  const maxResistanceLevel = get(programObject, ["maxResistanceLevel"], 0);
+  const { data: programs = {} } =
+    useGetProgramsQuery(undefined, {
+      refetchOnMountOrArgChange: true,
+    }) || {};
+
+  const targetRpm = get(programs, [fileName, "steps", counter, "targetRpm"], 0);
+  const steps = get(programs, [fileName, "steps"], []);
+  const maxResistanceLevel = get(programs, [fileName, "maxResistanceLevel"], 0);
 
   useEffect(() => {
     preventDisplaySleep(true);
@@ -136,7 +142,6 @@ const ProgramMode = props => {
     isDone,
     maxResistanceLevel,
     minutes,
-    programObject,
     restart,
     runningStatus,
     seconds,
@@ -182,27 +187,23 @@ const ProgramMode = props => {
     <>
       <Dialog
         isOpen={isDone}
-        title="TODO program done"
+        title={t(getTPath(trainingDone))}
         canOutsideClickClose={false}
         isCloseButtonShown={false}
       >
         <div className={Classes.DIALOG_BODY}>
-          <p>
-            <strong>TODO Тренировка окончена.</strong>
-          </p>
-          <p>
-            TODO Нажмите кнопку "назад", чтобы вернуться к списку програм или
-            кнопку "повторить", чтобы начать эту програму заново.
-          </p>
+          <p className={Classes.TEXT_LARGE}>{t(getTPath(trainingDoneMsg))}</p>
         </div>
         <div className={Classes.DIALOG_FOOTER}>
           <div className={Classes.DIALOG_FOOTER_ACTIONS}>
             <Button
+              large
               icon="repeat"
-              text="TODO повторить"
+              text={t(getTPath(repeat))}
               onClick={repeatProgram}
             />
             <Button
+              large
               icon="arrow-left"
               text={t(getTPath(back))}
               onClick={goBack}

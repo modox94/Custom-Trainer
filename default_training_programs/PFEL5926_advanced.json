@@ -1,5 +1,6 @@
 {
   "title": "[PFEL5926] Advanced",
+  "default": true,
   "maxResistanceLevel": 10,
   "steps": [
     { "resistanceLevel": 3, "targetRpm": 60 },
