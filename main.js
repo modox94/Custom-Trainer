@@ -75,8 +75,13 @@ const onQuit = () => {
     console.log("rate.off error", error);
   }
 
-  const watchers = get(store, ["watchers"], []);
-  watchers.forEach(watcher => watcher.close());
+  const watchersObj = get(store, ["watchers"], {});
+  const watchersArray = Object.values(watchersObj) || [];
+  watchersArray.forEach(watcher => {
+    if (isFunction(watcher.close)) {
+      watcher.close();
+    }
+  });
 
   preventDisplaySleepFn();
 
