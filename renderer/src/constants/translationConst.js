@@ -27,6 +27,8 @@ export const TRANSLATION_KEYS = {
     deleteTKey: "deleteTKey",
     save: "save",
     repeat: "repeat",
+    cancelTKey: "cancelTKey",
+    copyTKey: "copyTKey",
   },
   [TRANSLATION_ROOT_KEYS.WORKOUT]: {
     programMode: "programMode",
@@ -44,6 +46,10 @@ export const TRANSLATION_KEYS = {
     deleteProgram: "deleteProgram",
     typeProgramTitle: "typeProgramTitle",
     programTitleError: "programTitleError",
+    deleteProgHead: "deleteProgHead",
+    deleteProgMsg: "deleteProgMsg",
+    copyProgHead: "copyProgHead",
+    copyProgMsg: "copyProgMsg",
   },
   [TRANSLATION_ROOT_KEYS.SETTINGS]: {
     [LANGS_CODES.en]: LANGS_CODES.en,

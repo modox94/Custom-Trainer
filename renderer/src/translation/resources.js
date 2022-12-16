@@ -66,6 +66,14 @@ const resources = {
       [en]: "Repeat",
       [ru]: "Повторить",
     },
+    [TK[COMMON].cancelTKey]: {
+      [en]: "Cancel",
+      [ru]: "Отмена",
+    },
+    [TK[COMMON].copyTKey]: {
+      [en]: "Copy",
+      [ru]: "Копировать",
+    },
   },
   [WORKOUT]: {
     [TK[WORKOUT].programMode]: {
@@ -133,6 +141,22 @@ const resources = {
     [TK[PROGRAM_EDITOR].programTitleError]: {
       [en]: "This title is already used, enter another one.",
       [ru]: "Это название уже занято какой-то программой, введите другое.",
+    },
+    [TK[PROGRAM_EDITOR].deleteProgHead]: {
+      [en]: "Deleting the program",
+      [ru]: "Удаление программы",
+    },
+    [TK[PROGRAM_EDITOR].deleteProgMsg]: {
+      [en]: 'The selected program "{{programTitle}}" will be permanently deleted. Are you sure?',
+      [ru]: 'Выбранная программа "{{programTitle}}" будет удалена без возможности восстановления. Вы уверены?',
+    },
+    [TK[PROGRAM_EDITOR].copyProgHead]: {
+      [en]: "Copying program",
+      [ru]: "Копирование программы",
+    },
+    [TK[PROGRAM_EDITOR].copyProgMsg]: {
+      [en]: 'The new program will be created based on the selected "{{programTitle}}". You will need to enter a new title, make changes if necessary, and save.',
+      [ru]: 'Новая программа будет создана на основе выбранной "{{programTitle}}". Нужно будет ввести новое имя, внести изменения, если потребуется, и сохранить.',
     },
   },
   [SETTINGS]: {

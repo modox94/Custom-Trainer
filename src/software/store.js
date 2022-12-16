@@ -16,7 +16,6 @@ const DIR_CONST_ARRAY = Object.values(DIR_CONST);
 class Store {
   constructor() {
     this.userDataPath = app.getPath("userData");
-    console.log("this.userDataPath", this.userDataPath);
 
     this.callbacks = DIR_CONST_ARRAY.reduce((callbacksObj, dir) => {
       callbacksObj[dir] = [];
