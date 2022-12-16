@@ -11,7 +11,7 @@ import {
   saveNewProgram,
   useGetProgramsQuery,
 } from "../../api/ipc";
-import { PAGES, PAGES_PATHS } from "../../constants/pathConst";
+import { PAGES, PAGES_PATHS, SUB_PATHS } from "../../constants/pathConst";
 import {
   DEFAULT_STEPS,
   MAX_RES_LEVEL,
@@ -45,9 +45,9 @@ const NewProgram = props => {
   const [currentStep, setCurrentStep] = useState(0);
 
   const filenameMatch = useMatch(
-    `${PAGES_PATHS[PROGRAM_EDITOR]}/edit/:filename`,
+    `${PAGES_PATHS[PROGRAM_EDITOR]}/${SUB_PATHS[PROGRAM_EDITOR].EDIT}/:${SUB_PATHS.FILENAME}`,
   );
-  const filename = get(filenameMatch, ["params", "filename"]);
+  const filename = get(filenameMatch, ["params", SUB_PATHS.FILENAME]);
   const { data: programs = {} } =
     useGetProgramsQuery(undefined, {
       skip: mode !== NP_MODE.EDIT,

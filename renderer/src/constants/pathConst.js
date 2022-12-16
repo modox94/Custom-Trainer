@@ -13,3 +13,14 @@ export const PAGES_PATHS = {
   [PAGES.SELECT_PROGRAM]: "/select_program",
   [PAGES.PROGRAM_EDITOR]: "/program_editor",
 };
+
+export const SUB_PATHS = {
+  FILENAME: "filename",
+  ROOT: "",
+  [PAGES.PROGRAM_EDITOR]: {
+    NEW: "new",
+    EDIT: "edit",
+    COPY: "copy",
+    DELETE: "delete",
+  },
+};

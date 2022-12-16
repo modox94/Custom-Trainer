@@ -7,7 +7,7 @@ import { useMatch } from "react-router-dom";
 import Keyboard from "react-simple-keyboard";
 import "react-simple-keyboard/build/css/index.css";
 import { checkProgramTitle, useGetProgramsQuery } from "../../api/ipc";
-import { PAGES, PAGES_PATHS } from "../../constants/pathConst";
+import { PAGES, PAGES_PATHS, SUB_PATHS } from "../../constants/pathConst";
 import { NP_MODE } from "../../constants/TODOconst";
 import {
   TRANSLATION_KEYS,
@@ -18,16 +18,18 @@ import { Container, Item } from "../SquareGrid/SquareGrid";
 import styles from "./EnterTitle.module.css";
 
 const { PROGRAM_EDITOR } = PAGES;
-const { COMMON } = TRANSLATION_ROOT_KEYS;
-const { programTitleError, typeProgramTitle, next } = TRANSLATION_KEYS[COMMON];
+const { COMMON, PROGRAM_EDITOR: PE_TRK } = TRANSLATION_ROOT_KEYS;
+const { next } = TRANSLATION_KEYS[COMMON];
+const { programTitleError, typeProgramTitle } = TRANSLATION_KEYS[PE_TRK];
 
-const getTPath = (...args) => getTranslationPath(COMMON, ...args);
+const getTPath = (...args) => getTranslationPath(PE_TRK, ...args);
 
 const DISPLAY = {
   "{numbers}": "123",
   "{backspace}": "⌫",
   "{shift}": "⇧",
   "{abc}": "ABC",
+  "{space}": "⎵",
 };
 
 const LAYOUT_NAME = {
@@ -38,18 +40,23 @@ const LAYOUT_NAME = {
 
 const LAYOUT = {
   [LAYOUT_NAME.default]: [
-    "q w e r t y u i o p",
+    "q w e r t y u i o p {backspace}",
     "a s d f g h j k l",
-    "{shift} z x c v b n m {backspace}",
-    "{numbers} {space}",
+    "{shift} z x c v b n m {numbers}",
+    "{space}",
   ],
   [LAYOUT_NAME.shift]: [
-    "Q W E R T Y U I O P",
+    "Q W E R T Y U I O P {backspace}",
     "A S D F G H J K L",
-    "{shift} Z X C V B N M {backspace}",
-    "{numbers} {space}",
+    "{shift} Z X C V B N M {numbers}",
+    "{space}",
   ],
-  [LAYOUT_NAME.numbers]: ["1 2 3", "4 5 6", "7 8 9", "{abc} 0 {backspace}"],
+  [LAYOUT_NAME.numbers]: [
+    "_ 1 2 3 -",
+    "( 4 5 6 #",
+    ") 7 8 9 {space}",
+    "{abc} , 0 . {backspace}",
+  ],
 };
 
 const EnterTitle = props => {
@@ -58,9 +65,9 @@ const EnterTitle = props => {
   const keyboardRef = useRef();
   const [layout, setLayout] = useState(LAYOUT_NAME.default);
   const filenameMatch = useMatch(
-    `${PAGES_PATHS[PROGRAM_EDITOR]}/edit/:filename`,
+    `${PAGES_PATHS[PROGRAM_EDITOR]}/${SUB_PATHS[PROGRAM_EDITOR].EDIT}/:${SUB_PATHS.FILENAME}`,
   );
-  const filename = get(filenameMatch, ["params", "filename"]);
+  const filename = get(filenameMatch, ["params", SUB_PATHS.FILENAME]);
   const { data: programs = {} } =
     useGetProgramsQuery(undefined, {
       skip: mode !== NP_MODE.EDIT,
@@ -149,7 +156,7 @@ const EnterTitle = props => {
                   (error && "danger") ||
                   (input.trim().length > 0 ? "success" : "none")
                 }
-                text={t(getTPath(next))}
+                text={t(getTranslationPath(COMMON, next))}
                 disabled={error || input.trim().length === 0}
                 onClick={onNextStep}
               />

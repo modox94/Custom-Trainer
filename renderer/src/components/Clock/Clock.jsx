@@ -10,10 +10,10 @@ import { Item } from "../SquareGrid/SquareGrid";
 import styles from "./Clock.module.css";
 import zeroFill from "zero-fill";
 
-const { COMMON } = TRANSLATION_ROOT_KEYS;
-const { current: current_T, time: time_T } = TRANSLATION_KEYS[COMMON];
+const { WORKOUT } = TRANSLATION_ROOT_KEYS;
+const { current: current_T, time: time_T } = TRANSLATION_KEYS[WORKOUT];
 
-const getTPath = (...args) => getTranslationPath(COMMON, ...args);
+const getTPath = (...args) => getTranslationPath(WORKOUT, ...args);
 
 const Clock = props => {
   const { t } = useTranslation();

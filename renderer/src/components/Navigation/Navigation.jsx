@@ -4,7 +4,7 @@ import React, { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useLocation, useMatch, useNavigate } from "react-router-dom";
 import { setFullScreen, useGetProgramsQuery } from "../../api/ipc";
-import { PAGES, PAGES_PATHS } from "../../constants/pathConst";
+import { PAGES, PAGES_PATHS, SUB_PATHS } from "../../constants/pathConst";
 import {
   TRANSLATION_KEYS,
   TRANSLATION_ROOT_KEYS,
@@ -13,8 +13,9 @@ import { getTranslationPath } from "../../utils/translationUtils";
 import styles from "./Navigation.module.css";
 
 const { MAIN, MANUAL_MODE, SETTINGS, SELECT_PROGRAM } = PAGES;
-const { COMMON } = TRANSLATION_ROOT_KEYS;
-const { back, fullscreen, programMode } = TRANSLATION_KEYS[COMMON];
+const { COMMON, WORKOUT } = TRANSLATION_ROOT_KEYS;
+const { back, fullscreen } = TRANSLATION_KEYS[COMMON];
+const { programMode } = TRANSLATION_KEYS[WORKOUT];
 
 const getTPath = (...args) => getTranslationPath(COMMON, ...args);
 
@@ -23,11 +24,14 @@ const Navigation = () => {
   const [title, setTitle] = useState("");
   const location = useLocation();
   const navigate = useNavigate();
-  const filenameMatch = useMatch(`${PAGES_PATHS[SELECT_PROGRAM]}/:filename`);
+  const filenameMatch = useMatch(
+    `${PAGES_PATHS[SELECT_PROGRAM]}/:${SUB_PATHS.FILENAME}`,
+  );
+
   const { data: programs = {} } = useGetProgramsQuery();
   const programTitle = useMemo(() => {
     if (filenameMatch) {
-      const filename = get(filenameMatch, ["params", "filename"]);
+      const filename = get(filenameMatch, ["params", SUB_PATHS.FILENAME]);
 
       return get(programs, [filename, "title"], "") || "";
     }
@@ -57,7 +61,9 @@ const Navigation = () => {
 
       default: {
         if (filenameMatch) {
-          const newTitle = `${t(getTPath(programMode))}: ${programTitle}`;
+          const newTitle = `${t(
+            getTranslationPath(WORKOUT, programMode),
+          )}: ${programTitle}`;
           setTitle(newTitle);
         }
         break;
