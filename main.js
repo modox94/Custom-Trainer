@@ -4,9 +4,6 @@ const { rate } = require("./src/hardware/cadence_sensor");
 const { motor } = require("./src/hardware/motor_driver");
 const { DIR_CONST, Store } = require("./src/software/store");
 const { isFunction } = require("lodash");
-const filenamify = require("filenamify");
-const unusedFilename = require("unused-filename");
-const fs = require("node:fs");
 
 const store = new Store();
 
