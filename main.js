@@ -3,7 +3,7 @@ const path = require("node:path");
 const { rate } = require("./src/hardware/cadence_sensor");
 const { motor } = require("./src/hardware/motor_driver");
 const { DIR_CONST, Store } = require("./src/software/store");
-const { isFunction } = require("lodash");
+const { isFunction, get } = require("lodash");
 
 const store = new Store();
 
@@ -62,13 +62,6 @@ app.whenReady().then(() => {
   });
 });
 
-const onProgramsChange = data => {
-  if (isFunction(win?.webContents?.send)) {
-    win.webContents.send(EVENTS.WATCH_PROGRAMS, data);
-  }
-};
-const unwatchProgramsFn = store.watch(DIR_CONST.PROGRAMS, onProgramsChange);
-
 const onQuit = () => {
   try {
     motor.off();
@@ -82,9 +75,8 @@ const onQuit = () => {
     console.log("rate.off error", error);
   }
 
-  if (isFunction(unwatchProgramsFn)) {
-    unwatchProgramsFn();
-  }
+  const watchers = get(store, ["watchers"], []);
+  watchers.forEach(watcher => watcher.close());
 
   preventDisplaySleepFn();
 
@@ -103,6 +95,13 @@ const onCadenceFn = () => {
 
 onCadenceFn();
 rate.cadenceSensor.watch(onCadenceFn);
+
+const onProgramsChange = data => {
+  if (isFunction(win?.webContents?.send)) {
+    win.webContents.send(EVENTS.WATCH_PROGRAMS, data);
+  }
+};
+store.watch(DIR_CONST.PROGRAMS, onProgramsChange);
 
 ipcMain.handle(EVENTS.GET_PROGRAMS, () => store.store[DIR_CONST.PROGRAMS]);
 
