@@ -1,8 +1,8 @@
 import clsx from "clsx";
-import { get, isNumber, round, unset } from "lodash";
+import { get, isNumber, noop, round, set, unset } from "lodash";
 import PropTypes from "prop-types";
 import React, { useEffect, useMemo, useRef } from "react";
-import { MAX_RES_LEVEL, MAX_RPM_LEVEL } from "../../constants/TODOconst";
+import { MAX_RES_LEVEL, MAX_RPM_LEVEL } from "../../constants/settingsConst";
 import { Item } from "../SquareGrid/SquareGrid";
 import styles from "./BarChart.module.css";
 
@@ -14,6 +14,7 @@ const BarChart = props => {
     maxResistanceLevel,
     isDone,
     isEditor,
+    setStep,
   } = props;
   const ref = useRef();
 
@@ -33,11 +34,12 @@ const BarChart = props => {
         };
         if (isEditor) {
           unset(result, ["styleRpm", "display"]);
+          set(result, ["onClick"], () => setStep(idx));
         }
 
         return result;
       }),
-    [isEditor, maxResistanceLevel, steps],
+    [isEditor, maxResistanceLevel, setStep, steps],
   );
 
   useEffect(() => {
@@ -82,7 +84,7 @@ const BarChart = props => {
       <div ref={ref} className={styles.barContainer}>
         <div className={styles.spacerBar} />
         {barsArray.map((bar, idx) => {
-          const { key, styleResistance, styleRpm } = bar;
+          const { key, styleResistance, styleRpm, onClick } = bar;
           return (
             <div
               key={key}
@@ -90,6 +92,7 @@ const BarChart = props => {
                 [styles.barActive]: currentStep === idx && !isDone,
                 [styles.barDone]: !isEditor && (idx < currentStep || isDone),
               })}
+              onClick={onClick}
             >
               <div className={styles.barResistance} style={styleResistance} />
               <div className={styles.barRpm} style={styleRpm} />
@@ -109,6 +112,7 @@ BarChart.propTypes = {
   maxResistanceLevel: PropTypes.number,
   isDone: PropTypes.bool,
   isEditor: PropTypes.bool,
+  setStep: PropTypes.func,
 };
 BarChart.defaultProps = {
   className: "",
@@ -117,6 +121,7 @@ BarChart.defaultProps = {
   maxResistanceLevel: MAX_RES_LEVEL,
   isDone: false,
   isEditor: false,
+  setStep: noop,
 };
 
 export default BarChart;

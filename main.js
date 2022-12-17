@@ -3,10 +3,7 @@ const path = require("node:path");
 const { rate } = require("./src/hardware/cadence_sensor");
 const { motor } = require("./src/hardware/motor_driver");
 const { DIR_CONST, Store } = require("./src/software/store");
-const { isFunction } = require("lodash");
-const filenamify = require("filenamify");
-const unusedFilename = require("unused-filename");
-const fs = require("node:fs");
+const { isFunction, get } = require("lodash");
 
 const store = new Store();
 
@@ -23,6 +20,7 @@ const EVENTS = {
   PREVENT_DISPLAY_SLEEP: "PREVENT_DISPLAY_SLEEP",
   EDIT_PROGRAM: "EDIT_PROGRAM",
   SAVE_NEW_PROGRAM: "SAVE_NEW_PROGRAM",
+  DELETE_PROGRAM: "DELETE_PROGRAM",
   APP_QUIT: "APP_QUIT",
 };
 
@@ -65,13 +63,6 @@ app.whenReady().then(() => {
   });
 });
 
-const onProgramsChange = data => {
-  if (isFunction(win?.webContents?.send)) {
-    win.webContents.send(EVENTS.WATCH_PROGRAMS, data);
-  }
-};
-const unwatchProgramsFn = store.watch(DIR_CONST.PROGRAMS, onProgramsChange);
-
 const onQuit = () => {
   try {
     motor.off();
@@ -85,9 +76,13 @@ const onQuit = () => {
     console.log("rate.off error", error);
   }
 
-  if (isFunction(unwatchProgramsFn)) {
-    unwatchProgramsFn();
-  }
+  const watchersObj = get(store, ["watchers"], {});
+  const watchersArray = Object.values(watchersObj) || [];
+  watchersArray.forEach(watcher => {
+    if (isFunction(watcher.close)) {
+      watcher.close();
+    }
+  });
 
   preventDisplaySleepFn();
 
@@ -106,6 +101,13 @@ const onCadenceFn = () => {
 
 onCadenceFn();
 rate.cadenceSensor.watch(onCadenceFn);
+
+const onProgramsChange = data => {
+  if (isFunction(win?.webContents?.send)) {
+    win.webContents.send(EVENTS.WATCH_PROGRAMS, data);
+  }
+};
+store.watch(DIR_CONST.PROGRAMS, onProgramsChange);
 
 ipcMain.handle(EVENTS.GET_PROGRAMS, () => store.store[DIR_CONST.PROGRAMS]);
 
@@ -134,6 +136,10 @@ ipcMain.on(EVENTS.SAVE_NEW_PROGRAM, async (event, programObject) =>
 
 ipcMain.on(EVENTS.EDIT_PROGRAM, async (event, filename, programObject) =>
   store.editProgram(filename, programObject),
+);
+
+ipcMain.on(EVENTS.DELETE_PROGRAM, async (event, filename) =>
+  store.delete(DIR_CONST.PROGRAMS, filename),
 );
 
 ipcMain.on(EVENTS.APP_QUIT, onQuit);

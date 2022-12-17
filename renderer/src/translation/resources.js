@@ -10,7 +10,7 @@ import {
 } from "../utils/translationUtils";
 
 const { en, ru } = LANGS_CODES;
-const { COMMON } = TRK;
+const { COMMON, WORKOUT, PROGRAM_EDITOR, SETTINGS } = TRK;
 
 // {ROOT_KEY: {INSIDE_KEY: {LANG_KEY1: value, LANG_KEY2: value, ...}}};
 // example
@@ -25,14 +25,6 @@ const resources = {
     [TK[COMMON].fullscreen]: {
       [en]: "Fullscreen",
       [ru]: "На весь экран",
-    },
-    [en]: {
-      [en]: "English",
-      [ru]: "Английский",
-    },
-    [ru]: {
-      [en]: "Russian",
-      [ru]: "Русский",
     },
     [PAGES.MAIN]: {
       [en]: "Main",
@@ -54,33 +46,9 @@ const resources = {
       [en]: "Program editor",
       [ru]: "Редактор программ",
     },
-    [TK[COMMON].newProgram]: {
-      [en]: "New program",
-      [ru]: "Новая программа",
-    },
-    [TK[COMMON].editProgram]: {
-      [en]: "Edit program",
-      [ru]: "Редактировать программу",
-    },
-    [TK[COMMON].copyProgram]: {
-      [en]: "Copy program",
-      [ru]: "Копировать программу",
-    },
-    [TK[COMMON].deleteProgram]: {
-      [en]: "Delete program",
-      [ru]: "Удалить программу",
-    },
-    [TK[COMMON].typeProgramTitle]: {
-      [en]: "Type the title of the program...",
-      [ru]: "Введите название программы...",
-    },
     [TK[COMMON].next]: {
       [en]: "Next",
       [ru]: "Дальше",
-    },
-    [TK[COMMON].programTitleError]: {
-      [en]: "This title is already used, enter another one.",
-      [ru]: "Это название уже занято какой-то программой, введите другое.",
     },
     [TK[COMMON].add]: {
       [en]: "Add",
@@ -94,47 +62,45 @@ const resources = {
       [en]: "Save",
       [ru]: "Сохранить",
     },
-    [TK[COMMON].programMode]: {
-      [en]: "Program mode",
-      [ru]: "Режим программы",
-    },
-    [TK[COMMON].current]: {
-      [en]: "Current",
-      [ru]: "Текущее",
-    },
-    [TK[COMMON].remaining]: {
-      [en]: "Remaining",
-      [ru]: "Оставшееся",
-    },
-    [TK[COMMON].elapsed]: {
-      [en]: "Elapsed",
-      [ru]: "Прошедшее",
-    },
-    [TK[COMMON].time]: {
-      [en]: "time",
-      [ru]: "время",
-    },
-    [TK[COMMON].resistance]: {
-      [en]: "Resistance",
-      [ru]: "Нагрузка",
-    },
-    [TK[COMMON].currentRPM]: {
-      [en]: "Current RPM",
-      [ru]: "Текущий каденс",
-    },
-    [TK[COMMON].targetRPM]: {
-      [en]: "Target RPM",
-      [ru]: "Требуемый каденс",
-    },
     [TK[COMMON].repeat]: {
       [en]: "Repeat",
       [ru]: "Повторить",
     },
-    [TK[COMMON].trainingDone]: {
+    [TK[COMMON].cancelTKey]: {
+      [en]: "Cancel",
+      [ru]: "Отмена",
+    },
+    [TK[COMMON].copyTKey]: {
+      [en]: "Copy",
+      [ru]: "Копировать",
+    },
+  },
+  [WORKOUT]: {
+    [TK[WORKOUT].programMode]: {
+      [en]: "Program mode",
+      [ru]: "Режим программы",
+    },
+    [TK[WORKOUT].current]: {
+      [en]: "Current",
+      [ru]: "Текущее",
+    },
+    [TK[WORKOUT].remaining]: {
+      [en]: "Remaining",
+      [ru]: "Оставшееся",
+    },
+    [TK[WORKOUT].elapsed]: {
+      [en]: "Elapsed",
+      [ru]: "Прошедшее",
+    },
+    [TK[WORKOUT].time]: {
+      [en]: "time",
+      [ru]: "время",
+    },
+    [TK[WORKOUT].trainingDone]: {
       [en]: "Training is done",
       [ru]: "Тренировка окончена",
     },
-    [TK[COMMON].trainingDoneMsg]: {
+    [TK[WORKOUT].trainingDoneMsg]: {
       [en]: `Click the "$t(${getTP(
         COMMON,
         TK[COMMON].back,
@@ -149,6 +115,66 @@ const resources = {
         COMMON,
         TK[COMMON].repeat,
       )})", чтобы запустить эту программу с начала.`,
+    },
+  },
+  [PROGRAM_EDITOR]: {
+    [TK[PROGRAM_EDITOR].newProgram]: {
+      [en]: "New program",
+      [ru]: "Новая программа",
+    },
+    [TK[PROGRAM_EDITOR].editProgram]: {
+      [en]: "Edit program",
+      [ru]: "Редактировать программу",
+    },
+    [TK[PROGRAM_EDITOR].copyProgram]: {
+      [en]: "Copy program",
+      [ru]: "Копировать программу",
+    },
+    [TK[PROGRAM_EDITOR].deleteProgram]: {
+      [en]: "Delete program",
+      [ru]: "Удалить программу",
+    },
+    [TK[PROGRAM_EDITOR].saveToFile]: {
+      [en]: "Save to file",
+      [ru]: "Сохранить в файл",
+    },
+    [TK[PROGRAM_EDITOR].loadFromFile]: {
+      [en]: "Load from file",
+      [ru]: "Загрузить из файла",
+    },
+    [TK[PROGRAM_EDITOR].typeProgramTitle]: {
+      [en]: "Type the title of the program...",
+      [ru]: "Введите название программы...",
+    },
+    [TK[PROGRAM_EDITOR].programTitleError]: {
+      [en]: "This title is already used, enter another one.",
+      [ru]: "Это название уже занято какой-то программой, введите другое.",
+    },
+    [TK[PROGRAM_EDITOR].deleteProgHead]: {
+      [en]: "Deleting the program",
+      [ru]: "Удаление программы",
+    },
+    [TK[PROGRAM_EDITOR].deleteProgMsg]: {
+      [en]: 'The selected program "{{programTitle}}" will be permanently deleted. Are you sure?',
+      [ru]: 'Выбранная программа "{{programTitle}}" будет удалена без возможности восстановления. Вы уверены?',
+    },
+    [TK[PROGRAM_EDITOR].copyProgHead]: {
+      [en]: "Copying program",
+      [ru]: "Копирование программы",
+    },
+    [TK[PROGRAM_EDITOR].copyProgMsg]: {
+      [en]: 'The new program will be created based on the selected "{{programTitle}}". You will need to enter a new title, make changes if necessary, and save.',
+      [ru]: 'Новая программа будет создана на основе выбранной "{{programTitle}}". Нужно будет ввести новое имя, внести изменения, если потребуется, и сохранить.',
+    },
+  },
+  [SETTINGS]: {
+    [en]: {
+      [en]: "English",
+      [ru]: "Английский",
+    },
+    [ru]: {
+      [en]: "Russian",
+      [ru]: "Русский",
     },
   },
 };

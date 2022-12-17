@@ -20,10 +20,10 @@
     "react-redux": "^8.0.5",
     "react-router-dom": "^6.4.5",
     "react-scripts": "5.0.1",
-    "react-simple-keyboard": "^3.4.247",
+    "react-simple-keyboard": "^3.4.248",
     "react-timer-hook": "^3.0.5",
     "redux-logger": "^3.0.6",
-    "simple-keyboard-layouts": "^3.1.242",
+    "simple-keyboard-layouts": "^3.1.243",
     "web-vitals": "^3.1.0",
     "zero-fill": "^2.2.4"
   },

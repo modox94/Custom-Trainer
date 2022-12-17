@@ -5,31 +5,30 @@ import { get, noop } from "lodash";
 import { Duration } from "luxon";
 import PropTypes from "prop-types";
 import React, { useMemo, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { useMatch, useNavigate } from "react-router-dom";
 import {
   editProgram,
   saveNewProgram,
   useGetProgramsQuery,
 } from "../../api/ipc";
-import { PAGES, PAGES_PATHS } from "../../constants/pathConst";
+import { PAGES, PAGES_PATHS, SUB_PATHS } from "../../constants/pathConst";
+import { DEFAULT_STEPS, PE_MODE } from "../../constants/programEditorConst";
 import {
-  DEFAULT_STEPS,
   MAX_RES_LEVEL,
   MAX_RPM_LEVEL,
-  NP_MODE,
   RES_STEP,
   RPM_STEP,
-} from "../../constants/TODOconst";
-import BarChart from "../BarChart/BarChart";
-import { Container, Item } from "../SquareGrid/SquareGrid";
-import EnterTitle from "./EnterTitle";
-import styles from "./NewProgram.module.css";
-import { useTranslation } from "react-i18next";
+} from "../../constants/settingsConst";
 import {
   TRANSLATION_KEYS,
   TRANSLATION_ROOT_KEYS,
 } from "../../constants/translationConst";
 import { getTranslationPath } from "../../utils/translationUtils";
+import BarChart from "../BarChart/BarChart";
+import { Container, Item } from "../SquareGrid/SquareGrid";
+import EnterTitle from "./EnterTitle";
+import styles from "./ProgramEditor.module.css";
 
 const { MAIN, PROGRAM_EDITOR } = PAGES;
 const { COMMON } = TRANSLATION_ROOT_KEYS;
@@ -37,20 +36,26 @@ const { add, deleteTKey, save } = TRANSLATION_KEYS[COMMON];
 
 const getTPath = (...args) => getTranslationPath(COMMON, ...args);
 
-const NewProgram = props => {
+const ProgramEditor = props => {
   const { mode } = props;
   const { t } = useTranslation();
   const navigate = useNavigate();
   const [title, setTitle] = useState("");
   const [currentStep, setCurrentStep] = useState(0);
 
-  const filenameMatch = useMatch(
-    `${PAGES_PATHS[PROGRAM_EDITOR]}/edit/:filename`,
+  const filenameEditMatch = useMatch(
+    `${PAGES_PATHS[PROGRAM_EDITOR]}/${SUB_PATHS[PROGRAM_EDITOR].EDIT}/:${SUB_PATHS.FILENAME}`,
   );
-  const filename = get(filenameMatch, ["params", "filename"]);
+  const filenameCopyMatch = useMatch(
+    `${PAGES_PATHS[PROGRAM_EDITOR]}/${SUB_PATHS[PROGRAM_EDITOR].COPY}/:${SUB_PATHS.FILENAME}`,
+  );
+  const filename = get(filenameEditMatch || filenameCopyMatch, [
+    "params",
+    SUB_PATHS.FILENAME,
+  ]);
   const { data: programs = {} } =
     useGetProgramsQuery(undefined, {
-      skip: mode !== NP_MODE.EDIT,
+      skip: [PE_MODE.NEW].includes(mode),
       refetchOnMountOrArgChange: true,
     }) || {};
   const programSteps = get(programs, [filename, "steps"], DEFAULT_STEPS);
@@ -59,12 +64,13 @@ const NewProgram = props => {
 
   const onSaveProgram = () => {
     switch (mode) {
-      case NP_MODE.NEW:
+      case PE_MODE.NEW:
+      case PE_MODE.COPY:
         saveNewProgram({ title, maxResistanceLevel: MAX_RES_LEVEL, steps });
         navigate(PAGES_PATHS[MAIN]);
         break;
 
-      case NP_MODE.EDIT:
+      case PE_MODE.EDIT:
         editProgram(filename, {
           title,
           maxResistanceLevel: MAX_RES_LEVEL,
@@ -296,6 +302,7 @@ const NewProgram = props => {
           steps={steps}
           currentStep={currentStep}
           isEditor
+          setStep={setCurrentStep}
         />
 
         <Item className={clsx(styles.tinyPadding, styles.tripleButtonItem)}>
@@ -327,11 +334,11 @@ const NewProgram = props => {
   );
 };
 
-NewProgram.propTypes = {
+ProgramEditor.propTypes = {
   mode: PropTypes.string,
 };
-NewProgram.defaultProps = {
-  mode: NP_MODE.NEW,
+ProgramEditor.defaultProps = {
+  mode: PE_MODE.NEW,
 };
 
-export default NewProgram;
+export default ProgramEditor;

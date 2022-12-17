@@ -1,14 +1,14 @@
 import { Button, Callout, Divider, InputGroup } from "@blueprintjs/core";
 import { get, noop } from "lodash";
 import PropTypes from "prop-types";
-import React, { useCallback, useRef, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useMatch } from "react-router-dom";
 import Keyboard from "react-simple-keyboard";
 import "react-simple-keyboard/build/css/index.css";
 import { checkProgramTitle, useGetProgramsQuery } from "../../api/ipc";
-import { PAGES, PAGES_PATHS } from "../../constants/pathConst";
-import { NP_MODE } from "../../constants/TODOconst";
+import { PAGES, PAGES_PATHS, SUB_PATHS } from "../../constants/pathConst";
+import { PE_MODE } from "../../constants/programEditorConst";
 import {
   TRANSLATION_KEYS,
   TRANSLATION_ROOT_KEYS,
@@ -18,38 +18,53 @@ import { Container, Item } from "../SquareGrid/SquareGrid";
 import styles from "./EnterTitle.module.css";
 
 const { PROGRAM_EDITOR } = PAGES;
-const { COMMON } = TRANSLATION_ROOT_KEYS;
-const { programTitleError, typeProgramTitle, next } = TRANSLATION_KEYS[COMMON];
+const { COMMON, PROGRAM_EDITOR: PE_TRK } = TRANSLATION_ROOT_KEYS;
+const { next } = TRANSLATION_KEYS[COMMON];
+const { programTitleError, typeProgramTitle } = TRANSLATION_KEYS[PE_TRK];
 
-const getTPath = (...args) => getTranslationPath(COMMON, ...args);
+const getTPath = (...args) => getTranslationPath(PE_TRK, ...args);
 
 const DISPLAY = {
   "{numbers}": "123",
   "{backspace}": "⌫",
+  "{lock}": "caps",
   "{shift}": "⇧",
-  "{abc}": "ABC",
+  "{abc}": "abc",
+  "{space}": "⎵",
 };
 
 const LAYOUT_NAME = {
   default: "default",
+  lock: "lock",
   shift: "shift",
   numbers: "numbers",
 };
 
 const LAYOUT = {
   [LAYOUT_NAME.default]: [
-    "q w e r t y u i o p",
-    "a s d f g h j k l",
-    "{shift} z x c v b n m {backspace}",
-    "{numbers} {space}",
+    "{numbers} q w e r t y u i o p {backspace}",
+    "{lock} a s d f g h j k l",
+    "{shift} z x c v b n m",
+    "{space}",
+  ],
+  [LAYOUT_NAME.lock]: [
+    "{numbers} Q W E R T Y U I O P {backspace}",
+    "{lock} A S D F G H J K L",
+    "{shift} Z X C V B N M",
+    "{space}",
   ],
   [LAYOUT_NAME.shift]: [
-    "Q W E R T Y U I O P",
-    "A S D F G H J K L",
-    "{shift} Z X C V B N M {backspace}",
-    "{numbers} {space}",
+    "{numbers} Q W E R T Y U I O P {backspace}",
+    "{lock} A S D F G H J K L",
+    "{shift} Z X C V B N M",
+    "{space}",
   ],
-  [LAYOUT_NAME.numbers]: ["1 2 3", "4 5 6", "7 8 9", "{abc} 0 {backspace}"],
+  [LAYOUT_NAME.numbers]: [
+    "{abc} 1 2 3 {backspace}",
+    "( 4 5 6 #",
+    ") 7 8 9 {space}",
+    "_ , 0 . -",
+  ],
 };
 
 const EnterTitle = props => {
@@ -58,27 +73,34 @@ const EnterTitle = props => {
   const keyboardRef = useRef();
   const [layout, setLayout] = useState(LAYOUT_NAME.default);
   const filenameMatch = useMatch(
-    `${PAGES_PATHS[PROGRAM_EDITOR]}/edit/:filename`,
+    `${PAGES_PATHS[PROGRAM_EDITOR]}/${SUB_PATHS[PROGRAM_EDITOR].EDIT}/:${SUB_PATHS.FILENAME}`,
   );
-  const filename = get(filenameMatch, ["params", "filename"]);
+  const filename = get(filenameMatch, ["params", SUB_PATHS.FILENAME]);
   const { data: programs = {} } =
     useGetProgramsQuery(undefined, {
-      skip: mode !== NP_MODE.EDIT,
+      skip: [PE_MODE.NEW].includes(mode),
       refetchOnMountOrArgChange: true,
     }) || {};
   const programTitle = get(programs, [filename, "title"], "");
   const [input, setInput] = useState(programTitle);
   const [error, setError] = useState("");
 
-  const handleShift = () => {
-    const newLayoutName =
-      layout === LAYOUT_NAME.default ? LAYOUT_NAME.shift : LAYOUT_NAME.default;
-    setLayout(newLayoutName);
-  };
+  useEffect(() => {
+    switch (mode) {
+      case PE_MODE.NEW:
+        break;
 
-  const handleNum = () => setLayout(LAYOUT_NAME.numbers);
+      case PE_MODE.EDIT:
+        keyboardRef.current?.setInput(programTitle);
+        break;
 
-  const handleDefault = () => setLayout(LAYOUT_NAME.default);
+      case PE_MODE.COPY:
+        break;
+
+      default:
+        break;
+    }
+  }, [mode, programTitle]);
 
   const checkTitle = useCallback(
     async value => {
@@ -103,16 +125,38 @@ const EnterTitle = props => {
   };
 
   const onKeyBoardKeyPress = button => {
-    if (button === "{shift}" || button === "{lock}") {
-      handleShift();
-    }
+    switch (button) {
+      case "{shift}": {
+        const newLayoutName =
+          layout === LAYOUT_NAME.default
+            ? LAYOUT_NAME.shift
+            : LAYOUT_NAME.default;
+        setLayout(newLayoutName);
+        break;
+      }
 
-    if (button === "{numbers}") {
-      handleNum();
-    }
+      case "{lock}": {
+        const newLayoutName =
+          layout === LAYOUT_NAME.default
+            ? LAYOUT_NAME.lock
+            : LAYOUT_NAME.default;
+        setLayout(newLayoutName);
+        break;
+      }
 
-    if (button === "{abc}") {
-      handleDefault();
+      case "{numbers}":
+        setLayout(LAYOUT_NAME.numbers);
+        break;
+
+      case "{abc}":
+        setLayout(LAYOUT_NAME.default);
+        break;
+
+      default:
+        if (layout === LAYOUT_NAME.shift) {
+          setLayout(LAYOUT_NAME.default);
+        }
+        break;
     }
   };
 
@@ -149,7 +193,7 @@ const EnterTitle = props => {
                   (error && "danger") ||
                   (input.trim().length > 0 ? "success" : "none")
                 }
-                text={t(getTPath(next))}
+                text={t(getTranslationPath(COMMON, next))}
                 disabled={error || input.trim().length === 0}
                 onClick={onNextStep}
               />
@@ -188,7 +232,7 @@ EnterTitle.propTypes = {
   setTitle: PropTypes.func,
 };
 EnterTitle.defaultProps = {
-  mode: NP_MODE.NEW,
+  mode: PE_MODE.NEW,
   setTitle: noop,
 };
 

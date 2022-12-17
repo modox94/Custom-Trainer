@@ -9,12 +9,13 @@ import MainPage from "./components/MainPage/MainPage";
 import ManualMode from "./components/ManualMode/ManualMode";
 import Navigation from "./components/Navigation/Navigation";
 import EditorMenu from "./components/ProgramEditor/EditorMenu";
-import NewProgram from "./components/ProgramEditor/NewProgram";
+import ProgramEditor from "./components/ProgramEditor/ProgramEditor";
 import ProgramMode from "./components/ProgramMode/ProgramMode";
 import SelectProgram from "./components/SelectProgram/SelectProgram";
 import Settings from "./components/Settings/Settings";
-import { PAGES, PAGES_PATHS } from "./constants/pathConst";
-import { NP_MODE, SP_MODE } from "./constants/TODOconst";
+import { PAGES, PAGES_PATHS, SUB_PATHS } from "./constants/pathConst";
+import { PE_MODE } from "./constants/programEditorConst";
+import { SP_MODE } from "./constants/selectProgramConst";
 
 const OutletProvider = () => <Outlet />;
 
@@ -37,29 +38,51 @@ const App = () => {
               element={<OutletProvider />}
             >
               <Route
-                path=""
+                path={SUB_PATHS.ROOT}
                 element={<SelectProgram mode={SP_MODE.SELECT} />}
               />
-              <Route path=":programTitle" element={<ProgramMode />} />
+              <Route
+                path={`:${SUB_PATHS.FILENAME}`}
+                element={<ProgramMode />}
+              />
             </Route>
             <Route
               path={PAGES_PATHS[PROGRAM_EDITOR]}
               element={<OutletProvider />}
             >
-              <Route path="" element={<EditorMenu />} />
-              <Route path="new" element={<NewProgram mode={NP_MODE.NEW} />} />
-              <Route path="edit" element={<OutletProvider />}>
+              <Route path={SUB_PATHS.ROOT} element={<EditorMenu />} />
+              <Route
+                path={SUB_PATHS[PROGRAM_EDITOR].NEW}
+                element={<ProgramEditor mode={PE_MODE.NEW} />}
+              />
+              <Route
+                path={SUB_PATHS[PROGRAM_EDITOR].EDIT}
+                element={<OutletProvider />}
+              >
                 <Route
-                  path=""
+                  path={SUB_PATHS.ROOT}
                   element={<SelectProgram mode={SP_MODE.EDIT} />}
                 />
                 <Route
-                  path=":programTitle"
-                  element={<NewProgram mode={NP_MODE.EDIT} />}
+                  path={`:${SUB_PATHS.FILENAME}`}
+                  element={<ProgramEditor mode={PE_MODE.EDIT} />}
                 />
               </Route>
               <Route
-                path="delete"
+                path={SUB_PATHS[PROGRAM_EDITOR].COPY}
+                element={<OutletProvider />}
+              >
+                <Route
+                  path={SUB_PATHS.ROOT}
+                  element={<SelectProgram mode={SP_MODE.COPY} />}
+                />
+                <Route
+                  path={`:${SUB_PATHS.FILENAME}`}
+                  element={<ProgramEditor mode={PE_MODE.COPY} />}
+                />
+              </Route>
+              <Route
+                path={SUB_PATHS[PROGRAM_EDITOR].DELETE}
                 element={<SelectProgram mode={SP_MODE.DELETE} />}
               />
             </Route>

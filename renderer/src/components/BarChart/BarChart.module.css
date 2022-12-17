@@ -56,7 +56,7 @@
   bottom: 0;
   width: calc(var(--bar-min-width) / 3);
   margin: 0 calc((var(--bar-min-width) / 3) + var(--tiny-gap));
-  background-color: var(--lime3);
+  background-color: var(--gold3);
 }
 
 .barActive .barResistance {

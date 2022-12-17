@@ -11,9 +11,9 @@ import {
   stopMotor,
   useGetProgramsQuery,
 } from "../../api/ipc";
-import { PAGES, PAGES_PATHS } from "../../constants/pathConst";
+import { PAGES, PAGES_PATHS, SUB_PATHS } from "../../constants/pathConst";
 import { RUNNINIG_STATUS } from "../../constants/reduxConst";
-import { MAX_RES_LEVEL } from "../../constants/TODOconst";
+import { MAX_RES_LEVEL } from "../../constants/settingsConst";
 import {
   TRANSLATION_KEYS,
   TRANSLATION_ROOT_KEYS,
@@ -27,9 +27,9 @@ import { Container, Item } from "../SquareGrid/SquareGrid";
 import Timer from "../Timer/Timer";
 import styles from "./ProgramMode.module.css";
 
-const { COMMON } = TRANSLATION_ROOT_KEYS;
-const { back, repeat, trainingDone, trainingDoneMsg } =
-  TRANSLATION_KEYS[COMMON];
+const { COMMON, WORKOUT } = TRANSLATION_ROOT_KEYS;
+const { back, repeat } = TRANSLATION_KEYS[COMMON];
+const { trainingDone, trainingDoneMsg } = TRANSLATION_KEYS[WORKOUT];
 const { RUN } = RUNNINIG_STATUS;
 const { SELECT_PROGRAM } = PAGES;
 
@@ -60,10 +60,12 @@ const ProgramMode = props => {
   const navigate = useNavigate();
   const runningStatus = useSelector(getRunningStatus);
 
-  const filenameMatch = useMatch(`${PAGES_PATHS[SELECT_PROGRAM]}/:filename`);
+  const filenameMatch = useMatch(
+    `${PAGES_PATHS[SELECT_PROGRAM]}/:${SUB_PATHS.FILENAME}`,
+  );
 
   const fileName = useMemo(
-    () => get(filenameMatch, ["params", "filename"], ""),
+    () => get(filenameMatch, ["params", SUB_PATHS.FILENAME], ""),
     [filenameMatch],
   );
   const { data: programs = {} } =
@@ -187,12 +189,14 @@ const ProgramMode = props => {
     <>
       <Dialog
         isOpen={isDone}
-        title={t(getTPath(trainingDone))}
+        title={t(getTranslationPath(WORKOUT, trainingDone))}
         canOutsideClickClose={false}
         isCloseButtonShown={false}
       >
         <div className={Classes.DIALOG_BODY}>
-          <p className={Classes.TEXT_LARGE}>{t(getTPath(trainingDoneMsg))}</p>
+          <p className={Classes.TEXT_LARGE}>
+            {t(getTranslationPath(WORKOUT, trainingDoneMsg))}
+          </p>
         </div>
         <div className={Classes.DIALOG_FOOTER}>
           <div className={Classes.DIALOG_FOOTER_ACTIONS}>
