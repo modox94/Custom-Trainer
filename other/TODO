@@ -17,5 +17,3 @@ https://github.com/studioalex/electron-vue-template/tree/ESM
 https://www.npmjs.com/package/esm
 
 переделать грид систему: задавать через пропсы размеры относительно доступного пространства в процентах
-
-сделать возможным выбрать участок по нажатию на столбик

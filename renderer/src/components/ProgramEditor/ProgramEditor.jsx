@@ -302,6 +302,7 @@ const ProgramEditor = props => {
           steps={steps}
           currentStep={currentStep}
           isEditor
+          setStep={setCurrentStep}
         />
 
         <Item className={clsx(styles.tinyPadding, styles.tripleButtonItem)}>
