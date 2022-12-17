@@ -9,7 +9,7 @@ import MainPage from "./components/MainPage/MainPage";
 import ManualMode from "./components/ManualMode/ManualMode";
 import Navigation from "./components/Navigation/Navigation";
 import EditorMenu from "./components/ProgramEditor/EditorMenu";
-import NewProgram from "./components/ProgramEditor/NewProgram";
+import ProgramEditor from "./components/ProgramEditor/ProgramEditor";
 import ProgramMode from "./components/ProgramMode/ProgramMode";
 import SelectProgram from "./components/SelectProgram/SelectProgram";
 import Settings from "./components/Settings/Settings";
@@ -52,7 +52,7 @@ const App = () => {
               <Route path={SUB_PATHS.ROOT} element={<EditorMenu />} />
               <Route
                 path={SUB_PATHS[PROGRAM_EDITOR].NEW}
-                element={<NewProgram mode={NP_MODE.NEW} />}
+                element={<ProgramEditor mode={NP_MODE.NEW} />}
               />
               <Route
                 path={SUB_PATHS[PROGRAM_EDITOR].EDIT}
@@ -64,7 +64,7 @@ const App = () => {
                 />
                 <Route
                   path={`:${SUB_PATHS.FILENAME}`}
-                  element={<NewProgram mode={NP_MODE.EDIT} />}
+                  element={<ProgramEditor mode={NP_MODE.EDIT} />}
                 />
               </Route>
               <Route
@@ -77,7 +77,7 @@ const App = () => {
                 />
                 <Route
                   path={`:${SUB_PATHS.FILENAME}`}
-                  element={<NewProgram mode={NP_MODE.COPY} />}
+                  element={<ProgramEditor mode={NP_MODE.COPY} />}
                 />
               </Route>
               <Route

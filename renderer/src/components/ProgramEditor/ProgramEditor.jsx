@@ -5,6 +5,7 @@ import { get, noop } from "lodash";
 import { Duration } from "luxon";
 import PropTypes from "prop-types";
 import React, { useMemo, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { useMatch, useNavigate } from "react-router-dom";
 import {
   editProgram,
@@ -20,16 +21,15 @@ import {
   RES_STEP,
   RPM_STEP,
 } from "../../constants/TODOconst";
-import BarChart from "../BarChart/BarChart";
-import { Container, Item } from "../SquareGrid/SquareGrid";
-import EnterTitle from "./EnterTitle";
-import styles from "./NewProgram.module.css";
-import { useTranslation } from "react-i18next";
 import {
   TRANSLATION_KEYS,
   TRANSLATION_ROOT_KEYS,
 } from "../../constants/translationConst";
 import { getTranslationPath } from "../../utils/translationUtils";
+import BarChart from "../BarChart/BarChart";
+import { Container, Item } from "../SquareGrid/SquareGrid";
+import EnterTitle from "./EnterTitle";
+import styles from "./ProgramEditor.module.css";
 
 const { MAIN, PROGRAM_EDITOR } = PAGES;
 const { COMMON } = TRANSLATION_ROOT_KEYS;
@@ -37,7 +37,7 @@ const { add, deleteTKey, save } = TRANSLATION_KEYS[COMMON];
 
 const getTPath = (...args) => getTranslationPath(COMMON, ...args);
 
-const NewProgram = props => {
+const ProgramEditor = props => {
   const { mode } = props;
   const { t } = useTranslation();
   const navigate = useNavigate();
@@ -334,11 +334,11 @@ const NewProgram = props => {
   );
 };
 
-NewProgram.propTypes = {
+ProgramEditor.propTypes = {
   mode: PropTypes.string,
 };
-NewProgram.defaultProps = {
+ProgramEditor.defaultProps = {
   mode: NP_MODE.NEW,
 };
 
-export default NewProgram;
+export default ProgramEditor;
