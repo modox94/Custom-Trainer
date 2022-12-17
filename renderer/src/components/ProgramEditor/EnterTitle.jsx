@@ -27,35 +27,43 @@ const getTPath = (...args) => getTranslationPath(PE_TRK, ...args);
 const DISPLAY = {
   "{numbers}": "123",
   "{backspace}": "⌫",
+  "{lock}": "caps",
   "{shift}": "⇧",
-  "{abc}": "ABC",
+  "{abc}": "abc",
   "{space}": "⎵",
 };
 
 const LAYOUT_NAME = {
   default: "default",
+  lock: "lock",
   shift: "shift",
   numbers: "numbers",
 };
 
 const LAYOUT = {
   [LAYOUT_NAME.default]: [
-    "q w e r t y u i o p {backspace}",
-    "a s d f g h j k l",
-    "{shift} z x c v b n m {numbers}",
+    "{numbers} q w e r t y u i o p {backspace}",
+    "{lock} a s d f g h j k l",
+    "{shift} z x c v b n m",
+    "{space}",
+  ],
+  [LAYOUT_NAME.lock]: [
+    "{numbers} Q W E R T Y U I O P {backspace}",
+    "{lock} A S D F G H J K L",
+    "{shift} Z X C V B N M",
     "{space}",
   ],
   [LAYOUT_NAME.shift]: [
-    "Q W E R T Y U I O P {backspace}",
-    "A S D F G H J K L",
-    "{shift} Z X C V B N M {numbers}",
+    "{numbers} Q W E R T Y U I O P {backspace}",
+    "{lock} A S D F G H J K L",
+    "{shift} Z X C V B N M",
     "{space}",
   ],
   [LAYOUT_NAME.numbers]: [
-    "_ 1 2 3 -",
+    "{abc} 1 2 3 {backspace}",
     "( 4 5 6 #",
     ") 7 8 9 {space}",
-    "{abc} , 0 . {backspace}",
+    "_ , 0 . -",
   ],
 };
 
@@ -94,16 +102,6 @@ const EnterTitle = props => {
     }
   }, [mode, programTitle]);
 
-  const handleShift = () => {
-    const newLayoutName =
-      layout === LAYOUT_NAME.default ? LAYOUT_NAME.shift : LAYOUT_NAME.default;
-    setLayout(newLayoutName);
-  };
-
-  const handleNum = () => setLayout(LAYOUT_NAME.numbers);
-
-  const handleDefault = () => setLayout(LAYOUT_NAME.default);
-
   const checkTitle = useCallback(
     async value => {
       const valueTrimed = value.trim();
@@ -127,16 +125,38 @@ const EnterTitle = props => {
   };
 
   const onKeyBoardKeyPress = button => {
-    if (button === "{shift}" || button === "{lock}") {
-      handleShift();
-    }
+    switch (button) {
+      case "{shift}": {
+        const newLayoutName =
+          layout === LAYOUT_NAME.default
+            ? LAYOUT_NAME.shift
+            : LAYOUT_NAME.default;
+        setLayout(newLayoutName);
+        break;
+      }
 
-    if (button === "{numbers}") {
-      handleNum();
-    }
+      case "{lock}": {
+        const newLayoutName =
+          layout === LAYOUT_NAME.default
+            ? LAYOUT_NAME.lock
+            : LAYOUT_NAME.default;
+        setLayout(newLayoutName);
+        break;
+      }
 
-    if (button === "{abc}") {
-      handleDefault();
+      case "{numbers}":
+        setLayout(LAYOUT_NAME.numbers);
+        break;
+
+      case "{abc}":
+        setLayout(LAYOUT_NAME.default);
+        break;
+
+      default:
+        if (layout === LAYOUT_NAME.shift) {
+          setLayout(LAYOUT_NAME.default);
+        }
+        break;
     }
   };
 
