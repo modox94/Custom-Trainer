@@ -13,14 +13,13 @@ import {
   useGetProgramsQuery,
 } from "../../api/ipc";
 import { PAGES, PAGES_PATHS, SUB_PATHS } from "../../constants/pathConst";
+import { DEFAULT_STEPS, PE_MODE } from "../../constants/programEditorConst";
 import {
-  DEFAULT_STEPS,
   MAX_RES_LEVEL,
   MAX_RPM_LEVEL,
-  NP_MODE,
   RES_STEP,
   RPM_STEP,
-} from "../../constants/TODOconst";
+} from "../../constants/settingsConst";
 import {
   TRANSLATION_KEYS,
   TRANSLATION_ROOT_KEYS,
@@ -56,7 +55,7 @@ const ProgramEditor = props => {
   ]);
   const { data: programs = {} } =
     useGetProgramsQuery(undefined, {
-      skip: [NP_MODE.NEW].includes(mode),
+      skip: [PE_MODE.NEW].includes(mode),
       refetchOnMountOrArgChange: true,
     }) || {};
   const programSteps = get(programs, [filename, "steps"], DEFAULT_STEPS);
@@ -65,13 +64,13 @@ const ProgramEditor = props => {
 
   const onSaveProgram = () => {
     switch (mode) {
-      case NP_MODE.NEW:
-      case NP_MODE.COPY:
+      case PE_MODE.NEW:
+      case PE_MODE.COPY:
         saveNewProgram({ title, maxResistanceLevel: MAX_RES_LEVEL, steps });
         navigate(PAGES_PATHS[MAIN]);
         break;
 
-      case NP_MODE.EDIT:
+      case PE_MODE.EDIT:
         editProgram(filename, {
           title,
           maxResistanceLevel: MAX_RES_LEVEL,
@@ -338,7 +337,7 @@ ProgramEditor.propTypes = {
   mode: PropTypes.string,
 };
 ProgramEditor.defaultProps = {
-  mode: NP_MODE.NEW,
+  mode: PE_MODE.NEW,
 };
 
 export default ProgramEditor;

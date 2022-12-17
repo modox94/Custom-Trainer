@@ -14,7 +14,8 @@ import ProgramMode from "./components/ProgramMode/ProgramMode";
 import SelectProgram from "./components/SelectProgram/SelectProgram";
 import Settings from "./components/Settings/Settings";
 import { PAGES, PAGES_PATHS, SUB_PATHS } from "./constants/pathConst";
-import { NP_MODE, SP_MODE } from "./constants/TODOconst";
+import { PE_MODE } from "./constants/programEditorConst";
+import { SP_MODE } from "./constants/selectProgramConst";
 
 const OutletProvider = () => <Outlet />;
 
@@ -52,7 +53,7 @@ const App = () => {
               <Route path={SUB_PATHS.ROOT} element={<EditorMenu />} />
               <Route
                 path={SUB_PATHS[PROGRAM_EDITOR].NEW}
-                element={<ProgramEditor mode={NP_MODE.NEW} />}
+                element={<ProgramEditor mode={PE_MODE.NEW} />}
               />
               <Route
                 path={SUB_PATHS[PROGRAM_EDITOR].EDIT}
@@ -64,7 +65,7 @@ const App = () => {
                 />
                 <Route
                   path={`:${SUB_PATHS.FILENAME}`}
-                  element={<ProgramEditor mode={NP_MODE.EDIT} />}
+                  element={<ProgramEditor mode={PE_MODE.EDIT} />}
                 />
               </Route>
               <Route
@@ -77,7 +78,7 @@ const App = () => {
                 />
                 <Route
                   path={`:${SUB_PATHS.FILENAME}`}
-                  element={<ProgramEditor mode={NP_MODE.COPY} />}
+                  element={<ProgramEditor mode={PE_MODE.COPY} />}
                 />
               </Route>
               <Route

@@ -13,7 +13,7 @@ import {
 } from "../../api/ipc";
 import { PAGES, PAGES_PATHS, SUB_PATHS } from "../../constants/pathConst";
 import { RUNNINIG_STATUS } from "../../constants/reduxConst";
-import { MAX_RES_LEVEL } from "../../constants/TODOconst";
+import { MAX_RES_LEVEL } from "../../constants/settingsConst";
 import {
   TRANSLATION_KEYS,
   TRANSLATION_ROOT_KEYS,

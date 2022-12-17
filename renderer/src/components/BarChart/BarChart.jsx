@@ -2,7 +2,7 @@ import clsx from "clsx";
 import { get, isNumber, round, unset } from "lodash";
 import PropTypes from "prop-types";
 import React, { useEffect, useMemo, useRef } from "react";
-import { MAX_RES_LEVEL, MAX_RPM_LEVEL } from "../../constants/TODOconst";
+import { MAX_RES_LEVEL, MAX_RPM_LEVEL } from "../../constants/settingsConst";
 import { Item } from "../SquareGrid/SquareGrid";
 import styles from "./BarChart.module.css";
 

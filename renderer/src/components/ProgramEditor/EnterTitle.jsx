@@ -8,7 +8,7 @@ import Keyboard from "react-simple-keyboard";
 import "react-simple-keyboard/build/css/index.css";
 import { checkProgramTitle, useGetProgramsQuery } from "../../api/ipc";
 import { PAGES, PAGES_PATHS, SUB_PATHS } from "../../constants/pathConst";
-import { NP_MODE } from "../../constants/TODOconst";
+import { PE_MODE } from "../../constants/programEditorConst";
 import {
   TRANSLATION_KEYS,
   TRANSLATION_ROOT_KEYS,
@@ -78,7 +78,7 @@ const EnterTitle = props => {
   const filename = get(filenameMatch, ["params", SUB_PATHS.FILENAME]);
   const { data: programs = {} } =
     useGetProgramsQuery(undefined, {
-      skip: [NP_MODE.NEW].includes(mode),
+      skip: [PE_MODE.NEW].includes(mode),
       refetchOnMountOrArgChange: true,
     }) || {};
   const programTitle = get(programs, [filename, "title"], "");
@@ -87,14 +87,14 @@ const EnterTitle = props => {
 
   useEffect(() => {
     switch (mode) {
-      case NP_MODE.NEW:
+      case PE_MODE.NEW:
         break;
 
-      case NP_MODE.EDIT:
+      case PE_MODE.EDIT:
         keyboardRef.current?.setInput(programTitle);
         break;
 
-      case NP_MODE.COPY:
+      case PE_MODE.COPY:
         break;
 
       default:
@@ -232,7 +232,7 @@ EnterTitle.propTypes = {
   setTitle: PropTypes.func,
 };
 EnterTitle.defaultProps = {
-  mode: NP_MODE.NEW,
+  mode: PE_MODE.NEW,
   setTitle: noop,
 };
 
