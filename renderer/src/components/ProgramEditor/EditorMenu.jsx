@@ -10,8 +10,14 @@ import { getTranslationPath } from "../../utils/translationUtils";
 import { Container, Item } from "../SquareGrid/SquareGrid";
 
 const { PROGRAM_EDITOR: PE_TRK } = TRANSLATION_ROOT_KEYS;
-const { newProgram, editProgram, copyProgram, deleteProgram } =
-  TRANSLATION_KEYS[PE_TRK];
+const {
+  newProgram,
+  editProgram,
+  copyProgram,
+  deleteProgram,
+  saveToFile,
+  loadFromFile,
+} = TRANSLATION_KEYS[PE_TRK];
 const { PROGRAM_EDITOR } = PAGES;
 
 const getTPath = (...args) => getTranslationPath(PE_TRK, ...args);
@@ -52,6 +58,10 @@ const EditorMenu = props => {
     [navigate],
   );
 
+  const onClickSaveTo = useCallback(() => console.log("onClickSaveTo"), []); // TODO
+
+  const onClickLoadFrom = useCallback(() => console.log("onClickLoadFrom"), []); // TODO
+
   return (
     <>
       <Container>
@@ -68,6 +78,12 @@ const EditorMenu = props => {
       <Container>
         <Item onClick={onClickDelete}>
           <h1>{t(getTPath(deleteProgram))}</h1>
+        </Item>
+        <Item onClick={onClickSaveTo}>
+          <h1>{t(getTPath(saveToFile))}</h1>
+        </Item>
+        <Item onClick={onClickLoadFrom}>
+          <h1>{t(getTPath(loadFromFile))}</h1>
         </Item>
       </Container>
     </>

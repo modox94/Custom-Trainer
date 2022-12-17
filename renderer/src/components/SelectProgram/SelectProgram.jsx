@@ -4,7 +4,7 @@ import PropTypes from "prop-types";
 import React, { useCallback, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
-import { useGetProgramsQuery } from "../../api/ipc";
+import { deleteProgram, useGetProgramsQuery } from "../../api/ipc";
 import { PAGES, PAGES_PATHS, SUB_PATHS } from "../../constants/pathConst";
 import { SP_MODE } from "../../constants/TODOconst";
 import {
@@ -14,8 +14,8 @@ import {
 import { getTranslationPath } from "../../utils/translationUtils";
 import { Container, Item } from "../SquareGrid/SquareGrid";
 
-const { SELECT_PROGRAM, PROGRAM_EDITOR: PE_TRK } = PAGES;
-const { COMMON, PROGRAM_EDITOR } = TRANSLATION_ROOT_KEYS;
+const { SELECT_PROGRAM, PROGRAM_EDITOR } = PAGES;
+const { COMMON, PROGRAM_EDITOR: PE_TRK } = TRANSLATION_ROOT_KEYS;
 const { deleteTKey, cancelTKey, copyTKey } = TRANSLATION_KEYS[COMMON];
 const { deleteProgHead, deleteProgMsg, copyProgHead, copyProgMsg } =
   TRANSLATION_KEYS[PE_TRK];
@@ -47,17 +47,20 @@ const SelectProgram = props => {
   const onDialogBtn1 = useCallback(() => {
     switch (mode) {
       case SP_MODE.COPY:
-        console.log("TODO copy fn");
+        navigate(
+          `${PAGES_PATHS[PROGRAM_EDITOR]}/${SUB_PATHS[PROGRAM_EDITOR].COPY}/${target}`,
+        );
         break;
 
       case SP_MODE.DELETE:
-        console.log("TODO delete fn");
+        deleteProgram(target);
+        setTarget(TARGET_DEFAULT);
         break;
 
       default:
         break;
     }
-  }, [mode]);
+  }, [mode, navigate, target]);
 
   const onDialogBtn2 = useCallback(() => {
     switch (mode) {
@@ -75,11 +78,11 @@ const SelectProgram = props => {
     let header = "";
     let message = "";
     let btn1Text = "";
-    let btn1Icon = "";
-    let btn1Intent = "";
+    let btn1Icon = undefined;
+    let btn1Intent = "none";
     let btn2Text = "";
-    let btn2Icon = "";
-    let btn2Intent = "";
+    let btn2Icon = undefined;
+    let btn2Intent = "none";
 
     switch (mode) {
       case SP_MODE.COPY:

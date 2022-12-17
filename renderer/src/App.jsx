@@ -69,8 +69,17 @@ const App = () => {
               </Route>
               <Route
                 path={SUB_PATHS[PROGRAM_EDITOR].COPY}
-                element={<SelectProgram mode={SP_MODE.COPY} />}
-              />
+                element={<OutletProvider />}
+              >
+                <Route
+                  path={SUB_PATHS.ROOT}
+                  element={<SelectProgram mode={SP_MODE.COPY} />}
+                />
+                <Route
+                  path={`:${SUB_PATHS.FILENAME}`}
+                  element={<NewProgram mode={NP_MODE.COPY} />}
+                />
+              </Route>
               <Route
                 path={SUB_PATHS[PROGRAM_EDITOR].DELETE}
                 element={<SelectProgram mode={SP_MODE.DELETE} />}

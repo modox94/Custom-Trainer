@@ -20,6 +20,7 @@ const EVENTS = {
   PREVENT_DISPLAY_SLEEP: "PREVENT_DISPLAY_SLEEP",
   EDIT_PROGRAM: "EDIT_PROGRAM",
   SAVE_NEW_PROGRAM: "SAVE_NEW_PROGRAM",
+  DELETE_PROGRAM: "DELETE_PROGRAM",
   APP_QUIT: "APP_QUIT",
 };
 
@@ -135,6 +136,10 @@ ipcMain.on(EVENTS.SAVE_NEW_PROGRAM, async (event, programObject) =>
 
 ipcMain.on(EVENTS.EDIT_PROGRAM, async (event, filename, programObject) =>
   store.editProgram(filename, programObject),
+);
+
+ipcMain.on(EVENTS.DELETE_PROGRAM, async (event, filename) =>
+  store.delete(DIR_CONST.PROGRAMS, filename),
 );
 
 ipcMain.on(EVENTS.APP_QUIT, onQuit);

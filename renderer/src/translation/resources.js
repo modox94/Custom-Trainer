@@ -134,6 +134,14 @@ const resources = {
       [en]: "Delete program",
       [ru]: "Удалить программу",
     },
+    [TK[PROGRAM_EDITOR].saveToFile]: {
+      [en]: "Save to file",
+      [ru]: "Сохранить в файл",
+    },
+    [TK[PROGRAM_EDITOR].loadFromFile]: {
+      [en]: "Load from file",
+      [ru]: "Загрузить из файла",
+    },
     [TK[PROGRAM_EDITOR].typeProgramTitle]: {
       [en]: "Type the title of the program...",
       [ru]: "Введите название программы...",

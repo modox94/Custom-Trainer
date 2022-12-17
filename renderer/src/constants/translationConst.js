@@ -44,6 +44,8 @@ export const TRANSLATION_KEYS = {
     editProgram: "editProgram",
     copyProgram: "copyProgram",
     deleteProgram: "deleteProgram",
+    saveToFile: "saveToFile",
+    loadFromFile: "loadFromFile",
     typeProgramTitle: "typeProgramTitle",
     programTitleError: "programTitleError",
     deleteProgHead: "deleteProgHead",

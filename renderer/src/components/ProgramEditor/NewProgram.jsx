@@ -44,13 +44,19 @@ const NewProgram = props => {
   const [title, setTitle] = useState("");
   const [currentStep, setCurrentStep] = useState(0);
 
-  const filenameMatch = useMatch(
+  const filenameEditMatch = useMatch(
     `${PAGES_PATHS[PROGRAM_EDITOR]}/${SUB_PATHS[PROGRAM_EDITOR].EDIT}/:${SUB_PATHS.FILENAME}`,
   );
-  const filename = get(filenameMatch, ["params", SUB_PATHS.FILENAME]);
+  const filenameCopyMatch = useMatch(
+    `${PAGES_PATHS[PROGRAM_EDITOR]}/${SUB_PATHS[PROGRAM_EDITOR].COPY}/:${SUB_PATHS.FILENAME}`,
+  );
+  const filename = get(filenameEditMatch || filenameCopyMatch, [
+    "params",
+    SUB_PATHS.FILENAME,
+  ]);
   const { data: programs = {} } =
     useGetProgramsQuery(undefined, {
-      skip: mode !== NP_MODE.EDIT,
+      skip: [NP_MODE.NEW].includes(mode),
       refetchOnMountOrArgChange: true,
     }) || {};
   const programSteps = get(programs, [filename, "steps"], DEFAULT_STEPS);
@@ -60,6 +66,7 @@ const NewProgram = props => {
   const onSaveProgram = () => {
     switch (mode) {
       case NP_MODE.NEW:
+      case NP_MODE.COPY:
         saveNewProgram({ title, maxResistanceLevel: MAX_RES_LEVEL, steps });
         navigate(PAGES_PATHS[MAIN]);
         break;

@@ -1,7 +1,7 @@
 import { Button, Callout, Divider, InputGroup } from "@blueprintjs/core";
 import { get, noop } from "lodash";
 import PropTypes from "prop-types";
-import React, { useCallback, useRef, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useMatch } from "react-router-dom";
 import Keyboard from "react-simple-keyboard";
@@ -70,12 +70,29 @@ const EnterTitle = props => {
   const filename = get(filenameMatch, ["params", SUB_PATHS.FILENAME]);
   const { data: programs = {} } =
     useGetProgramsQuery(undefined, {
-      skip: mode !== NP_MODE.EDIT,
+      skip: [NP_MODE.NEW].includes(mode),
       refetchOnMountOrArgChange: true,
     }) || {};
   const programTitle = get(programs, [filename, "title"], "");
   const [input, setInput] = useState(programTitle);
   const [error, setError] = useState("");
+
+  useEffect(() => {
+    switch (mode) {
+      case NP_MODE.NEW:
+        break;
+
+      case NP_MODE.EDIT:
+        keyboardRef.current?.setInput(programTitle);
+        break;
+
+      case NP_MODE.COPY:
+        break;
+
+      default:
+        break;
+    }
+  }, [mode, programTitle]);
 
   const handleShift = () => {
     const newLayoutName =

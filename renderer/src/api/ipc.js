@@ -82,6 +82,9 @@ export const editProgram = (filename, programObject) =>
     programObject,
   );
 
+export const deleteProgram = filename =>
+  window.electron.ipcRenderer.send(EVENTS.DELETE_PROGRAM, filename);
+
 export const appQuit = () => window.electron.ipcRenderer.send(EVENTS.APP_QUIT);
 
 export const { useGetCadenceQuery, useGetProgramsQuery } = ipcApi;
