@@ -1,0 +1,25 @@
+.footer {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  justify-content: flex-start;
+  align-items: center;
+  bottom: 0px;
+  height: var(--footer-height);
+  padding: 0 var(--medium-gap);
+  overflow-x: auto;
+  overflow-y: hidden;
+}
+
+.footer::-webkit-scrollbar {
+  width: 0px;
+  height: 5px;
+}
+
+.footer::-webkit-scrollbar-track {
+  background: var(--gray3);
+}
+
+.footer::-webkit-scrollbar-thumb {
+  background-color: var(--blue3);
+}

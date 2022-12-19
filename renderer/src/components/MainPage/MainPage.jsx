@@ -1,5 +1,6 @@
 import { Icon } from "@blueprintjs/core";
 import { IconNames } from "@blueprintjs/icons";
+import clsx from "clsx";
 import React, { useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
@@ -54,10 +55,16 @@ const MainPage = props => {
           <h1>PLACEHOLDER</h1>
         </Item>
         <Item onClick={onClickS}>
-          <h1>{t(getTPath(SETTINGS))}</h1>
+          <Icon
+            className={clsx(styles.icon, styles.settingsIcon)}
+            icon={IconNames.COG}
+          />
         </Item>
         <Item onClick={appQuit}>
-          <Icon className={styles.icon} icon={IconNames.POWER} />
+          <Icon
+            className={clsx(styles.icon, styles.quitIcon)}
+            icon={IconNames.POWER}
+          />
         </Item>
       </Container>
     </>

@@ -1,4 +1,4 @@
-import { Button, Icon } from "@blueprintjs/core";
+import { Button, Icon, Intent } from "@blueprintjs/core";
 import { IconNames } from "@blueprintjs/icons";
 import clsx from "clsx";
 import { get, noop } from "lodash";
@@ -308,23 +308,23 @@ const ProgramEditor = props => {
         <Item className={clsx(styles.tinyPadding, styles.tripleButtonItem)}>
           <Button
             large
-            intent="primary"
-            icon="plus"
+            intent={Intent.PRIMARY}
+            icon={IconNames.PLUS}
             text={t(getTPath(add))}
             onClick={onAddStep}
           />
           <Button
             large
-            intent="danger"
-            icon="trash"
+            intent={Intent.DANGER}
+            icon={IconNames.TRASH}
             text={t(getTPath(deleteTKey))}
             disabled={steps.length <= 1}
             onClick={onDeleteStep}
           />
           <Button
             large
-            intent="success"
-            icon="floppy-disk"
+            intent={Intent.SUCCESS}
+            icon={IconNames.FLOPPY_DISK}
             text={t(getTPath(save))}
             onClick={onSaveProgram}
           />

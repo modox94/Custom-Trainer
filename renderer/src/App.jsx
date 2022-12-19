@@ -2,9 +2,12 @@ import { PortalProvider } from "@blueprintjs/core";
 import "@blueprintjs/core/lib/css/blueprint.css";
 import "@blueprintjs/icons/lib/css/blueprint-icons.css";
 import "@blueprintjs/select/lib/css/blueprint-select.css";
+import clsx from "clsx";
 import "normalize.css";
+import { useSelector } from "react-redux";
 import { MemoryRouter, Outlet, Route, Routes } from "react-router-dom";
 import "./App.css";
+import Footer from "./components/Footer/Footer";
 import MainPage from "./components/MainPage/MainPage";
 import ManualMode from "./components/ManualMode/ManualMode";
 import Navigation from "./components/Navigation/Navigation";
@@ -16,16 +19,24 @@ import Settings from "./components/Settings/Settings";
 import { PAGES, PAGES_PATHS, SUB_PATHS } from "./constants/pathConst";
 import { PE_MODE } from "./constants/programEditorConst";
 import { SP_MODE } from "./constants/selectProgramConst";
+import { getFooterStatus } from "./selectors/environmentSelectors";
 
 const OutletProvider = () => <Outlet />;
 
 const { MAIN, MANUAL_MODE, SETTINGS, SELECT_PROGRAM, PROGRAM_EDITOR } = PAGES;
 
 const App = () => {
+  const footerStatus = useSelector(getFooterStatus);
+
   return (
     <PortalProvider>
       <MemoryRouter>
-        <div className="app">
+        <div
+          className={clsx("app", {
+            withHeader: !footerStatus,
+            withHeaderAndFooter: footerStatus,
+          })}
+        >
           <Navigation />
 
           <Routes>
@@ -87,6 +98,8 @@ const App = () => {
               />
             </Route>
           </Routes>
+
+          <Footer />
         </div>
       </MemoryRouter>
     </PortalProvider>

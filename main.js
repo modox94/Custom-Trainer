@@ -7,8 +7,6 @@ const { isFunction, get } = require("lodash");
 
 const store = new Store();
 
-const isProduction = process.env.NODE_ENV === "production";
-
 const EVENTS = {
   WATCH_CADENCE: "WATCH_CADENCE",
   WATCH_PROGRAMS: "WATCH_PROGRAMS",
@@ -40,7 +38,7 @@ const createWindow = () => {
     width: 800,
     height: 600,
     fullscreenable: true,
-    fullscreen: isProduction,
+    fullscreen: app.isPackaged,
     webPreferences: {
       preload: path.join(__dirname, "preload.js"),
       contextIsolation: true,

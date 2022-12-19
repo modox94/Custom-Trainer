@@ -1,4 +1,5 @@
-import { Button, Classes, Dialog } from "@blueprintjs/core";
+import { Button, Classes, Dialog, Intent } from "@blueprintjs/core";
+import { IconNames } from "@blueprintjs/icons";
 import { chunk, get } from "lodash";
 import PropTypes from "prop-types";
 import React, { useCallback, useMemo, useState } from "react";
@@ -79,10 +80,10 @@ const SelectProgram = props => {
     let message = "";
     let btn1Text = "";
     let btn1Icon = undefined;
-    let btn1Intent = "none";
+    let btn1Intent = Intent.NONE;
     let btn2Text = "";
     let btn2Icon = undefined;
-    let btn2Intent = "none";
+    let btn2Intent = Intent.NONE;
 
     switch (mode) {
       case SP_MODE.COPY:
@@ -90,8 +91,8 @@ const SelectProgram = props => {
         message = getTranslationPath(PE_TRK, copyProgMsg);
 
         btn1Text = getTranslationPath(COMMON, copyTKey);
-        btn1Icon = "duplicate";
-        btn1Intent = "primary";
+        btn1Icon = IconNames.DUPLICATE;
+        btn1Intent = Intent.PRIMARY;
         btn2Text = getTranslationPath(COMMON, cancelTKey);
         break;
 
@@ -100,8 +101,8 @@ const SelectProgram = props => {
         message = getTranslationPath(PE_TRK, deleteProgMsg);
 
         btn1Text = getTranslationPath(COMMON, deleteTKey);
-        btn1Icon = "trash";
-        btn1Intent = "danger";
+        btn1Icon = IconNames.TRASH;
+        btn1Intent = Intent.DANGER;
         btn2Text = getTranslationPath(COMMON, cancelTKey);
         break;
 

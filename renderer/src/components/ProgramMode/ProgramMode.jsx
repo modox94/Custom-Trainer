@@ -1,4 +1,5 @@
 import { Button, Classes, Dialog } from "@blueprintjs/core";
+import { IconNames } from "@blueprintjs/icons";
 import { get, round } from "lodash";
 import React, { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -202,13 +203,13 @@ const ProgramMode = props => {
           <div className={Classes.DIALOG_FOOTER_ACTIONS}>
             <Button
               large
-              icon="repeat"
+              icon={IconNames.REPEAT}
               text={t(getTPath(repeat))}
               onClick={repeatProgram}
             />
             <Button
               large
-              icon="arrow-left"
+              icon={IconNames.ARROW_LEFT}
               text={t(getTPath(back))}
               onClick={goBack}
             />
