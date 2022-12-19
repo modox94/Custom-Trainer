@@ -11,6 +11,7 @@ export const TRANSLATION_ROOT_KEYS = {
   WORKOUT: "WORKOUT",
   PROGRAM_EDITOR: "PROGRAM_EDITOR",
   SETTINGS: "SETTINGS",
+  TIPS: "TIPS",
 };
 
 export const TRANSLATION_KEYS = {
@@ -29,6 +30,7 @@ export const TRANSLATION_KEYS = {
     repeat: "repeat",
     cancelTKey: "cancelTKey",
     copyTKey: "copyTKey",
+    ok: "ok",
   },
   [TRANSLATION_ROOT_KEYS.WORKOUT]: {
     programMode: "programMode",
@@ -56,5 +58,17 @@ export const TRANSLATION_KEYS = {
   [TRANSLATION_ROOT_KEYS.SETTINGS]: {
     [LANGS_CODES.en]: LANGS_CODES.en,
     [LANGS_CODES.ru]: LANGS_CODES.ru,
+  },
+  [TRANSLATION_ROOT_KEYS.TIPS]: {
+    tipTitle: "tipTitle",
+    settingsTip: "settingsTip",
+    quitBut: "quitBut",
+    quitTip: "quitTip",
+    rpmBut: "rpmBut",
+    rpmTip: "rpmTip",
+    totalDurationBut: "totalDurationBut",
+    totalDurationTip: "totalDurationTip",
+    resistanceBut: "resistanceBut",
+    resistanceTip: "resistanceTip",
   },
 };

@@ -1,4 +1,11 @@
-import { Button, Callout, Divider, InputGroup } from "@blueprintjs/core";
+import {
+  Button,
+  Callout,
+  Divider,
+  InputGroup,
+  Intent,
+} from "@blueprintjs/core";
+import { IconNames } from "@blueprintjs/icons";
 import { get, noop } from "lodash";
 import PropTypes from "prop-types";
 import React, { useCallback, useEffect, useRef, useState } from "react";
@@ -190,8 +197,8 @@ const EnterTitle = props => {
                 large
                 rightIcon="arrow-right"
                 intent={
-                  (error && "danger") ||
-                  (input.trim().length > 0 ? "success" : "none")
+                  (error && Intent.DANGER) ||
+                  (input.trim().length > 0 ? Intent.SUCCESS : Intent.NONE)
                 }
                 text={t(getTranslationPath(COMMON, next))}
                 disabled={error || input.trim().length === 0}
@@ -206,7 +213,7 @@ const EnterTitle = props => {
           {error && (
             <>
               <Divider />
-              <Callout icon="error" intent="danger">
+              <Callout icon={IconNames.ERROR} intent={Intent.DANGER}>
                 {error}
               </Callout>
             </>

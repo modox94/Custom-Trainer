@@ -1,13 +1,11 @@
-#root {
-  overflow-y: auto;
-
+html {
   --header-height: 50px; /* pt-navbar-height */
+  --footer-height: 50px; /* pt-navbar-height */
   --keyboard-height: 185px;
   --large-gap: 20px;
   --medium-gap: 10px;
   --small-gap: 5px;
   --tiny-gap: 2px;
-  --available-height: calc((100vh - var(--header-height) - var(--medium-gap)));
 
   --black: #111418;
   --dark-gray1: #1c2127;
@@ -103,6 +101,10 @@
   --cobalt5: #68c1ee;
 }
 
+#root {
+  overflow-y: auto;
+}
+
 #root::-webkit-scrollbar {
   width: 1vw;
   height: 0px;
@@ -117,7 +119,23 @@
 }
 
 .app {
-  padding-top: calc(100vh - var(--available-height));
-  height: 100%;
   width: 100%;
+}
+
+.withHeader {
+  --padding-header: calc(var(--header-height) + var(--medium-gap));
+  --available-height: calc((100vh - var(--padding-header)));
+
+  padding-top: var(--padding-header);
+}
+
+.withHeaderAndFooter {
+  --padding-header: calc(var(--header-height) + var(--medium-gap));
+  --padding-footer: calc(var(--footer-height));
+  --available-height: calc(
+    100vh - var(--padding-header) - var(--padding-footer)
+  );
+
+  padding-top: var(--padding-header);
+  padding-bottom: var(--padding-footer);
 }

@@ -7,12 +7,20 @@ import { isProduction } from "../utils/commonUtils";
 const initialState = {
   runningStatus: RUNNINIG_STATUS.PAUSE,
   lastSleep: undefined,
+  footerStatus: false,
 };
 
 const environmentSlice = createSlice({
   name: NAMES.environment,
   initialState,
-  reducers: {},
+  reducers: {
+    showFooter: state => {
+      state.footerStatus = true;
+    },
+    hideFooter: state => {
+      state.footerStatus = false;
+    },
+  },
   extraReducers: {
     [updateRunningStatus.pending]: (state, action) => {
       const lastTimecode = get(action, ["meta", "arg"]);
@@ -48,5 +56,7 @@ const environmentSlice = createSlice({
     },
   },
 });
+
+export const { showFooter, hideFooter } = environmentSlice.actions;
 
 export default environmentSlice;

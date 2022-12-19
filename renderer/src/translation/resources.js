@@ -10,7 +10,7 @@ import {
 } from "../utils/translationUtils";
 
 const { en, ru } = LANGS_CODES;
-const { COMMON, WORKOUT, PROGRAM_EDITOR, SETTINGS } = TRK;
+const { COMMON, WORKOUT, PROGRAM_EDITOR, SETTINGS, TIPS } = TRK;
 
 // {ROOT_KEY: {INSIDE_KEY: {LANG_KEY1: value, LANG_KEY2: value, ...}}};
 // example
@@ -73,6 +73,10 @@ const resources = {
     [TK[COMMON].copyTKey]: {
       [en]: "Copy",
       [ru]: "Копировать",
+    },
+    [TK[COMMON].ok]: {
+      [en]: "Ok",
+      [ru]: "Ясно",
     },
   },
   [WORKOUT]: {
@@ -175,6 +179,48 @@ const resources = {
     [ru]: {
       [en]: "Russian",
       [ru]: "Русский",
+    },
+  },
+  [TIPS]: {
+    [TK[TIPS].tipTitle]: {
+      [en]: "Tip",
+      [ru]: "Подсказка",
+    },
+    [TK[TIPS].settingsTip]: {
+      [en]: "go to the settings page.",
+      [ru]: "переход на страницу настроек приложения.",
+    },
+    [TK[TIPS].quitBut]: {
+      [en]: "Quit",
+      [ru]: "Выход",
+    },
+    [TK[TIPS].quitTip]: {
+      [en]: "quit the app.",
+      [ru]: "выход из приложения.",
+    },
+    [TK[TIPS].rpmBut]: {
+      [en]: "RPM",
+      [ru]: "RPM",
+    },
+    [TK[TIPS].rpmTip]: {
+      [en]: "the desired running speed on the sector.",
+      [ru]: "желаемая скорость бега на участке.",
+    },
+    [TK[TIPS].totalDurationBut]: {
+      [en]: "Total duration",
+      [ru]: "Общая продолжительность",
+    },
+    [TK[TIPS].totalDurationTip]: {
+      [en]: "the total duration of the workout.",
+      [ru]: "общая продолжительность тренировки.",
+    },
+    [TK[TIPS].resistanceBut]: {
+      [en]: "Resistance level",
+      [ru]: "Уровень нагрузки",
+    },
+    [TK[TIPS].resistanceTip]: {
+      [en]: "the level of load on the sector.",
+      [ru]: "уровень нагрузки на участке.",
     },
   },
 };
