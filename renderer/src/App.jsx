@@ -15,7 +15,12 @@ import EditorMenu from "./components/ProgramEditor/EditorMenu";
 import ProgramEditor from "./components/ProgramEditor/ProgramEditor";
 import ProgramMode from "./components/ProgramMode/ProgramMode";
 import SelectProgram from "./components/SelectProgram/SelectProgram";
+import Advanced from "./components/Settings/Advanced";
+import Interface from "./components/Settings/Interface";
+import Performance from "./components/Settings/Performance";
+import Peripheral from "./components/Settings/Peripheral";
 import Settings from "./components/Settings/Settings";
+import Translate from "./components/Settings/Translate";
 import { PAGES, PAGES_PATHS, SUB_PATHS } from "./constants/pathConst";
 import { PE_MODE } from "./constants/programEditorConst";
 import { SP_MODE } from "./constants/selectProgramConst";
@@ -42,7 +47,30 @@ const App = () => {
           <Routes>
             <Route path={PAGES_PATHS[MAIN]} element={<MainPage />} />
             <Route path={PAGES_PATHS[MANUAL_MODE]} element={<ManualMode />} />
-            <Route path={PAGES_PATHS[SETTINGS]} element={<Settings />} />
+
+            <Route path={PAGES_PATHS[SETTINGS]} element={<OutletProvider />}>
+              <Route path={SUB_PATHS.ROOT} element={<Settings />} />
+              <Route
+                path={SUB_PATHS[SETTINGS].TRANSLATE}
+                element={<Translate />}
+              />
+              <Route
+                path={SUB_PATHS[SETTINGS].INTERFACE}
+                element={<Interface />}
+              />
+              <Route
+                path={SUB_PATHS[SETTINGS].PERIPHERAL}
+                element={<Peripheral />}
+              />
+              <Route
+                path={SUB_PATHS[SETTINGS].PERFORMANCE}
+                element={<Performance />}
+              />
+              <Route
+                path={SUB_PATHS[SETTINGS].ADVANCED}
+                element={<Advanced />}
+              />
+            </Route>
 
             <Route
               path={PAGES_PATHS[SELECT_PROGRAM]}

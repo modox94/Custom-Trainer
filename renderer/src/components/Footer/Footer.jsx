@@ -8,8 +8,7 @@ import {
 } from "@blueprintjs/core";
 import { IconNames } from "@blueprintjs/icons";
 import { get } from "lodash";
-import React, { useEffect, useMemo, useState } from "react";
-import { useCallback } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "react-redux";
 import { useLocation, useMatch } from "react-router-dom";
@@ -31,6 +30,8 @@ const { MAIN, MANUAL_MODE, SETTINGS, SELECT_PROGRAM } = PAGES;
 const { COMMON, PROGRAM_EDITOR, TIPS } = TRANSLATION_ROOT_KEYS;
 const { ok } = TRANSLATION_KEYS[COMMON];
 const {
+  tipBut,
+  tipDescrip,
   tipTitle,
   settingsTip,
   quitBut,
@@ -42,6 +43,8 @@ const {
   resistanceBut,
   resistanceTip,
 } = TRANSLATION_KEYS[TIPS];
+
+const getTPath = (...args) => getTranslationPath(TIPS, ...args);
 
 const TIP_DEFAULT = null;
 const TIPS_PATH_DEFAULT = null;
@@ -138,7 +141,7 @@ const Footer = props => {
                     className={stylesMainPage.settingsIcon}
                     icon={IconNames.COG}
                   />
-                  {`${DASH}${t(getTranslationPath(TIPS, settingsTip))}`}
+                  {`${DASH}${t(getTPath(settingsTip))}`}
                 </>
               ),
             }),
@@ -147,7 +150,7 @@ const Footer = props => {
           buttonIcon: (
             <Icon className={stylesMainPage.quitIcon} icon={IconNames.POWER} />
           ),
-          buttonText: t(getTranslationPath(TIPS, quitBut)),
+          buttonText: t(getTPath(quitBut)),
           onClick: () =>
             setTip({
               body: (
@@ -156,7 +159,7 @@ const Footer = props => {
                     className={stylesMainPage.quitIcon}
                     icon={IconNames.POWER}
                   />
-                  {`${DASH}${t(getTranslationPath(TIPS, quitTip))}`}
+                  {`${DASH}${t(getTPath(quitTip))}`}
                 </>
               ),
             }),
@@ -165,39 +168,39 @@ const Footer = props => {
       [PAGES_PATHS[PROGRAM_EDITOR]]: [
         {
           buttonIcon: <Icon icon={IconNames.DASHBOARD} />,
-          buttonText: t(getTranslationPath(TIPS, rpmBut)),
+          buttonText: t(getTPath(rpmBut)),
           onClick: () =>
             setTip({
               body: (
                 <>
                   <Icon icon={IconNames.DASHBOARD} />
-                  {`${DASH}${t(getTranslationPath(TIPS, rpmTip))}`}
+                  {`${DASH}${t(getTPath(rpmTip))}`}
                 </>
               ),
             }),
         },
         {
           buttonIcon: <Icon icon={IconNames.STOPWATCH} />,
-          buttonText: t(getTranslationPath(TIPS, totalDurationBut)),
+          buttonText: t(getTPath(totalDurationBut)),
           onClick: () =>
             setTip({
               body: (
                 <>
                   <Icon icon={IconNames.STOPWATCH} />
-                  {`${DASH}${t(getTranslationPath(TIPS, totalDurationTip))}`}
+                  {`${DASH}${t(getTPath(totalDurationTip))}`}
                 </>
               ),
             }),
         },
         {
           buttonIcon: <Icon icon={IconNames.MOUNTAIN} />,
-          buttonText: t(getTranslationPath(TIPS, resistanceBut)),
+          buttonText: t(getTPath(resistanceBut)),
           onClick: () =>
             setTip({
               body: (
                 <>
                   <Icon icon={IconNames.MOUNTAIN} />
-                  {`${DASH}${t(getTranslationPath(TIPS, resistanceTip))}`}
+                  {`${DASH}${t(getTPath(resistanceTip))}`}
                 </>
               ),
             }),
@@ -215,6 +218,11 @@ const Footer = props => {
   return (
     <Navbar fixedToTop className={styles.footer} style={containerStyle}>
       <ButtonGroup large minimal>
+        <Button
+          icon={IconNames.HELP}
+          text={t(getTPath(tipBut))}
+          onClick={() => setTip({ body: t(getTPath(tipDescrip)) })}
+        />
         {get(tipsObject, tipsPath, []).map((tipEl, idx) => {
           return (
             <Button
@@ -229,7 +237,7 @@ const Footer = props => {
 
       <Dialog
         isOpen={Boolean(tip)}
-        title={t(getTranslationPath(TIPS, tipTitle))}
+        title={t(getTPath(tipTitle))}
         canOutsideClickClose
         isCloseButtonShown
         onClose={onTipClose}

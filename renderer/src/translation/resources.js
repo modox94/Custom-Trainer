@@ -180,8 +180,32 @@ const resources = {
       [en]: "Russian",
       [ru]: "Русский",
     },
+    [TK[SETTINGS].interfaceTKey]: {
+      [en]: "Interface",
+      [ru]: "Интерфейс",
+    },
+    [TK[SETTINGS].peripheral]: {
+      [en]: "Peripheral",
+      [ru]: "Переферия",
+    },
+    [TK[SETTINGS].performance]: {
+      [en]: "Performance",
+      [ru]: "Производительность",
+    },
+    [TK[SETTINGS].advanced]: {
+      [en]: "Advanced",
+      [ru]: "Дополнительно",
+    },
   },
   [TIPS]: {
+    [TK[TIPS].tipBut]: {
+      [en]: "Tips",
+      [ru]: "Подсказки",
+    },
+    [TK[TIPS].tipDescrip]: {
+      [en]: "To the right of the button you clicked, there are tips.",
+      [ru]: "Справа от кнопки, которую вы нажали, находятся подсказки.",
+    },
     [TK[TIPS].tipTitle]: {
       [en]: "Tip",
       [ru]: "Подсказка",

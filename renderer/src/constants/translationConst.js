@@ -58,8 +58,14 @@ export const TRANSLATION_KEYS = {
   [TRANSLATION_ROOT_KEYS.SETTINGS]: {
     [LANGS_CODES.en]: LANGS_CODES.en,
     [LANGS_CODES.ru]: LANGS_CODES.ru,
+    interfaceTKey: "interfaceTKey",
+    peripheral: "peripheral",
+    performance: "performance",
+    advanced: "advanced",
   },
   [TRANSLATION_ROOT_KEYS.TIPS]: {
+    tipBut: "tipBut",
+    tipDescrip: "tipDescrip",
     tipTitle: "tipTitle",
     settingsTip: "settingsTip",
     quitBut: "quitBut",
