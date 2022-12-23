@@ -33,7 +33,7 @@
     "@electron-forge/cli": "^6.0.4",
     "@electron-forge/maker-deb": "^6.0.4",
     "electron": "^22.0.0",
-    "eslint": "^8.29.0",
+    "eslint": "^8.30.0",
     "prettier": "^2.8.1"
   },
   "config": {
