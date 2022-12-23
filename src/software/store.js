@@ -1,14 +1,25 @@
 const { app } = require("electron");
 const path = require("node:path");
 const fs = require("node:fs");
-const { get, set, camelCase, isEqual, isFunction, unset } = require("lodash");
+const {
+  get,
+  set,
+  camelCase,
+  isEqual,
+  isFunction,
+  unset,
+  cloneDeep,
+} = require("lodash");
 const chokidar = require("chokidar");
 const defaultTrainingPrograms = require("../../default_training_programs");
+const {
+  LANGS_CODES,
+  DIR_CONST,
+  FILE_CONST,
+} = require("../constants/constants");
 
-const DIR_CONST = {
-  SETTINGS: "settings",
-  EXERCISES: "exercises",
-  PROGRAMS: "programs",
+const interfaceDefault = {
+  lang: LANGS_CODES.en,
 };
 
 const DIR_CONST_ARRAY = Object.values(DIR_CONST);
@@ -47,15 +58,19 @@ class Store {
   }
 
   initialize() {
-    const fullPath = path.join(this.userDataPath, DIR_CONST.PROGRAMS);
-    const programsDir = fs.readdirSync(fullPath, { withFileTypes: true });
     const tempStore = {};
+
+    // Programs
+    const programsFullPath = path.join(this.userDataPath, DIR_CONST.PROGRAMS);
+    const programsDir = fs.readdirSync(programsFullPath, {
+      withFileTypes: true,
+    });
 
     programsDir.forEach(programFile => {
       if (programFile.isDirectory()) {
         return console.log("error unexpected folder");
       } else if (programFile.isFile()) {
-        const pathEl = path.join(fullPath, programFile.name);
+        const pathEl = path.join(programsFullPath, programFile.name);
         const programObj = JSON.parse(fs.readFileSync(pathEl));
         set(tempStore, [DIR_CONST.PROGRAMS, programFile.name], programObj);
       }
@@ -84,19 +99,41 @@ class Store {
 
       let filename = `${camelCase(defaultProgram.title)}.json`;
       let iterator = 0;
-      while (tempStore[DIR_CONST.PROGRAMS][filename] && iterator < 100) {
+      while (get(tempStore, [DIR_CONST.PROGRAMS, filename]) && iterator < 100) {
         iterator += 1;
         filename = `${camelCase(defaultProgram.title)}_(${iterator}).json`;
       }
 
-      if (tempStore[DIR_CONST.PROGRAMS][filename]) {
+      if (get(tempStore, [DIR_CONST.PROGRAMS, filename])) {
         return console.log("error cant save default program");
       }
 
-      const filePath = path.join(fullPath, filename);
-      fs.writeFileSync(filePath, JSON.stringify(defaultProgram));
-      set(tempStore, [DIR_CONST.PROGRAMS, filePath], defaultProgram);
+      this.create(DIR_CONST.PROGRAMS, filename, defaultProgram);
     });
+
+    // Settings
+    const settingsFullPath = path.join(this.userDataPath, DIR_CONST.SETTINGS);
+    const settingsDir = fs.readdirSync(settingsFullPath, {
+      withFileTypes: true,
+    });
+
+    settingsDir.forEach(programFile => {
+      if (programFile.isDirectory()) {
+        return console.log("error unexpected folder");
+      } else if (programFile.isFile()) {
+        const pathEl = path.join(settingsFullPath, programFile.name);
+        const programObj = JSON.parse(fs.readFileSync(pathEl));
+        set(tempStore, [DIR_CONST.SETTINGS, programFile.name], programObj);
+      }
+    });
+
+    if (!get(tempStore, [DIR_CONST.SETTINGS, FILE_CONST.INTERFACE])) {
+      this.create(DIR_CONST.SETTINGS, FILE_CONST.INTERFACE, interfaceDefault);
+    }
+
+    if (!get(tempStore, [DIR_CONST.SETTINGS, FILE_CONST.PERIPHERAL])) {
+      // TODO
+    }
   }
 
   onAddOrChange(dir, pathValue) {
@@ -236,14 +273,22 @@ class Store {
   }
 
   editProgram(filename, data) {
-    const isExist = this.isExist(DIR_CONST.PROGRAMS, filename);
-    if (!isExist) {
-      console.log("error cant find file");
-      return;
-    }
+    this.edit(DIR_CONST.PROGRAMS, filename, data);
+  }
 
-    const fullPath = path.join(this.userDataPath, DIR_CONST.PROGRAMS, filename);
-    fs.writeFileSync(fullPath, JSON.stringify(data));
+  editSettings(filename, field, value) {
+    if (Object.values(FILE_CONST).includes(filename)) {
+      const newData = cloneDeep(
+        get(this.store, [DIR_CONST.SETTINGS, filename], {}),
+      );
+      set(newData, [field], value);
+      this.edit(DIR_CONST.SETTINGS, filename, newData);
+    } else {
+      console.log("error invalid args");
+      console.log("filename", filename);
+      console.log("field", field);
+      console.log("value", value);
+    }
   }
 
   delete(dir, filename) {
@@ -263,5 +308,4 @@ class Store {
   }
 }
 
-exports.DIR_CONST = DIR_CONST;
-exports.Store = Store;
+module.exports = Store;

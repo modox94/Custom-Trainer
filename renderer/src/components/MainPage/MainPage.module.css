@@ -8,10 +8,37 @@
   height: 100%;
 }
 
-.quitIcon svg {
+svg.redIcon,
+.redIcon svg {
   color: var(--red2);
 }
 
-.settingsIcon svg {
+svg.blueIcon,
+.blueIcon svg {
   color: var(--blue2);
+}
+
+svg.greenIcon,
+.greenIcon svg {
+  color: var(--green2);
+}
+
+.customIcon svg,
+svg.redIcon,
+svg.blueIcon,
+svg.greenIcon {
+  fill: currentColor;
+}
+
+.customIcon {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  justify-content: center;
+  align-items: center;
+}
+
+.customIcon svg {
+  max-width: 100%;
+  max-height: 100%;
 }

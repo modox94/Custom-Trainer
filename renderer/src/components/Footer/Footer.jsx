@@ -7,6 +7,7 @@ import {
   Navbar,
 } from "@blueprintjs/core";
 import { IconNames } from "@blueprintjs/icons";
+import clsx from "clsx";
 import { get } from "lodash";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -20,6 +21,7 @@ import {
 import { getFooterStatus } from "../../selectors/environmentSelectors";
 import { hideFooter, showFooter } from "../../slices/environmentSlice";
 import { getTranslationPath } from "../../utils/translationUtils";
+import { ReactComponent as MicrochipIcon } from "../Icons/microchip-solid.svg";
 import stylesMainPage from "../MainPage/MainPage.module.css";
 import styles from "./Footer.module.css";
 
@@ -114,12 +116,11 @@ const Footer = props => {
       }
     }
   }, [
-    location,
-    location.pathname,
     footerStatus,
     dispatch,
     filenameMatchPE_EDIT,
     filenameMatchPE_COPY,
+    location,
   ]);
 
   const tipsObject = useMemo(() => {
@@ -128,9 +129,66 @@ const Footer = props => {
         {
           buttonIcon: (
             <Icon
-              className={stylesMainPage.settingsIcon}
-              icon={IconNames.COG}
+              className={stylesMainPage.greenIcon}
+              icon={IconNames.SWAP_VERTICAL}
             />
+          ),
+          buttonText: t(getTranslationPath(COMMON, MANUAL_MODE)),
+          onClick: () =>
+            setTip({
+              body: (
+                <>
+                  <Icon
+                    className={stylesMainPage.greenIcon}
+                    icon={IconNames.SWAP_VERTICAL}
+                  />
+                  {`${DASH}${t(getTPath("TODO"))}`}
+                </>
+              ),
+            }),
+        },
+        {
+          buttonIcon: (
+            <span className={clsx(Classes.ICON, stylesMainPage.greenIcon)}>
+              <MicrochipIcon className={styles.customIcon} />
+            </span>
+          ),
+          buttonText: t(getTranslationPath(COMMON, SELECT_PROGRAM)),
+          onClick: () =>
+            setTip({
+              body: (
+                <>
+                  <span
+                    className={clsx(Classes.ICON, stylesMainPage.greenIcon)}
+                  >
+                    <MicrochipIcon className={styles.customIcon} />
+                  </span>
+                  {`${DASH}${t(getTPath("TODO"))}`}
+                </>
+              ),
+            }),
+        },
+        {
+          buttonIcon: (
+            <Icon className={stylesMainPage.blueIcon} icon={IconNames.EDIT} />
+          ),
+          buttonText: t(getTranslationPath(COMMON, PROGRAM_EDITOR)),
+          onClick: () =>
+            setTip({
+              body: (
+                <>
+                  <Icon
+                    className={stylesMainPage.blueIcon}
+                    icon={IconNames.EDIT}
+                  />
+                  {`${DASH}${t(getTPath("TODO"))}`}
+                </>
+              ),
+            }),
+        },
+        {
+          buttonIcon: (
+            <Icon className={stylesMainPage.blueIcon} icon={IconNames.COG} />
           ),
           buttonText: t(getTranslationPath(COMMON, SETTINGS)),
           onClick: () =>
@@ -138,7 +196,7 @@ const Footer = props => {
               body: (
                 <>
                   <Icon
-                    className={stylesMainPage.settingsIcon}
+                    className={stylesMainPage.blueIcon}
                     icon={IconNames.COG}
                   />
                   {`${DASH}${t(getTPath(settingsTip))}`}
@@ -148,7 +206,7 @@ const Footer = props => {
         },
         {
           buttonIcon: (
-            <Icon className={stylesMainPage.quitIcon} icon={IconNames.POWER} />
+            <Icon className={stylesMainPage.redIcon} icon={IconNames.POWER} />
           ),
           buttonText: t(getTPath(quitBut)),
           onClick: () =>
@@ -156,7 +214,7 @@ const Footer = props => {
               body: (
                 <>
                   <Icon
-                    className={stylesMainPage.quitIcon}
+                    className={stylesMainPage.redIcon}
                     icon={IconNames.POWER}
                   />
                   {`${DASH}${t(getTPath(quitTip))}`}

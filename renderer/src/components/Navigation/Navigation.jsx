@@ -23,7 +23,7 @@ const { programMode } = TRANSLATION_KEYS[WORKOUT];
 const getTPath = (...args) => getTranslationPath(COMMON, ...args);
 
 const Navigation = () => {
-  const { t, i18n } = useTranslation();
+  const { t } = useTranslation();
   const [title, setTitle] = useState("");
   const location = useLocation();
   const navigate = useNavigate();
@@ -55,6 +55,7 @@ const Navigation = () => {
         break;
 
       case PAGES_PATHS[SETTINGS]:
+      case `${PAGES_PATHS[SETTINGS]}/${SUB_PATHS[SETTINGS].TRANSLATE}`:
         setTitle(t(getTPath(SETTINGS)));
         break;
 
@@ -92,14 +93,7 @@ const Navigation = () => {
         break;
       }
     }
-  }, [
-    location,
-    location.pathname,
-    t,
-    i18n.language,
-    filenameMatch,
-    programTitle,
-  ]);
+  }, [location, filenameMatch, programTitle, t]);
 
   const goBack = () => {
     navigate(-1);

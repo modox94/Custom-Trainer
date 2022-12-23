@@ -52,8 +52,6 @@ const Settings = props => {
     [navigate],
   );
 
-  // translate
-
   return (
     <>
       <Container>
