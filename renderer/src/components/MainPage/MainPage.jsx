@@ -2,7 +2,6 @@ import { Icon } from "@blueprintjs/core";
 import { IconNames } from "@blueprintjs/icons";
 import clsx from "clsx";
 import React, { useCallback } from "react";
-import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 import { appQuit } from "../../api/ipc";
 import { PAGES, PAGES_PATHS } from "../../constants/pathConst";
@@ -13,7 +12,6 @@ import styles from "./MainPage.module.css";
 const { MANUAL_MODE, SETTINGS, SELECT_PROGRAM, PROGRAM_EDITOR } = PAGES;
 
 const MainPage = props => {
-  const { t } = useTranslation();
   const navigate = useNavigate();
 
   const onClickMM = useCallback(
