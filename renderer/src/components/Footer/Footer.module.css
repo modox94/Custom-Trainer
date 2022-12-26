@@ -24,7 +24,14 @@
   background-color: var(--blue3);
 }
 
-.customIcon {
-  width: 16px;
-  height: 16px;
+.redIcon svg {
+  color: var(--red2);
+}
+
+.blueIcon svg {
+  color: var(--blue2);
+}
+
+.greenIcon svg {
+  color: var(--green2);
 }

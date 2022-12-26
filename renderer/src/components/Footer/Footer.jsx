@@ -20,16 +20,27 @@ import {
 import { getFooterStatus } from "../../selectors/environmentSelectors";
 import { hideFooter, showFooter } from "../../slices/environmentSlice";
 import { getTranslationPath } from "../../utils/translationUtils";
-import { DumbbellIcon, GaugeHighIcon, MicrochipIcon } from "../Icons";
-import stylesMainPage from "../MainPage/MainPage.module.css";
+import {
+  DumbbellIcon,
+  GaugeHighIcon,
+  MicrochipIcon,
+  WiresWireIcon,
+} from "../Icons";
 import styles from "./Footer.module.css";
 
 const containerStyle = { top: "unset" };
 const DASH = " — ";
 
 const { MAIN, MANUAL_MODE, SETTINGS, SELECT_PROGRAM } = PAGES;
-const { COMMON, PROGRAM_EDITOR, TIPS } = TRANSLATION_ROOT_KEYS;
+const {
+  COMMON,
+  PROGRAM_EDITOR,
+  TIPS,
+  SETTINGS: SETTINGS_TRK,
+} = TRANSLATION_ROOT_KEYS;
 const { ok } = TRANSLATION_KEYS[COMMON];
+const { languageTKey, interfaceTKey, peripheral } =
+  TRANSLATION_KEYS[SETTINGS_TRK];
 const {
   tipBut,
   tipDescrip,
@@ -43,6 +54,9 @@ const {
   totalDurationTip,
   resistanceBut,
   resistanceTip,
+  languageTip,
+  interfaceTip,
+  peripheralTip,
 } = TRANSLATION_KEYS[TIPS];
 
 const getTPath = (...args) => getTranslationPath(TIPS, ...args);
@@ -70,16 +84,14 @@ const Footer = props => {
 
     switch (pathname) {
       case PAGES_PATHS[MAIN]: {
-        const path = [PAGES_PATHS[MAIN]];
         if (!footerStatus) {
           dispatch(showFooter());
         }
-        setTipsPath(path);
+        setTipsPath([pathname]);
         break;
       }
 
       case PAGES_PATHS[MANUAL_MODE]:
-      case PAGES_PATHS[SETTINGS]:
       case PAGES_PATHS[SELECT_PROGRAM]:
       case PAGES_PATHS[PROGRAM_EDITOR]:
       case `${PAGES_PATHS[PROGRAM_EDITOR]}/${SUB_PATHS[PROGRAM_EDITOR].EDIT}`:
@@ -91,11 +103,18 @@ const Footer = props => {
         break;
 
       case `${PAGES_PATHS[PROGRAM_EDITOR]}/${SUB_PATHS[PROGRAM_EDITOR].NEW}`: {
-        const path = [PAGES_PATHS[PROGRAM_EDITOR]];
         if (!footerStatus) {
           dispatch(showFooter());
         }
-        setTipsPath(path);
+        setTipsPath([PAGES_PATHS[PROGRAM_EDITOR]]);
+        break;
+      }
+
+      case PAGES_PATHS[SETTINGS]: {
+        if (!footerStatus) {
+          dispatch(showFooter());
+        }
+        setTipsPath([pathname]);
         break;
       }
 
@@ -127,10 +146,7 @@ const Footer = props => {
       [PAGES_PATHS[MAIN]]: [
         {
           buttonIcon: (
-            <Icon
-              className={stylesMainPage.greenIcon}
-              icon={IconNames.SWAP_VERTICAL}
-            />
+            <Icon className={styles.greenIcon} icon={IconNames.SWAP_VERTICAL} />
           ),
           buttonText: t(getTranslationPath(COMMON, MANUAL_MODE)),
           onClick: () =>
@@ -138,7 +154,7 @@ const Footer = props => {
               body: (
                 <>
                   <Icon
-                    className={stylesMainPage.greenIcon}
+                    className={styles.greenIcon}
                     icon={IconNames.SWAP_VERTICAL}
                   />
                   {`${DASH}${t(getTPath("TODO"))}`}
@@ -147,13 +163,13 @@ const Footer = props => {
             }),
         },
         {
-          buttonIcon: <MicrochipIcon className={stylesMainPage.greenIcon} />,
+          buttonIcon: <MicrochipIcon className={styles.greenIcon} />,
           buttonText: t(getTranslationPath(COMMON, SELECT_PROGRAM)),
           onClick: () =>
             setTip({
               body: (
                 <>
-                  <MicrochipIcon className={stylesMainPage.greenIcon} />
+                  <MicrochipIcon className={styles.greenIcon} />
                   {`${DASH}${t(getTPath("TODO"))}`}
                 </>
               ),
@@ -161,35 +177,27 @@ const Footer = props => {
         },
         {
           buttonIcon: (
-            <Icon className={stylesMainPage.blueIcon} icon={IconNames.EDIT} />
+            <Icon className={styles.blueIcon} icon={IconNames.EDIT} />
           ),
           buttonText: t(getTranslationPath(COMMON, PROGRAM_EDITOR)),
           onClick: () =>
             setTip({
               body: (
                 <>
-                  <Icon
-                    className={stylesMainPage.blueIcon}
-                    icon={IconNames.EDIT}
-                  />
+                  <Icon className={styles.blueIcon} icon={IconNames.EDIT} />
                   {`${DASH}${t(getTPath("TODO"))}`}
                 </>
               ),
             }),
         },
         {
-          buttonIcon: (
-            <Icon className={stylesMainPage.blueIcon} icon={IconNames.COG} />
-          ),
+          buttonIcon: <Icon className={styles.blueIcon} icon={IconNames.COG} />,
           buttonText: t(getTranslationPath(COMMON, SETTINGS)),
           onClick: () =>
             setTip({
               body: (
                 <>
-                  <Icon
-                    className={stylesMainPage.blueIcon}
-                    icon={IconNames.COG}
-                  />
+                  <Icon className={styles.blueIcon} icon={IconNames.COG} />
                   {`${DASH}${t(getTPath(settingsTip))}`}
                 </>
               ),
@@ -197,17 +205,14 @@ const Footer = props => {
         },
         {
           buttonIcon: (
-            <Icon className={stylesMainPage.redIcon} icon={IconNames.POWER} />
+            <Icon className={styles.redIcon} icon={IconNames.POWER} />
           ),
           buttonText: t(getTPath(quitBut)),
           onClick: () =>
             setTip({
               body: (
                 <>
-                  <Icon
-                    className={stylesMainPage.redIcon}
-                    icon={IconNames.POWER}
-                  />
+                  <Icon className={styles.redIcon} icon={IconNames.POWER} />
                   {`${DASH}${t(getTPath(quitTip))}`}
                 </>
               ),
@@ -250,6 +255,57 @@ const Footer = props => {
                 <>
                   <DumbbellIcon />
                   {`${DASH}${t(getTPath(resistanceTip))}`}
+                </>
+              ),
+            }),
+        },
+      ],
+      [PAGES_PATHS[SETTINGS]]: [
+        {
+          buttonIcon: (
+            <Icon className={styles.blueIcon} icon={IconNames.TRANSLATE} />
+          ),
+          buttonText: t(getTranslationPath(SETTINGS_TRK, languageTKey)),
+          onClick: () =>
+            setTip({
+              body: (
+                <>
+                  <Icon
+                    className={styles.blueIcon}
+                    icon={IconNames.TRANSLATE}
+                  />
+                  {`${DASH}${t(getTPath(languageTip))}`}
+                </>
+              ),
+            }),
+        },
+        {
+          buttonIcon: (
+            <Icon className={styles.blueIcon} icon={IconNames.APPLICATION} />
+          ),
+          buttonText: t(getTranslationPath(SETTINGS_TRK, interfaceTKey)),
+          onClick: () =>
+            setTip({
+              body: (
+                <>
+                  <Icon
+                    className={styles.blueIcon}
+                    icon={IconNames.APPLICATION}
+                  />
+                  {`${DASH}${t(getTPath(interfaceTip))}`}
+                </>
+              ),
+            }),
+        },
+        {
+          buttonIcon: <WiresWireIcon className={styles.blueIcon} />,
+          buttonText: t(getTranslationPath(SETTINGS_TRK, peripheral)),
+          onClick: () =>
+            setTip({
+              body: (
+                <>
+                  <WiresWireIcon className={styles.blueIcon} />
+                  {`${DASH}${t(getTPath(peripheralTip))}`}
                 </>
               ),
             }),

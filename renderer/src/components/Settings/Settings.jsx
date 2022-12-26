@@ -14,9 +14,9 @@ import { WiresWireIcon } from "../Icons";
 import { Container, Item } from "../SquareGrid/SquareGrid";
 import styles from "./Settings.module.css";
 
+const { SETTINGS } = PAGES;
 const { SETTINGS: SETTINGS_TRK } = TRANSLATION_ROOT_KEYS;
 const { performance, advanced } = TRANSLATION_KEYS[SETTINGS_TRK];
-const { SETTINGS } = PAGES;
 
 const getTPath = (...args) => getTranslationPath(SETTINGS_TRK, ...args);
 
@@ -66,11 +66,9 @@ const Settings = props => {
             className={clsx(styles.icon, styles.blueIcon)}
             icon={IconNames.APPLICATION}
           />
-          {/* <h1>{t(getTPath(interfaceTKey))}</h1> */}
         </Item>
         <Item onClick={onClickPeripheral}>
           <WiresWireIcon className={clsx(styles.icon, styles.blueIcon)} />
-          {/* <h1>{t(getTPath(peripheral))}</h1> */}
         </Item>
       </Container>
       <Container>

@@ -184,6 +184,10 @@ const resources = {
       [en]: "Russian",
       [ru]: "Русский",
     },
+    [TK[SETTINGS].languageTKey]: {
+      [en]: "Language",
+      [ru]: "Язык",
+    },
     [TK[SETTINGS].interfaceTKey]: {
       [en]: "Interface",
       [ru]: "Интерфейс",
@@ -262,6 +266,18 @@ const resources = {
     [TK[TIPS].resistanceTip]: {
       [en]: "the level of load on the sector.",
       [ru]: "уровень нагрузки на участке.",
+    },
+    [TK[TIPS].languageTip]: {
+      [en]: "application language selection menu.",
+      [ru]: "меню выбора языка приложения.",
+    },
+    [TK[TIPS].interfaceTip]: {
+      [en]: "setting up interface elements.",
+      [ru]: "настройка элементов интерфейса.",
+    },
+    [TK[TIPS].peripheralTip]: {
+      [en]: "setting up connected components.",
+      [ru]: "настройка подключенных компонентов.",
     },
   },
 };
