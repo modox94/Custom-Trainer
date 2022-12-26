@@ -5,7 +5,7 @@ import React, { useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { appQuit } from "../../api/ipc";
 import { PAGES, PAGES_PATHS } from "../../constants/pathConst";
-import { ReactComponent as MicrochipIcon } from "../Icons/microchip-solid.svg";
+import { MicrochipIcon } from "../Icons";
 import { Container, Item } from "../SquareGrid/SquareGrid";
 import styles from "./MainPage.module.css";
 
@@ -40,11 +40,8 @@ const MainPage = props => {
             icon={IconNames.SWAP_VERTICAL}
           />
         </Item>
-        <Item
-          className={clsx(styles.customIcon, styles.greenIcon)}
-          onClick={onClickSP}
-        >
-          <MicrochipIcon />
+        <Item onClick={onClickSP}>
+          <MicrochipIcon className={clsx(styles.icon, styles.greenIcon)} />
         </Item>
         <Item onClick={onClickPE}>
           <Icon

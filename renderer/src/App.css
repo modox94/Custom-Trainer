@@ -101,7 +101,18 @@ html {
   --cobalt5: #68c1ee;
 }
 
+.cursorNone * {
+  cursor: none;
+}
+
+.cursorNone .bp4-button:hover,
+.cursorNone .bp4-card:hover,
+.cursorNone .bp4-control-indicator {
+  cursor: none !important;
+}
+
 #root {
+  height: 100vh;
   overflow-y: auto;
 }
 

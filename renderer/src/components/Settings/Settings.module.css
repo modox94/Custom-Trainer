@@ -12,7 +12,7 @@
   color: var(--blue2);
 }
 
-.customIcon {
+.langIconContainer {
   display: flex;
   flex-direction: row;
   flex-wrap: nowrap;
@@ -20,12 +20,42 @@
   align-items: center;
 }
 
-.customIcon.selected {
+.langIconContainer.selected {
   background-color: var(--blue2);
 }
 
-.customIcon svg {
+.langIcon {
+  height: 100%;
+  width: auto;
+  max-width: 100%;
+  max-height: 100%;
+}
+
+.langIcon svg {
+  height: 100%;
+  width: auto;
   max-width: 100%;
   max-height: 100%;
   border: var(--tiny-gap) solid var(--black);
+}
+
+.fullHeightContainer {
+  height: var(--available-height);
+}
+
+.overflowItem {
+  overflow-x: auto;
+}
+
+.overflowItem::-webkit-scrollbar {
+  width: 1vw;
+  height: 0px;
+}
+
+.overflowItem::-webkit-scrollbar-track {
+  background: var(--gray3);
+}
+
+.overflowItem::-webkit-scrollbar-thumb {
+  background-color: var(--blue3);
 }

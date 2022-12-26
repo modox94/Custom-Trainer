@@ -78,6 +78,10 @@ const resources = {
       [en]: "Ok",
       [ru]: "Ясно",
     },
+    [TK[COMMON].yes]: {
+      [en]: "Yes",
+      [ru]: "Да",
+    },
   },
   [WORKOUT]: {
     [TK[WORKOUT].programMode]: {
@@ -195,6 +199,19 @@ const resources = {
     [TK[SETTINGS].advanced]: {
       [en]: "Advanced",
       [ru]: "Дополнительно",
+    },
+    [TK[SETTINGS].cursorNoneTitle]: {
+      [en]: "Hide the cursor",
+      [ru]: "Скрыть курсор",
+    },
+
+    [TK[SETTINGS].cursorNoneMsg]: {
+      [en]: "Are you sure you want to hide the cursor?",
+      [ru]: "Вы уверены, что хотите скрыть курсор?",
+    },
+    [TK[SETTINGS].showTipsTKey]: {
+      [en]: "Show tips at the bottom of the page",
+      [ru]: "Показывать подсказки внизу страницы",
     },
   },
   [TIPS]: {

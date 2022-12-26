@@ -4,8 +4,7 @@ import { useTranslation } from "react-i18next";
 import { editSettings } from "../../api/ipc";
 import { FILE_CONST } from "../../constants/reduxConst";
 import { LANGS_CODES } from "../../constants/translationConst";
-import { ReactComponent as RuIcon } from "../Icons/ru.svg";
-import { ReactComponent as UsIcon } from "../Icons/us.svg";
+import { RuIcon, UsIcon } from "../Icons";
 import { Container, Item } from "../SquareGrid/SquareGrid";
 import styles from "./Settings.module.css";
 
@@ -29,20 +28,20 @@ const Translate = props => {
   return (
     <Container>
       <Item
-        className={clsx(styles.customIcon, {
+        className={clsx(styles.langIconContainer, {
           [styles.selected]: i18n.language === LANGS_CODES.ru,
         })}
         onClick={selectRu}
       >
-        <RuIcon />
+        <RuIcon className={styles.langIcon} />
       </Item>
       <Item
-        className={clsx(styles.customIcon, {
+        className={clsx(styles.langIconContainer, {
           [styles.selected]: i18n.language === LANGS_CODES.en,
         })}
         onClick={selectEn}
       >
-        <UsIcon />
+        <UsIcon className={styles.langIcon} />
       </Item>
     </Container>
   );

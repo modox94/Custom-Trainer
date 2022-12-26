@@ -31,6 +31,7 @@ export const TRANSLATION_KEYS = {
     cancelTKey: "cancelTKey",
     copyTKey: "copyTKey",
     ok: "ok",
+    yes: "yes",
   },
   [TRANSLATION_ROOT_KEYS.WORKOUT]: {
     programMode: "programMode",
@@ -62,6 +63,9 @@ export const TRANSLATION_KEYS = {
     peripheral: "peripheral",
     performance: "performance",
     advanced: "advanced",
+    cursorNoneTitle: "cursorNoneTitle",
+    cursorNoneMsg: "cursorNoneMsg",
+    showTipsTKey: "showTipsTKey",
   },
   [TRANSLATION_ROOT_KEYS.TIPS]: {
     tipBut: "tipBut",

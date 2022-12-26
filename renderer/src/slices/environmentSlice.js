@@ -8,6 +8,7 @@ const initialState = {
   runningStatus: RUNNINIG_STATUS.PAUSE,
   lastSleep: undefined,
   footerStatus: false,
+  cursorNoneTemp: false,
 };
 
 const environmentSlice = createSlice({
@@ -19,6 +20,12 @@ const environmentSlice = createSlice({
     },
     hideFooter: state => {
       state.footerStatus = false;
+    },
+    tryCursorNone: state => {
+      state.cursorNoneTemp = true;
+    },
+    resetCursorNone: state => {
+      state.cursorNoneTemp = false;
     },
   },
   extraReducers: {
@@ -57,6 +64,7 @@ const environmentSlice = createSlice({
   },
 });
 
-export const { showFooter, hideFooter } = environmentSlice.actions;
+export const { showFooter, hideFooter, tryCursorNone, resetCursorNone } =
+  environmentSlice.actions;
 
 export default environmentSlice;

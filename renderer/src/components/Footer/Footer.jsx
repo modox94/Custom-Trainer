@@ -7,7 +7,6 @@ import {
   Navbar,
 } from "@blueprintjs/core";
 import { IconNames } from "@blueprintjs/icons";
-import clsx from "clsx";
 import { get } from "lodash";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -21,7 +20,7 @@ import {
 import { getFooterStatus } from "../../selectors/environmentSelectors";
 import { hideFooter, showFooter } from "../../slices/environmentSlice";
 import { getTranslationPath } from "../../utils/translationUtils";
-import { ReactComponent as MicrochipIcon } from "../Icons/microchip-solid.svg";
+import { DumbbellIcon, GaugeHighIcon, MicrochipIcon } from "../Icons";
 import stylesMainPage from "../MainPage/MainPage.module.css";
 import styles from "./Footer.module.css";
 
@@ -148,21 +147,13 @@ const Footer = props => {
             }),
         },
         {
-          buttonIcon: (
-            <span className={clsx(Classes.ICON, stylesMainPage.greenIcon)}>
-              <MicrochipIcon className={styles.customIcon} />
-            </span>
-          ),
+          buttonIcon: <MicrochipIcon className={stylesMainPage.greenIcon} />,
           buttonText: t(getTranslationPath(COMMON, SELECT_PROGRAM)),
           onClick: () =>
             setTip({
               body: (
                 <>
-                  <span
-                    className={clsx(Classes.ICON, stylesMainPage.greenIcon)}
-                  >
-                    <MicrochipIcon className={styles.customIcon} />
-                  </span>
+                  <MicrochipIcon className={stylesMainPage.greenIcon} />
                   {`${DASH}${t(getTPath("TODO"))}`}
                 </>
               ),
@@ -225,13 +216,13 @@ const Footer = props => {
       ],
       [PAGES_PATHS[PROGRAM_EDITOR]]: [
         {
-          buttonIcon: <Icon icon={IconNames.DASHBOARD} />,
+          buttonIcon: <GaugeHighIcon />,
           buttonText: t(getTPath(rpmBut)),
           onClick: () =>
             setTip({
               body: (
                 <>
-                  <Icon icon={IconNames.DASHBOARD} />
+                  <GaugeHighIcon />
                   {`${DASH}${t(getTPath(rpmTip))}`}
                 </>
               ),
@@ -251,13 +242,13 @@ const Footer = props => {
             }),
         },
         {
-          buttonIcon: <Icon icon={IconNames.MOUNTAIN} />,
+          buttonIcon: <DumbbellIcon />,
           buttonText: t(getTPath(resistanceBut)),
           onClick: () =>
             setTip({
               body: (
                 <>
-                  <Icon icon={IconNames.MOUNTAIN} />
+                  <DumbbellIcon />
                   {`${DASH}${t(getTPath(resistanceTip))}`}
                 </>
               ),

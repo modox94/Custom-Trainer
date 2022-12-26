@@ -30,22 +30,33 @@ import { PE_MODE } from "./constants/programEditorConst";
 import { FILE_CONST } from "./constants/reduxConst";
 import { SP_MODE } from "./constants/selectProgramConst";
 import { LANGS_CODES } from "./constants/translationConst";
-import { getFooterStatus } from "./selectors/environmentSelectors";
+import {
+  getCursorNoneTemp,
+  getFooterStatus,
+} from "./selectors/environmentSelectors";
 
 const { MAIN, MANUAL_MODE, SETTINGS, SELECT_PROGRAM, PROGRAM_EDITOR } = PAGES;
 
 const App = () => {
   const { i18n } = useTranslation();
   const footerStatus = useSelector(getFooterStatus);
+  const cursorNoneTemp = useSelector(getCursorNoneTemp);
   const { data: settings = {} } =
     useGetSettingsQuery(undefined, { refetchOnMountOrArgChange: true }) || {};
   const lang = get(settings, [FILE_CONST.INTERFACE, "lang"], "");
+  const cursorNone = get(settings, [FILE_CONST.INTERFACE, "cursorNone"], false);
+  const showTips = get(settings, [FILE_CONST.INTERFACE, "showTips"], false);
 
   useEffect(() => {
     if (lang && LANGS_CODES[lang] && i18n.language !== lang) {
       i18n.changeLanguage(lang);
     }
   }, [i18n, lang]);
+
+  useEffect(() => {
+    const body = document.querySelector("body");
+    body.classList.toggle("cursorNone", cursorNone || cursorNoneTemp);
+  }, [cursorNone, cursorNoneTemp]);
 
   return (
     <PortalProvider>
@@ -129,7 +140,7 @@ const App = () => {
             </Route>
           </Routes>
 
-          <Footer />
+          {showTips && <Footer />}
         </div>
       </MemoryRouter>
     </PortalProvider>
