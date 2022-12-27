@@ -2,25 +2,11 @@ const { app, BrowserWindow, ipcMain, powerSaveBlocker } = require("electron");
 const path = require("node:path");
 const { rate } = require("./src/hardware/cadence_sensor");
 const { motor } = require("./src/hardware/motor_driver");
-const { DIR_CONST, Store } = require("./src/software/store");
+const Store = require("./src/software/store");
 const { isFunction, get } = require("lodash");
+const { DIR_CONST, EVENTS } = require("./src/constants/constants");
 
 const store = new Store();
-
-const EVENTS = {
-  WATCH_CADENCE: "WATCH_CADENCE",
-  WATCH_PROGRAMS: "WATCH_PROGRAMS",
-  GET_PROGRAMS: "GET_PROGRAMS",
-  CHECK_PROGRAM_TITLE: "CHECK_PROGRAM_TITLE",
-  SET_FULLSCREEN: "SET_FULLSCREEN",
-  SET_MOTOR_LEVEL: "SET_MOTOR_LEVEL",
-  STOP_MOTOR: "STOP_MOTOR",
-  PREVENT_DISPLAY_SLEEP: "PREVENT_DISPLAY_SLEEP",
-  EDIT_PROGRAM: "EDIT_PROGRAM",
-  SAVE_NEW_PROGRAM: "SAVE_NEW_PROGRAM",
-  DELETE_PROGRAM: "DELETE_PROGRAM",
-  APP_QUIT: "APP_QUIT",
-};
 
 let win = null;
 let preventDisplaySleepID = false;
@@ -109,6 +95,15 @@ store.watch(DIR_CONST.PROGRAMS, onProgramsChange);
 
 ipcMain.handle(EVENTS.GET_PROGRAMS, () => store.store[DIR_CONST.PROGRAMS]);
 
+const onSettingsChange = data => {
+  if (isFunction(win?.webContents?.send)) {
+    win.webContents.send(EVENTS.WATCH_SETTINGS, data);
+  }
+};
+store.watch(DIR_CONST.SETTINGS, onSettingsChange);
+
+ipcMain.handle(EVENTS.GET_SETTINGS, () => store.store[DIR_CONST.SETTINGS]);
+
 ipcMain.handle(EVENTS.CHECK_PROGRAM_TITLE, (event, value) => {
   return store.isTitleAvailable(DIR_CONST.PROGRAMS, value);
 });
@@ -134,6 +129,10 @@ ipcMain.on(EVENTS.SAVE_NEW_PROGRAM, async (event, programObject) =>
 
 ipcMain.on(EVENTS.EDIT_PROGRAM, async (event, filename, programObject) =>
   store.editProgram(filename, programObject),
+);
+
+ipcMain.on(EVENTS.EDIT_SETTINGS, async (event, filename, field, value) =>
+  store.editSettings(filename, field, value),
 );
 
 ipcMain.on(EVENTS.DELETE_PROGRAM, async (event, filename) =>

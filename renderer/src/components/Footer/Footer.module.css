@@ -23,3 +23,15 @@
 .footer::-webkit-scrollbar-thumb {
   background-color: var(--blue3);
 }
+
+.redIcon svg {
+  color: var(--red2);
+}
+
+.blueIcon svg {
+  color: var(--blue2);
+}
+
+.greenIcon svg {
+  color: var(--green2);
+}

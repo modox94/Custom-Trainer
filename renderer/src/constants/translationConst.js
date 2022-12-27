@@ -31,6 +31,7 @@ export const TRANSLATION_KEYS = {
     cancelTKey: "cancelTKey",
     copyTKey: "copyTKey",
     ok: "ok",
+    yes: "yes",
   },
   [TRANSLATION_ROOT_KEYS.WORKOUT]: {
     programMode: "programMode",
@@ -58,8 +59,18 @@ export const TRANSLATION_KEYS = {
   [TRANSLATION_ROOT_KEYS.SETTINGS]: {
     [LANGS_CODES.en]: LANGS_CODES.en,
     [LANGS_CODES.ru]: LANGS_CODES.ru,
+    languageTKey: "languageTKey",
+    interfaceTKey: "interfaceTKey",
+    peripheral: "peripheral",
+    performance: "performance",
+    advanced: "advanced",
+    cursorNoneTitle: "cursorNoneTitle",
+    cursorNoneMsg: "cursorNoneMsg",
+    showTipsTKey: "showTipsTKey",
   },
   [TRANSLATION_ROOT_KEYS.TIPS]: {
+    tipBut: "tipBut",
+    tipDescrip: "tipDescrip",
     tipTitle: "tipTitle",
     settingsTip: "settingsTip",
     quitBut: "quitBut",
@@ -70,5 +81,8 @@ export const TRANSLATION_KEYS = {
     totalDurationTip: "totalDurationTip",
     resistanceBut: "resistanceBut",
     resistanceTip: "resistanceTip",
+    languageTip: "languageTip",
+    interfaceTip: "interfaceTip",
+    peripheralTip: "peripheralTip",
   },
 };

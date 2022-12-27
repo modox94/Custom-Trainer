@@ -9,7 +9,7 @@ import resources from "./resources";
 
 i18next.use(initReactI18next).init({
   resources,
-  fallbackLng: LANGS_CODES.ru, // TODO
+  fallbackLng: LANGS_CODES.en,
   supportedLngs: Object.values(LANGS_CODES),
   interpolation: { escapeValue: false }, // react already safes from xss
   ns: i18nNamespace,

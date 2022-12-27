@@ -23,4 +23,11 @@ export const SUB_PATHS = {
     COPY: "copy",
     DELETE: "delete",
   },
+  [PAGES.SETTINGS]: {
+    TRANSLATE: "translate",
+    INTERFACE: "interface",
+    PERIPHERAL: "peripheral",
+    PERFORMANCE: "performance",
+    ADVANCED: "advanced",
+  },
 };

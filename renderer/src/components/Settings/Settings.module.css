@@ -1,0 +1,61 @@
+.icon {
+  width: 100%;
+  height: 100%;
+}
+
+.icon svg {
+  width: 100%;
+  height: 100%;
+}
+
+.blueIcon svg {
+  color: var(--blue2);
+}
+
+.langIconContainer {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  justify-content: center;
+  align-items: center;
+}
+
+.langIconContainer.selected {
+  background-color: var(--blue2);
+}
+
+.langIcon {
+  height: 100%;
+  width: auto;
+  max-width: 100%;
+  max-height: 100%;
+}
+
+.langIcon svg {
+  height: 100%;
+  width: auto;
+  max-width: 100%;
+  max-height: 100%;
+  border: var(--tiny-gap) solid var(--black);
+}
+
+.fullHeightContainer {
+  height: var(--available-height);
+}
+
+.overflowItem {
+  overflow-x: auto;
+}
+
+.overflowItem::-webkit-scrollbar {
+  width: 1vw;
+  height: 0px;
+}
+
+.overflowItem::-webkit-scrollbar-track {
+  background: var(--gray3);
+}
+
+.overflowItem::-webkit-scrollbar-thumb {
+  background-color: var(--blue3);
+}

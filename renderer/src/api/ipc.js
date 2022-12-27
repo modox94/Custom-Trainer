@@ -1,6 +1,6 @@
 import { createApi } from "@reduxjs/toolkit/query/react";
 import { noop } from "lodash";
-import { EVENTS, NAMES } from "../constants/reduxConst";
+import { EVENTS, FILE_CONST, NAMES } from "../constants/reduxConst";
 
 const ipcApi = createApi({
   reducerPath: NAMES.ipcApi,
@@ -54,6 +54,33 @@ const ipcApi = createApi({
         removeListener();
       },
     }),
+    getSettings: builder.query({
+      queryFn: async () => {
+        const data = await window.electron.ipcRenderer.invoke(
+          EVENTS.GET_SETTINGS,
+        );
+        return { data };
+      },
+      async onCacheEntryAdded(
+        arg,
+        { updateCachedData, cacheDataLoaded, cacheEntryRemoved },
+      ) {
+        let removeListener = noop;
+        try {
+          await cacheDataLoaded;
+          const listener = storeData => updateCachedData(() => storeData);
+          removeListener = window.electron.ipcRenderer.on(
+            EVENTS.WATCH_SETTINGS,
+            listener,
+          );
+        } catch (error) {
+          console.log("ipc error", error);
+        }
+
+        await cacheEntryRemoved;
+        removeListener();
+      },
+    }),
   }),
 });
 
@@ -85,7 +112,21 @@ export const editProgram = (filename, programObject) =>
 export const deleteProgram = filename =>
   window.electron.ipcRenderer.send(EVENTS.DELETE_PROGRAM, filename);
 
+export const editSettings = (filename, field, value) => {
+  if (Object.values(FILE_CONST).includes(filename)) {
+    window.electron.ipcRenderer.send(
+      EVENTS.EDIT_SETTINGS,
+      filename,
+      field,
+      value,
+    );
+  } else {
+    console.log("error invalid filename");
+  }
+};
+
 export const appQuit = () => window.electron.ipcRenderer.send(EVENTS.APP_QUIT);
 
-export const { useGetCadenceQuery, useGetProgramsQuery } = ipcApi;
+export const { useGetCadenceQuery, useGetProgramsQuery, useGetSettingsQuery } =
+  ipcApi;
 export default ipcApi;

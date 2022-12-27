@@ -78,6 +78,10 @@ const resources = {
       [en]: "Ok",
       [ru]: "Ясно",
     },
+    [TK[COMMON].yes]: {
+      [en]: "Yes",
+      [ru]: "Да",
+    },
   },
   [WORKOUT]: {
     [TK[WORKOUT].programMode]: {
@@ -180,8 +184,49 @@ const resources = {
       [en]: "Russian",
       [ru]: "Русский",
     },
+    [TK[SETTINGS].languageTKey]: {
+      [en]: "Language",
+      [ru]: "Язык",
+    },
+    [TK[SETTINGS].interfaceTKey]: {
+      [en]: "Interface",
+      [ru]: "Интерфейс",
+    },
+    [TK[SETTINGS].peripheral]: {
+      [en]: "Peripheral",
+      [ru]: "Переферия",
+    },
+    [TK[SETTINGS].performance]: {
+      [en]: "Performance",
+      [ru]: "Производительность",
+    },
+    [TK[SETTINGS].advanced]: {
+      [en]: "Advanced",
+      [ru]: "Дополнительно",
+    },
+    [TK[SETTINGS].cursorNoneTitle]: {
+      [en]: "Hide the cursor",
+      [ru]: "Скрыть курсор",
+    },
+
+    [TK[SETTINGS].cursorNoneMsg]: {
+      [en]: "Are you sure you want to hide the cursor?",
+      [ru]: "Вы уверены, что хотите скрыть курсор?",
+    },
+    [TK[SETTINGS].showTipsTKey]: {
+      [en]: "Show tips at the bottom of the page",
+      [ru]: "Показывать подсказки внизу страницы",
+    },
   },
   [TIPS]: {
+    [TK[TIPS].tipBut]: {
+      [en]: "Tips",
+      [ru]: "Подсказки",
+    },
+    [TK[TIPS].tipDescrip]: {
+      [en]: "To the right of the button you clicked, there are tips.",
+      [ru]: "Справа от кнопки, которую вы нажали, находятся подсказки.",
+    },
     [TK[TIPS].tipTitle]: {
       [en]: "Tip",
       [ru]: "Подсказка",
@@ -221,6 +266,18 @@ const resources = {
     [TK[TIPS].resistanceTip]: {
       [en]: "the level of load on the sector.",
       [ru]: "уровень нагрузки на участке.",
+    },
+    [TK[TIPS].languageTip]: {
+      [en]: "application language selection menu.",
+      [ru]: "меню выбора языка приложения.",
+    },
+    [TK[TIPS].interfaceTip]: {
+      [en]: "setting up interface elements.",
+      [ru]: "настройка элементов интерфейса.",
+    },
+    [TK[TIPS].peripheralTip]: {
+      [en]: "setting up connected components.",
+      [ru]: "настройка подключенных компонентов.",
     },
   },
 };

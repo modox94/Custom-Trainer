@@ -26,6 +26,7 @@ import {
 } from "../../constants/translationConst";
 import { getTranslationPath } from "../../utils/translationUtils";
 import BarChart from "../BarChart/BarChart";
+import { DumbbellIcon, GaugeHighIcon } from "../Icons";
 import { Container, Item } from "../SquareGrid/SquareGrid";
 import EnterTitle from "./EnterTitle";
 import styles from "./ProgramEditor.module.css";
@@ -226,7 +227,7 @@ const ProgramEditor = props => {
           </div>
         </Item>
         <Item className={clsx(styles.tinyPadding, styles.flexColumn)}>
-          <Icon className={styles.icon50} icon={IconNames.DASHBOARD} />
+          <GaugeHighIcon className={styles.icon50} />
           <div className={styles.text}>
             <p>
               <b>{targetRpm}</b>
@@ -244,7 +245,7 @@ const ProgramEditor = props => {
         </Item>
 
         <Item className={clsx(styles.tinyPadding, styles.flexColumn)}>
-          <Icon className={styles.icon50} icon={IconNames.MOUNTAIN} />
+          <DumbbellIcon className={styles.icon50} />
           <div className={styles.text}>
             <p>
               <b>{resistanceLevel}</b>

@@ -8,8 +8,7 @@ import {
 } from "@blueprintjs/core";
 import { IconNames } from "@blueprintjs/icons";
 import { get } from "lodash";
-import React, { useEffect, useMemo, useState } from "react";
-import { useCallback } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "react-redux";
 import { useLocation, useMatch } from "react-router-dom";
@@ -21,16 +20,30 @@ import {
 import { getFooterStatus } from "../../selectors/environmentSelectors";
 import { hideFooter, showFooter } from "../../slices/environmentSlice";
 import { getTranslationPath } from "../../utils/translationUtils";
-import stylesMainPage from "../MainPage/MainPage.module.css";
+import {
+  DumbbellIcon,
+  GaugeHighIcon,
+  MicrochipIcon,
+  WiresWireIcon,
+} from "../Icons";
 import styles from "./Footer.module.css";
 
 const containerStyle = { top: "unset" };
 const DASH = " — ";
 
 const { MAIN, MANUAL_MODE, SETTINGS, SELECT_PROGRAM } = PAGES;
-const { COMMON, PROGRAM_EDITOR, TIPS } = TRANSLATION_ROOT_KEYS;
-const { ok } = TRANSLATION_KEYS[COMMON];
 const {
+  COMMON,
+  PROGRAM_EDITOR,
+  TIPS,
+  SETTINGS: SETTINGS_TRK,
+} = TRANSLATION_ROOT_KEYS;
+const { ok } = TRANSLATION_KEYS[COMMON];
+const { languageTKey, interfaceTKey, peripheral } =
+  TRANSLATION_KEYS[SETTINGS_TRK];
+const {
+  tipBut,
+  tipDescrip,
   tipTitle,
   settingsTip,
   quitBut,
@@ -41,7 +54,12 @@ const {
   totalDurationTip,
   resistanceBut,
   resistanceTip,
+  languageTip,
+  interfaceTip,
+  peripheralTip,
 } = TRANSLATION_KEYS[TIPS];
+
+const getTPath = (...args) => getTranslationPath(TIPS, ...args);
 
 const TIP_DEFAULT = null;
 const TIPS_PATH_DEFAULT = null;
@@ -66,16 +84,14 @@ const Footer = props => {
 
     switch (pathname) {
       case PAGES_PATHS[MAIN]: {
-        const path = [PAGES_PATHS[MAIN]];
         if (!footerStatus) {
           dispatch(showFooter());
         }
-        setTipsPath(path);
+        setTipsPath([pathname]);
         break;
       }
 
       case PAGES_PATHS[MANUAL_MODE]:
-      case PAGES_PATHS[SETTINGS]:
       case PAGES_PATHS[SELECT_PROGRAM]:
       case PAGES_PATHS[PROGRAM_EDITOR]:
       case `${PAGES_PATHS[PROGRAM_EDITOR]}/${SUB_PATHS[PROGRAM_EDITOR].EDIT}`:
@@ -87,11 +103,18 @@ const Footer = props => {
         break;
 
       case `${PAGES_PATHS[PROGRAM_EDITOR]}/${SUB_PATHS[PROGRAM_EDITOR].NEW}`: {
-        const path = [PAGES_PATHS[PROGRAM_EDITOR]];
         if (!footerStatus) {
           dispatch(showFooter());
         }
-        setTipsPath(path);
+        setTipsPath([PAGES_PATHS[PROGRAM_EDITOR]]);
+        break;
+      }
+
+      case PAGES_PATHS[SETTINGS]: {
+        if (!footerStatus) {
+          dispatch(showFooter());
+        }
+        setTipsPath([pathname]);
         break;
       }
 
@@ -111,12 +134,11 @@ const Footer = props => {
       }
     }
   }, [
-    location,
-    location.pathname,
     footerStatus,
     dispatch,
     filenameMatchPE_EDIT,
     filenameMatchPE_COPY,
+    location,
   ]);
 
   const tipsObject = useMemo(() => {
@@ -124,39 +146,74 @@ const Footer = props => {
       [PAGES_PATHS[MAIN]]: [
         {
           buttonIcon: (
-            <Icon
-              className={stylesMainPage.settingsIcon}
-              icon={IconNames.COG}
-            />
+            <Icon className={styles.greenIcon} icon={IconNames.SWAP_VERTICAL} />
           ),
-          buttonText: t(getTranslationPath(COMMON, SETTINGS)),
+          buttonText: t(getTranslationPath(COMMON, MANUAL_MODE)),
           onClick: () =>
             setTip({
               body: (
                 <>
                   <Icon
-                    className={stylesMainPage.settingsIcon}
-                    icon={IconNames.COG}
+                    className={styles.greenIcon}
+                    icon={IconNames.SWAP_VERTICAL}
                   />
-                  {`${DASH}${t(getTranslationPath(TIPS, settingsTip))}`}
+                  {`${DASH}${t(getTPath("TODO"))}`}
+                </>
+              ),
+            }),
+        },
+        {
+          buttonIcon: <MicrochipIcon className={styles.greenIcon} />,
+          buttonText: t(getTranslationPath(COMMON, SELECT_PROGRAM)),
+          onClick: () =>
+            setTip({
+              body: (
+                <>
+                  <MicrochipIcon className={styles.greenIcon} />
+                  {`${DASH}${t(getTPath("TODO"))}`}
                 </>
               ),
             }),
         },
         {
           buttonIcon: (
-            <Icon className={stylesMainPage.quitIcon} icon={IconNames.POWER} />
+            <Icon className={styles.blueIcon} icon={IconNames.EDIT} />
           ),
-          buttonText: t(getTranslationPath(TIPS, quitBut)),
+          buttonText: t(getTranslationPath(COMMON, PROGRAM_EDITOR)),
           onClick: () =>
             setTip({
               body: (
                 <>
-                  <Icon
-                    className={stylesMainPage.quitIcon}
-                    icon={IconNames.POWER}
-                  />
-                  {`${DASH}${t(getTranslationPath(TIPS, quitTip))}`}
+                  <Icon className={styles.blueIcon} icon={IconNames.EDIT} />
+                  {`${DASH}${t(getTPath("TODO"))}`}
+                </>
+              ),
+            }),
+        },
+        {
+          buttonIcon: <Icon className={styles.blueIcon} icon={IconNames.COG} />,
+          buttonText: t(getTranslationPath(COMMON, SETTINGS)),
+          onClick: () =>
+            setTip({
+              body: (
+                <>
+                  <Icon className={styles.blueIcon} icon={IconNames.COG} />
+                  {`${DASH}${t(getTPath(settingsTip))}`}
+                </>
+              ),
+            }),
+        },
+        {
+          buttonIcon: (
+            <Icon className={styles.redIcon} icon={IconNames.POWER} />
+          ),
+          buttonText: t(getTPath(quitBut)),
+          onClick: () =>
+            setTip({
+              body: (
+                <>
+                  <Icon className={styles.redIcon} icon={IconNames.POWER} />
+                  {`${DASH}${t(getTPath(quitTip))}`}
                 </>
               ),
             }),
@@ -164,40 +221,91 @@ const Footer = props => {
       ],
       [PAGES_PATHS[PROGRAM_EDITOR]]: [
         {
-          buttonIcon: <Icon icon={IconNames.DASHBOARD} />,
-          buttonText: t(getTranslationPath(TIPS, rpmBut)),
+          buttonIcon: <GaugeHighIcon />,
+          buttonText: t(getTPath(rpmBut)),
           onClick: () =>
             setTip({
               body: (
                 <>
-                  <Icon icon={IconNames.DASHBOARD} />
-                  {`${DASH}${t(getTranslationPath(TIPS, rpmTip))}`}
+                  <GaugeHighIcon />
+                  {`${DASH}${t(getTPath(rpmTip))}`}
                 </>
               ),
             }),
         },
         {
           buttonIcon: <Icon icon={IconNames.STOPWATCH} />,
-          buttonText: t(getTranslationPath(TIPS, totalDurationBut)),
+          buttonText: t(getTPath(totalDurationBut)),
           onClick: () =>
             setTip({
               body: (
                 <>
                   <Icon icon={IconNames.STOPWATCH} />
-                  {`${DASH}${t(getTranslationPath(TIPS, totalDurationTip))}`}
+                  {`${DASH}${t(getTPath(totalDurationTip))}`}
                 </>
               ),
             }),
         },
         {
-          buttonIcon: <Icon icon={IconNames.MOUNTAIN} />,
-          buttonText: t(getTranslationPath(TIPS, resistanceBut)),
+          buttonIcon: <DumbbellIcon />,
+          buttonText: t(getTPath(resistanceBut)),
           onClick: () =>
             setTip({
               body: (
                 <>
-                  <Icon icon={IconNames.MOUNTAIN} />
-                  {`${DASH}${t(getTranslationPath(TIPS, resistanceTip))}`}
+                  <DumbbellIcon />
+                  {`${DASH}${t(getTPath(resistanceTip))}`}
+                </>
+              ),
+            }),
+        },
+      ],
+      [PAGES_PATHS[SETTINGS]]: [
+        {
+          buttonIcon: (
+            <Icon className={styles.blueIcon} icon={IconNames.TRANSLATE} />
+          ),
+          buttonText: t(getTranslationPath(SETTINGS_TRK, languageTKey)),
+          onClick: () =>
+            setTip({
+              body: (
+                <>
+                  <Icon
+                    className={styles.blueIcon}
+                    icon={IconNames.TRANSLATE}
+                  />
+                  {`${DASH}${t(getTPath(languageTip))}`}
+                </>
+              ),
+            }),
+        },
+        {
+          buttonIcon: (
+            <Icon className={styles.blueIcon} icon={IconNames.APPLICATION} />
+          ),
+          buttonText: t(getTranslationPath(SETTINGS_TRK, interfaceTKey)),
+          onClick: () =>
+            setTip({
+              body: (
+                <>
+                  <Icon
+                    className={styles.blueIcon}
+                    icon={IconNames.APPLICATION}
+                  />
+                  {`${DASH}${t(getTPath(interfaceTip))}`}
+                </>
+              ),
+            }),
+        },
+        {
+          buttonIcon: <WiresWireIcon className={styles.blueIcon} />,
+          buttonText: t(getTranslationPath(SETTINGS_TRK, peripheral)),
+          onClick: () =>
+            setTip({
+              body: (
+                <>
+                  <WiresWireIcon className={styles.blueIcon} />
+                  {`${DASH}${t(getTPath(peripheralTip))}`}
                 </>
               ),
             }),
@@ -215,6 +323,11 @@ const Footer = props => {
   return (
     <Navbar fixedToTop className={styles.footer} style={containerStyle}>
       <ButtonGroup large minimal>
+        <Button
+          icon={IconNames.HELP}
+          text={t(getTPath(tipBut))}
+          onClick={() => setTip({ body: t(getTPath(tipDescrip)) })}
+        />
         {get(tipsObject, tipsPath, []).map((tipEl, idx) => {
           return (
             <Button
@@ -229,7 +342,7 @@ const Footer = props => {
 
       <Dialog
         isOpen={Boolean(tip)}
-        title={t(getTranslationPath(TIPS, tipTitle))}
+        title={t(getTPath(tipTitle))}
         canOutsideClickClose
         isCloseButtonShown
         onClose={onTipClose}

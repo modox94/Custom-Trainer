@@ -8,10 +8,14 @@
   height: 100%;
 }
 
-.quitIcon svg {
+.redIcon svg {
   color: var(--red2);
 }
 
-.settingsIcon svg {
+.blueIcon svg {
   color: var(--blue2);
+}
+
+.greenIcon svg {
+  color: var(--green2);
 }
