@@ -2,9 +2,11 @@ import { Classes } from "@blueprintjs/core";
 import clsx from "clsx";
 import PropTypes from "prop-types";
 import React from "react";
+import { ReactComponent as CircuitSolidSvg } from "./circuit-solid.svg";
 import { ReactComponent as DumbbellSvg } from "./dumbbell-solid.svg";
 import { ReactComponent as EngineMotorRegularSvg } from "./engine-motor-regular.svg";
 import { ReactComponent as EngineMotorSolidSvg } from "./engine-motor-solid.svg";
+import { ReactComponent as FeatherSvg } from "./feather.svg";
 import { ReactComponent as GaugeHighSvg } from "./gauge-high-solid.svg";
 import { ReactComponent as GearsSvg } from "./gears-solid.svg";
 import { ReactComponent as HeartPulseSvg } from "./heart-pulse-solid.svg";
@@ -12,6 +14,8 @@ import styles from "./index.module.css";
 import { ReactComponent as KeyboardRegularSvg } from "./keyboard-regular.svg";
 import { ReactComponent as KeyboardSolidSvg } from "./keyboard-solid.svg";
 import { ReactComponent as MicrochipSvg } from "./microchip-solid.svg";
+import { ReactComponent as PotentiometerRegularSvg } from "./potentiometer-regular.svg";
+import { ReactComponent as PotentiometerSolidSvg } from "./potentiometer-solid.svg";
 import { ReactComponent as RankingStarSvg } from "./ranking-star-solid.svg";
 import { ReactComponent as RuSvg } from "./ru.svg";
 import { ReactComponent as UsSvg } from "./us.svg";
@@ -33,6 +37,16 @@ IconWrapper.propTypes = {
 };
 IconWrapper.defaultProps = {
   className: "",
+};
+
+export const CircuitSolidIcon = props => {
+  const { children, ...otherProps } = props;
+
+  return (
+    <IconWrapper {...otherProps}>
+      <CircuitSolidSvg />
+    </IconWrapper>
+  );
 };
 
 export const DumbbellIcon = props => {
@@ -61,6 +75,16 @@ export const EngineMotorSolidIcon = props => {
   return (
     <IconWrapper {...otherProps}>
       <EngineMotorSolidSvg />
+    </IconWrapper>
+  );
+};
+
+export const FeatherIcon = props => {
+  const { children, ...otherProps } = props;
+
+  return (
+    <IconWrapper {...otherProps}>
+      <FeatherSvg />
     </IconWrapper>
   );
 };
@@ -121,6 +145,26 @@ export const MicrochipIcon = props => {
   return (
     <IconWrapper {...otherProps}>
       <MicrochipSvg />
+    </IconWrapper>
+  );
+};
+
+export const PotentiometerRegularIcon = props => {
+  const { children, ...otherProps } = props;
+
+  return (
+    <IconWrapper {...otherProps}>
+      <PotentiometerRegularSvg />
+    </IconWrapper>
+  );
+};
+
+export const PotentiometerSolidIcon = props => {
+  const { children, ...otherProps } = props;
+
+  return (
+    <IconWrapper {...otherProps}>
+      <PotentiometerSolidSvg />
     </IconWrapper>
   );
 };
