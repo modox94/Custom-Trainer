@@ -1,11 +1,43 @@
+.flexColumn {
+  display: flex;
+  flex-direction: column;
+  flex-wrap: nowrap;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.tinyPadding {
+  padding: var(--tiny-gap);
+}
+
 .icon {
   width: 100%;
   height: 100%;
 }
 
-.icon svg {
+.icon50 {
+  width: 50%;
+  height: 50%;
+}
+
+.icon.inActive,
+.icon50.inActive svg {
+  color: var(--gray3);
+}
+
+.icon svg,
+.icon50 svg {
   width: 100%;
   height: 100%;
+}
+
+.text {
+  font-size: calc(var(--available-height) / 14);
+  text-align: center;
+}
+
+.text p b {
+  font-size: calc(var(--available-height) / 10);
 }
 
 .blueIcon svg {
