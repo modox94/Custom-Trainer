@@ -16,6 +16,7 @@ import { ReactComponent as KeyboardSolidSvg } from "./keyboard-solid.svg";
 import { ReactComponent as MicrochipSvg } from "./microchip-solid.svg";
 import { ReactComponent as PotentiometerRegularSvg } from "./potentiometer-regular.svg";
 import { ReactComponent as PotentiometerSolidSvg } from "./potentiometer-solid.svg";
+import { ReactComponent as PotentiometerSymbolSvg } from "./potentiometer-symbol.svg";
 import { ReactComponent as RankingStarSvg } from "./ranking-star-solid.svg";
 import { ReactComponent as RuSvg } from "./ru.svg";
 import { ReactComponent as UsSvg } from "./us.svg";
@@ -165,6 +166,16 @@ export const PotentiometerSolidIcon = props => {
   return (
     <IconWrapper {...otherProps}>
       <PotentiometerSolidSvg />
+    </IconWrapper>
+  );
+};
+
+export const PotentiometerSymbol = props => {
+  const { children, ...otherProps } = props;
+  // TODO fix svg or/and styles
+  return (
+    <IconWrapper {...otherProps}>
+      <PotentiometerSymbolSvg />
     </IconWrapper>
   );
 };
