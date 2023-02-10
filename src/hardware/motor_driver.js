@@ -187,7 +187,7 @@ class MotorDriver {
                 }),
               );
 
-              await motor.calibration();
+              await this.calibration();
 
               rl.close();
             }
