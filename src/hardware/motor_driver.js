@@ -2,7 +2,7 @@ const { Gpio } = require("onoff");
 const { DIRECTION, PHYSICAL_TO_GPIO } = require("../constants/constants");
 const readline = require("node:readline");
 const fs = require("node:fs");
-const { round, noop } = require("lodash");
+const { round, noop, get } = require("lodash");
 const { stdin: input, stdout: output } = require("node:process");
 const { sleep, sleepCb } = require("../utils/utils");
 const { PotentiometerSensor } = require("./potentiometer_sensor");
@@ -10,13 +10,6 @@ const Promise = require("bluebird");
 const { isFunction } = require("lodash");
 
 Promise.config({ cancellation: true });
-
-let motorSettings;
-try {
-  motorSettings = require("../../motor_settings.json");
-} catch (error) {
-  motorSettings = {};
-}
 
 const DELAY = 100;
 const DELAY_FOR_READ = 25;
@@ -41,7 +34,12 @@ const motorIn2Pin = PHYSICAL_TO_GPIO[18];
 
 class MotorDriver {
   constructor(options) {
-    Object.assign(this, options);
+    // { "minPosition": 5, "maxPosition": 95, "sleepRatio": 1435 }
+
+    this.reverseDirection = get(options, ["reverseDirection"], null);
+    this.minPosition = get(options, ["minPosition"], null);
+    this.maxPosition = get(options, ["maxPosition"], null);
+    this.sleepRatio = get(options, ["sleepRatio"], null);
 
     this.action = null;
     this.potentiometer = new PotentiometerSensor();
@@ -424,6 +422,4 @@ class MotorDriver {
   }
 }
 
-const motor = new MotorDriver(motorSettings);
-
-exports.motor = motor;
+module.exports = MotorDriver;
