@@ -5,7 +5,9 @@ const Rpm = () => {
   return (
     <>
       <Container>
-        <Item>Rpm</Item>
+        <Item>
+          <>Rpm</>
+        </Item>
         <Item></Item>
       </Container>
       <Container>

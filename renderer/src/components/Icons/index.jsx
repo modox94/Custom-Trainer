@@ -224,13 +224,13 @@ export const PotentiometerSymbol = props => {
         version="1.0"
         viewBox="0 0 100 80"
       >
-        <g fill="none" stroke="currentColor" stroke-width="4">
+        <g fill="none" stroke="currentColor" strokeWidth={4}>
           <polyline
             points="0,40 10,40 15,50 25,30 35,50 45,30 55,50
           65,30 75,50 85,30 90,40 100,40"
           />
           <g>
-            <line x1={lineX} y1="80" x2={lineX} y2="50" />
+            <line x1={lineX} y1={80} x2={lineX} y2={50} />
             <polyline
               points={`${headX1},58.660254 ${lineX},50 ${headX2},58.660254`}
             />

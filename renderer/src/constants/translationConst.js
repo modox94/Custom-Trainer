@@ -84,5 +84,8 @@ export const TRANSLATION_KEYS = {
     languageTip: "languageTip",
     interfaceTip: "interfaceTip",
     peripheralTip: "peripheralTip",
+    manualModeTip: "manualModeTip",
+    selectProgramTip: "selectProgramTip",
+    programEditorTip: "programEditorTip",
   },
 };

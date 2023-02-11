@@ -57,6 +57,9 @@ const {
   languageTip,
   interfaceTip,
   peripheralTip,
+  manualModeTip,
+  selectProgramTip,
+  programEditorTip,
 } = TRANSLATION_KEYS[TIPS];
 
 const getTPath = (...args) => getTranslationPath(TIPS, ...args);
@@ -157,7 +160,7 @@ const Footer = props => {
                     className={styles.greenIcon}
                     icon={IconNames.SWAP_VERTICAL}
                   />
-                  {`${DASH}${t(getTPath("TODO"))}`}
+                  {`${DASH}${t(getTPath(manualModeTip))}`}
                 </>
               ),
             }),
@@ -170,7 +173,7 @@ const Footer = props => {
               body: (
                 <>
                   <MicrochipIcon className={styles.greenIcon} />
-                  {`${DASH}${t(getTPath("TODO"))}`}
+                  {`${DASH}${t(getTPath(selectProgramTip))}`}
                 </>
               ),
             }),
@@ -185,7 +188,7 @@ const Footer = props => {
               body: (
                 <>
                   <Icon className={styles.blueIcon} icon={IconNames.EDIT} />
-                  {`${DASH}${t(getTPath("TODO"))}`}
+                  {`${DASH}${t(getTPath(programEditorTip))}`}
                 </>
               ),
             }),

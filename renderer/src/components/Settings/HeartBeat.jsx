@@ -5,7 +5,9 @@ const HeartBeat = () => {
   return (
     <>
       <Container>
-        <Item>HeartBeat</Item>
+        <Item>
+          <>HeartBeat</>
+        </Item>
         <Item></Item>
       </Container>
       <Container>
