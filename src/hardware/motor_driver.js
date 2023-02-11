@@ -131,7 +131,7 @@ class MotorDriver {
             }
 
             this.forward();
-            await sleepCb(DELAY);
+            await sleepCb(noop, DELAY);
             this.stop();
             console.log("pos", await this.readPosition());
             break;
@@ -146,7 +146,7 @@ class MotorDriver {
             }
 
             this.back();
-            await sleepCb(DELAY);
+            await sleepCb(noop, DELAY);
             this.stop();
             console.log("pos", await this.readPosition());
             break;
