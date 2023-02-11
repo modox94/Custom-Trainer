@@ -361,12 +361,15 @@ class MotorDriver {
     const interval =
       Math.abs(this.maxPosition - this.minPosition) / (RESIST_LEVELS - 1);
     let targetPos;
+    let reverseEdges; // TODO remove
     if (!isNumber(this.maxPosition) || !isNumber(this.minPosition)) {
       console.log("wrong motor edges");
       return;
     } else if (this.maxPosition > this.minPosition) {
+      reverseEdges = false;
       targetPos = this.minPosition + interval * (level - 1);
     } else if (this.maxPosition < this.minPosition) {
+      reverseEdges = true;
       targetPos = this.maxPosition - interval * (level - 1);
     } else {
       console.log("wrong motor edges");
@@ -392,8 +395,9 @@ class MotorDriver {
 
     while (
       Math.abs(posCur - targetPos) > 1 ||
-      Math.abs(this.maxPosition - posCur) ||
-      Math.abs(posCur - this.minPosition)
+      (reverseEdges
+        ? posCur <= this.maxPosition || posCur >= this.minPosition
+        : posCur >= this.maxPosition || posCur <= this.minPosition)
     ) {
       if (isCancelled()) {
         return;
