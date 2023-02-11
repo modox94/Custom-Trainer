@@ -4,7 +4,7 @@ const readline = require("node:readline");
 const fs = require("node:fs");
 const { round, noop, get } = require("lodash");
 const { stdin: input, stdout: output } = require("node:process");
-const { sleep, sleepCb } = require("../utils/utils");
+const { sleepCb } = require("../utils/utils");
 const { PotentiometerSensor } = require("./potentiometer_sensor");
 const Promise = require("bluebird");
 const { isFunction } = require("lodash");
@@ -131,7 +131,7 @@ class MotorDriver {
             }
 
             this.forward();
-            await sleep(DELAY);
+            await sleepCb(DELAY);
             this.stop();
             console.log("pos", await this.readPosition());
             break;
@@ -146,7 +146,7 @@ class MotorDriver {
             }
 
             this.back();
-            await sleep(DELAY);
+            await sleepCb(DELAY);
             this.stop();
             console.log("pos", await this.readPosition());
             break;
