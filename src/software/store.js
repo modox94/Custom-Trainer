@@ -23,7 +23,6 @@ const interfaceDefault = {
 };
 
 const peripheralDefault = {
-  reverseDirection: null,
   minPosition: null,
   maxPosition: null,
   sleepRatio: null,

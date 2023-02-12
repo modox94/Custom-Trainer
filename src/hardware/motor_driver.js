@@ -35,7 +35,6 @@ class MotorDriver {
   constructor(options) {
     // { "minPosition": 5, "maxPosition": 95, "sleepRatio": 1435 }
 
-    this.reverseDirection = get(options, ["reverseDirection"], null);
     this.minPosition = get(options, ["minPosition"], null); // can be less then maxPosition!
     this.maxPosition = get(options, ["maxPosition"], null); // can be higher then minPosition!
     this.sleepRatio = get(options, ["sleepRatio"], null);
@@ -118,11 +117,6 @@ class MotorDriver {
             );
             break;
 
-          case "r":
-            this.reverseDirection = !this.reverseDirection;
-            console.log("reverseDirection changed", this.reverseDirection);
-            break;
-
           case "g":
             console.log("pos", await this.readPosition());
             break;
@@ -130,12 +124,7 @@ class MotorDriver {
           case "f": {
             const posCur = await this.readPosition();
 
-            if (this.reverseDirection && posCur <= 5) {
-              console.log("Дальше нельзя!");
-              break;
-            }
-
-            if (!this.reverseDirection && posCur >= 95) {
+            if (posCur >= 95) {
               console.log("Дальше нельзя!");
               break;
             }
@@ -150,12 +139,7 @@ class MotorDriver {
           case "b": {
             const posCur = await this.readPosition();
 
-            if (!this.reverseDirection && posCur <= 5) {
-              console.log("Дальше нельзя!");
-              break;
-            }
-
-            if (this.reverseDirection && posCur >= 95) {
+            if (posCur <= 5) {
               console.log("Дальше нельзя!");
               break;
             }
@@ -221,23 +205,13 @@ class MotorDriver {
   }
 
   forward() {
-    if (this.reverseDirection) {
-      this.in1.writeSync(1);
-      this.in2.writeSync(0);
-    } else {
-      this.in1.writeSync(0);
-      this.in2.writeSync(1);
-    }
+    this.in1.writeSync(0);
+    this.in2.writeSync(1);
   }
 
   back() {
-    if (this.reverseDirection) {
-      this.in1.writeSync(0);
-      this.in2.writeSync(1);
-    } else {
-      this.in1.writeSync(1);
-      this.in2.writeSync(0);
-    }
+    this.in1.writeSync(1);
+    this.in2.writeSync(0);
   }
 
   stop() {
@@ -371,15 +345,14 @@ class MotorDriver {
     const interval =
       Math.abs(this.maxPosition - this.minPosition) / (RESIST_LEVELS - 1);
     let targetPos;
-    let reverseEdges; // TODO remove
+    const isMaxPosGreater = this.maxPosition > this.minPosition;
+
     if (!isNumber(this.maxPosition) || !isNumber(this.minPosition)) {
       console.log("wrong motor edges");
       return;
     } else if (this.maxPosition > this.minPosition) {
-      reverseEdges = false;
       targetPos = this.minPosition + interval * (level - 1);
     } else if (this.maxPosition < this.minPosition) {
-      reverseEdges = true;
       targetPos = this.minPosition - interval * (level - 1);
     } else {
       console.log("wrong motor edges");
@@ -404,15 +377,17 @@ class MotorDriver {
     }
 
     while (
-      Math.abs(posCur - targetPos) > 1 ||
-      (reverseEdges
-        ? posCur <= this.maxPosition || posCur >= this.minPosition
-        : posCur >= this.maxPosition || posCur <= this.minPosition)
+      Math.abs(posCur - targetPos) > 1 &&
+      (isMaxPosGreater
+        ? posCur < this.maxPosition || posCur > this.minPosition
+        : posCur > this.maxPosition || posCur < this.minPosition)
     ) {
       if (isCancelled()) {
         return;
       }
       ++counter;
+
+      // TODO rewrite
 
       if (posCur > targetPos) {
         this.back();
