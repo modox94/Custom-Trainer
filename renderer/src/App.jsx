@@ -20,9 +20,12 @@ import ProgramEditor from "./components/ProgramEditor/ProgramEditor";
 import ProgramMode from "./components/ProgramMode/ProgramMode";
 import SelectProgram from "./components/SelectProgram/SelectProgram";
 import Advanced from "./components/Settings/Advanced";
+import HeartBeat from "./components/Settings/HeartBeat";
 import Interface from "./components/Settings/Interface";
+import Motor from "./components/Settings/Motor";
 import Performance from "./components/Settings/Performance";
 import Peripheral from "./components/Settings/Peripheral";
+import Rpm from "./components/Settings/Rpm";
 import Settings from "./components/Settings/Settings";
 import Translate from "./components/Settings/Translate";
 import { PAGES, PAGES_PATHS, SUB_PATHS } from "./constants/pathConst";
@@ -71,6 +74,7 @@ const App = () => {
 
           <Routes>
             <Route path={PAGES_PATHS[MAIN]} element={<MainPage />} />
+
             <Route path={PAGES_PATHS[MANUAL_MODE]} element={<ManualMode />} />
 
             <Route path={PAGES_PATHS[SETTINGS]} element={<Outlet />}>
@@ -83,10 +87,17 @@ const App = () => {
                 path={SUB_PATHS[SETTINGS].INTERFACE}
                 element={<Interface />}
               />
-              <Route
-                path={SUB_PATHS[SETTINGS].PERIPHERAL}
-                element={<Peripheral />}
-              />
+
+              <Route path={SUB_PATHS[SETTINGS].PERIPHERAL} element={<Outlet />}>
+                <Route path={SUB_PATHS.ROOT} element={<Peripheral />} />
+                <Route path={SUB_PATHS[SETTINGS].MOTOR} element={<Motor />} />
+                <Route path={SUB_PATHS[SETTINGS].RPM} element={<Rpm />} />
+                <Route
+                  path={SUB_PATHS[SETTINGS].HEARTBEAT}
+                  element={<HeartBeat />}
+                />
+              </Route>
+
               <Route
                 path={SUB_PATHS[SETTINGS].PERFORMANCE}
                 element={<Performance />}
@@ -107,6 +118,7 @@ const App = () => {
                 element={<ProgramMode />}
               />
             </Route>
+
             <Route path={PAGES_PATHS[PROGRAM_EDITOR]} element={<Outlet />}>
               <Route path={SUB_PATHS.ROOT} element={<EditorMenu />} />
               <Route

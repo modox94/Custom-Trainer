@@ -135,7 +135,7 @@ html {
 
 .withHeader {
   --padding-header: calc(var(--header-height) + var(--medium-gap));
-  --available-height: calc((100vh - var(--padding-header)));
+  --available-height: calc(100vh - var(--padding-header));
 
   padding-top: var(--padding-header);
 }

@@ -14,7 +14,6 @@
   flex-wrap: nowrap;
   justify-content: space-between;
   align-items: center;
-  align-content: stretch;
 }
 
 .tripleButtonItem {
@@ -36,24 +35,17 @@
   height: 100%;
 }
 
-.icon {
-  width: 100%;
-  height: 100%;
-}
-
 .icon50 {
   width: 50%;
   height: 50%;
 }
 
-.icon svg,
 .icon50 svg,
 .doubleButtonIcon svg {
   width: 100%;
   height: 100%;
 }
 
-.icon.inActive svg,
 .icon50.inActive svg,
 .doubleButtonIcon.inActive svg {
   color: var(--gray3);

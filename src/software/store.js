@@ -22,6 +22,12 @@ const interfaceDefault = {
   lang: LANGS_CODES.en,
 };
 
+const peripheralDefault = {
+  minPosition: null,
+  maxPosition: null,
+  sleepRatio: null,
+};
+
 const DIR_CONST_ARRAY = Object.values(DIR_CONST);
 
 class Store {
@@ -109,6 +115,7 @@ class Store {
       }
 
       this.create(DIR_CONST.PROGRAMS, filename, defaultProgram);
+      set(tempStore, [DIR_CONST.PROGRAMS, filename], defaultProgram);
     });
 
     // Settings
@@ -129,11 +136,23 @@ class Store {
 
     if (!get(tempStore, [DIR_CONST.SETTINGS, FILE_CONST.INTERFACE])) {
       this.create(DIR_CONST.SETTINGS, FILE_CONST.INTERFACE, interfaceDefault);
+      set(
+        tempStore,
+        [DIR_CONST.SETTINGS, FILE_CONST.INTERFACE],
+        interfaceDefault,
+      );
     }
 
     if (!get(tempStore, [DIR_CONST.SETTINGS, FILE_CONST.PERIPHERAL])) {
-      // TODO
+      this.create(DIR_CONST.SETTINGS, FILE_CONST.PERIPHERAL, peripheralDefault);
+      set(
+        tempStore,
+        [DIR_CONST.SETTINGS, FILE_CONST.PERIPHERAL],
+        peripheralDefault,
+      );
     }
+
+    this.store = tempStore;
   }
 
   onAddOrChange(dir, pathValue) {

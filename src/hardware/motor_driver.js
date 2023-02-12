@@ -1,22 +1,14 @@
-const { Gpio } = require("onoff");
-const { DIRECTION, PHYSICAL_TO_GPIO } = require("../constants/constants");
+const Promise = require("bluebird");
+const { round, noop, get, isFunction, isNumber } = require("lodash");
+const { stdin: input, stdout: output } = require("node:process");
 const readline = require("node:readline");
 const fs = require("node:fs");
-const { round, noop } = require("lodash");
-const { stdin: input, stdout: output } = require("node:process");
-const { sleep, sleepCb } = require("../utils/utils");
+const { Gpio } = require("onoff");
+const { DIRECTION, PHYSICAL_TO_GPIO } = require("../constants/constants");
+const { sleepCb } = require("../utils/utils");
 const { PotentiometerSensor } = require("./potentiometer_sensor");
-const Promise = require("bluebird");
-const { isFunction } = require("lodash");
 
 Promise.config({ cancellation: true });
-
-let motorSettings;
-try {
-  motorSettings = require("../../motor_settings.json");
-} catch (error) {
-  motorSettings = {};
-}
 
 const DELAY = 100;
 const DELAY_FOR_READ = 25;
@@ -41,7 +33,11 @@ const motorIn2Pin = PHYSICAL_TO_GPIO[18];
 
 class MotorDriver {
   constructor(options) {
-    Object.assign(this, options);
+    // { "minPosition": 5, "maxPosition": 95, "sleepRatio": 1435 }
+
+    this.minPosition = get(options, ["minPosition"], null); // can be less then maxPosition!
+    this.maxPosition = get(options, ["maxPosition"], null); // can be higher then minPosition!
+    this.sleepRatio = get(options, ["sleepRatio"], null);
 
     this.action = null;
     this.potentiometer = new PotentiometerSensor();
@@ -71,6 +67,7 @@ class MotorDriver {
   }
 
   async initialize() {
+    // TODO remove
     this.in1.writeSync(0);
     this.in2.writeSync(0);
 
@@ -133,7 +130,7 @@ class MotorDriver {
             }
 
             this.forward();
-            await sleep(DELAY);
+            await sleepCb(noop, DELAY);
             this.stop();
             console.log("pos", await this.readPosition());
             break;
@@ -148,7 +145,7 @@ class MotorDriver {
             }
 
             this.back();
-            await sleep(DELAY);
+            await sleepCb(noop, DELAY);
             this.stop();
             console.log("pos", await this.readPosition());
             break;
@@ -189,7 +186,7 @@ class MotorDriver {
                 }),
               );
 
-              await motor.calibration();
+              await this.calibration();
 
               rl.close();
             }
@@ -213,8 +210,8 @@ class MotorDriver {
   }
 
   back() {
-    this.in2.writeSync(0);
     this.in1.writeSync(1);
+    this.in2.writeSync(0);
   }
 
   stop() {
@@ -346,8 +343,21 @@ class MotorDriver {
     }
 
     const interval =
-      (this.maxPosition - this.minPosition) / (RESIST_LEVELS - 1);
-    const targetPos = this.minPosition + interval * (level - 1);
+      Math.abs(this.maxPosition - this.minPosition) / (RESIST_LEVELS - 1);
+    let targetPos;
+    const isMaxPosGreater = this.maxPosition > this.minPosition;
+
+    if (!isNumber(this.maxPosition) || !isNumber(this.minPosition)) {
+      console.log("wrong motor edges");
+      return;
+    } else if (this.maxPosition > this.minPosition) {
+      targetPos = this.minPosition + interval * (level - 1);
+    } else if (this.maxPosition < this.minPosition) {
+      targetPos = this.minPosition - interval * (level - 1);
+    } else {
+      console.log("wrong motor edges");
+      return;
+    }
 
     if (isCancelled()) {
       return;
@@ -366,11 +376,18 @@ class MotorDriver {
       firstTime = (Math.abs(posCur - targetPos) / interval) * this.sleepRatio;
     }
 
-    while (Math.abs(posCur - targetPos) > 1) {
+    while (
+      Math.abs(posCur - targetPos) > 1 &&
+      (isMaxPosGreater
+        ? posCur < this.maxPosition || posCur > this.minPosition
+        : posCur > this.maxPosition || posCur < this.minPosition)
+    ) {
       if (isCancelled()) {
         return;
       }
       ++counter;
+
+      // TODO rewrite
 
       if (posCur > targetPos) {
         this.back();
@@ -424,6 +441,4 @@ class MotorDriver {
   }
 }
 
-const motor = new MotorDriver(motorSettings);
-
-exports.motor = motor;
+module.exports = MotorDriver;

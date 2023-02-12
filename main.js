@@ -1,12 +1,15 @@
 const { app, BrowserWindow, ipcMain, powerSaveBlocker } = require("electron");
 const path = require("node:path");
 const { rate } = require("./src/hardware/cadence_sensor");
-const { motor } = require("./src/hardware/motor_driver");
+const MotorDriver = require("./src/hardware/motor_driver");
 const Store = require("./src/software/store");
 const { isFunction, get } = require("lodash");
-const { DIR_CONST, EVENTS } = require("./src/constants/constants");
+const { DIR_CONST, EVENTS, FILE_CONST } = require("./src/constants/constants");
 
 const store = new Store();
+const motor = new MotorDriver(
+  get(store.store, [DIR_CONST.SETTINGS, FILE_CONST.PERIPHERAL], {}),
+);
 
 let win = null;
 let preventDisplaySleepID = false;

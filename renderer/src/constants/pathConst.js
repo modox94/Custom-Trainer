@@ -29,5 +29,8 @@ export const SUB_PATHS = {
     PERIPHERAL: "peripheral",
     PERFORMANCE: "performance",
     ADVANCED: "advanced",
+    MOTOR: "motor",
+    RPM: "rpm",
+    HEARTBEAT: "heartbeat",
   },
 };

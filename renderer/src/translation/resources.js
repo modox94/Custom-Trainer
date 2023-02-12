@@ -279,6 +279,18 @@ const resources = {
       [en]: "setting up connected components.",
       [ru]: "настройка подключенных компонентов.",
     },
+    [TK[TIPS].manualModeTip]: {
+      [en]: "a training mode in which the resistance level changes manually.",
+      [ru]: "режим тренировки, при котором изменение уровня нагрузки производится вручную.",
+    },
+    [TK[TIPS].selectProgramTip]: {
+      [en]: "list to select of a program for training in auto mode in which the resistance level changes in according with a pre-written program.",
+      [ru]: "выбор программы для тренировки в автоматическом режиме, изменение уровня нагрузки происходит в соответствии с заранее написанной программой.",
+    },
+    [TK[TIPS].programEditorTip]: {
+      [en]: "program editor for training in auto mode.",
+      [ru]: "редактор программ для тренировки в автоматическом режиме.",
+    },
   },
 };
 
