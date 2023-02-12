@@ -1,8 +1,8 @@
 const MotorDriver = require("./src/hardware/motor_driver");
 
 const motor = new MotorDriver({
-  minPosition: 5,
-  maxPosition: 95,
+  minPosition: 95,
+  maxPosition: 5,
   sleepRatio: 1435,
 });
 
