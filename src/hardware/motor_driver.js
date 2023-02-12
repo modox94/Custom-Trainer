@@ -130,7 +130,12 @@ class MotorDriver {
           case "f": {
             const posCur = await this.readPosition();
 
-            if (posCur >= 95) {
+            if (this.reverseDirection && posCur <= 5) {
+              console.log("Дальше нельзя!");
+              break;
+            }
+
+            if (!this.reverseDirection && posCur >= 95) {
               console.log("Дальше нельзя!");
               break;
             }
@@ -145,7 +150,12 @@ class MotorDriver {
           case "b": {
             const posCur = await this.readPosition();
 
-            if (posCur <= 5) {
+            if (!this.reverseDirection && posCur <= 5) {
+              console.log("Дальше нельзя!");
+              break;
+            }
+
+            if (this.reverseDirection && posCur >= 95) {
               console.log("Дальше нельзя!");
               break;
             }
@@ -370,7 +380,7 @@ class MotorDriver {
       targetPos = this.minPosition + interval * (level - 1);
     } else if (this.maxPosition < this.minPosition) {
       reverseEdges = true;
-      targetPos = this.maxPosition - interval * (level - 1);
+      targetPos = this.minPosition - interval * (level - 1);
     } else {
       console.log("wrong motor edges");
       return;
