@@ -213,7 +213,12 @@ export const WiresWireIcon = props => {
 export const PotentiometerSymbol = props => {
   const { position, ...otherProps } = props;
 
-  const lineX = 15 + round(70 * position);
+  let lineX = 15 + round(0.7 * position);
+  if (lineX < 15) {
+    lineX = 15;
+  } else if (lineX > 85) {
+    lineX = 85;
+  }
   const headX1 = lineX - 5;
   const headX2 = lineX + 5;
 
@@ -245,8 +250,8 @@ export const PotentiometerSymbol = props => {
 };
 
 PotentiometerSymbol.propTypes = {
-  position: PropTypes.number,
+  position: PropTypes.number, // from 0 to 100
 };
 PotentiometerSymbol.defaultProps = {
-  position: 0.5,
+  position: 50,
 };
