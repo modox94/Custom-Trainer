@@ -1,12 +1,12 @@
 const { Gpio } = require("onoff");
 const { random, noop, get } = require("lodash");
 const {
+  DEFAULT_M_C,
+  DEFAULT_WINDOW,
   DIRECTION,
   EDGE,
-  PHYSICAL_TO_GPIO,
   PAUSE_DELAY,
-  DEFAULT_WINDOW,
-  DEFAULT_M_C,
+  PHYSICAL_TO_GPIO,
 } = require("../constants/constants");
 
 const cadenceSensorPin = PHYSICAL_TO_GPIO[11];

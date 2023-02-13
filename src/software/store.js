@@ -3,20 +3,20 @@ const { app } = require("electron");
 const path = require("node:path");
 const fs = require("node:fs");
 const {
-  get,
-  set,
   camelCase,
+  cloneDeep,
+  get,
   isEqual,
   isFunction,
+  set,
   unset,
-  cloneDeep,
 } = require("lodash");
 const chokidar = require("chokidar");
 const defaultTrainingPrograms = require("../../default_training_programs");
 const {
-  LANGS_CODES,
   DIR_CONST,
   FILE_CONST,
+  LANGS_CODES,
 } = require("../constants/constants");
 
 const ajv = new Ajv();

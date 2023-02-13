@@ -379,8 +379,8 @@ class MotorDriver {
     while (
       Math.abs(posCur - targetPos) > 1 &&
       (isMaxPosGreater
-        ? posCur < this.maxPosition || posCur > this.minPosition
-        : posCur > this.maxPosition || posCur < this.minPosition)
+        ? posCur < this.maxPosition && posCur > this.minPosition
+        : posCur > this.maxPosition && posCur < this.minPosition)
     ) {
       if (isCancelled()) {
         return;
