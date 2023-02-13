@@ -1,3 +1,4 @@
+const Ajv = require("ajv");
 const { app } = require("electron");
 const path = require("node:path");
 const fs = require("node:fs");
@@ -18,15 +19,75 @@ const {
   FILE_CONST,
 } = require("../constants/constants");
 
+const ajv = new Ajv();
+
+const programSchema = {
+  type: "object",
+  properties: {
+    title: { type: "string" },
+    maxResistanceLevel: { type: "number" },
+    steps: {
+      type: "array",
+      items: {
+        type: "object",
+        properties: {
+          resistanceLevel: { type: "number" },
+          targetRpm: { type: "number" },
+        },
+        required: ["resistanceLevel", "targetRpm"],
+        additionalProperties: true,
+      },
+    },
+  },
+  required: ["title", "maxResistanceLevel", "steps"],
+  additionalProperties: true,
+};
+
 const interfaceDefault = {
   lang: LANGS_CODES.en,
+  cursorNone: false,
+};
+
+const interfaceSchema = {
+  type: "object",
+  properties: {
+    lang: { enum: Object.values(LANGS_CODES) },
+    cursorNone: { type: "boolean" },
+  },
+  required: ["lang"],
+  additionalProperties: true,
 };
 
 const peripheralDefault = {
   minPosition: null,
   maxPosition: null,
   sleepRatio: null,
+  swappedMotorWires: null,
+  swappedPotentiometerWires: null,
 };
+
+const peripheralSchema = {
+  type: "object",
+  properties: {
+    minPosition: { type: "number", maximum: 100, minimum: 0, nullable: true },
+    maxPosition: { type: "number", maximum: 100, minimum: 0, nullable: true },
+    sleepRatio: { type: "number", nullable: true },
+    swappedMotorWires: { type: "boolean", nullable: true },
+    swappedPotentiometerWires: { type: "boolean", nullable: true },
+  },
+  required: [
+    "minPosition",
+    "maxPosition",
+    "sleepRatio",
+    "swappedMotorWires",
+    "swappedPotentiometerWires",
+  ],
+  additionalProperties: true,
+};
+
+const validateProgram = ajv.compile(programSchema);
+const validateInterface = ajv.compile(interfaceSchema);
+const validatePeripheral = ajv.compile(peripheralSchema);
 
 const DIR_CONST_ARRAY = Object.values(DIR_CONST);
 
@@ -78,7 +139,9 @@ class Store {
       } else if (programFile.isFile()) {
         const pathEl = path.join(programsFullPath, programFile.name);
         const programObj = JSON.parse(fs.readFileSync(pathEl));
-        set(tempStore, [DIR_CONST.PROGRAMS, programFile.name], programObj);
+        if (validateProgram(programObj)) {
+          set(tempStore, [DIR_CONST.PROGRAMS, programFile.name], programObj);
+        }
       }
     });
 
@@ -124,18 +187,29 @@ class Store {
       withFileTypes: true,
     });
 
-    settingsDir.forEach(programFile => {
-      if (programFile.isDirectory()) {
+    settingsDir.forEach(settingsFile => {
+      if (settingsFile.isDirectory()) {
         return console.log("error unexpected folder");
-      } else if (programFile.isFile()) {
-        const pathEl = path.join(settingsFullPath, programFile.name);
-        const programObj = JSON.parse(fs.readFileSync(pathEl));
-        set(tempStore, [DIR_CONST.SETTINGS, programFile.name], programObj);
+      } else if (settingsFile.isFile()) {
+        const pathEl = path.join(settingsFullPath, settingsFile.name);
+        const settingObj = JSON.parse(fs.readFileSync(pathEl));
+        set(tempStore, [DIR_CONST.SETTINGS, settingsFile.name], settingObj);
       }
     });
 
-    if (!get(tempStore, [DIR_CONST.SETTINGS, FILE_CONST.INTERFACE])) {
+    const tempStoreSI = get(tempStore, [
+      DIR_CONST.SETTINGS,
+      FILE_CONST.INTERFACE,
+    ]);
+    if (!tempStoreSI) {
       this.create(DIR_CONST.SETTINGS, FILE_CONST.INTERFACE, interfaceDefault);
+      set(
+        tempStore,
+        [DIR_CONST.SETTINGS, FILE_CONST.INTERFACE],
+        interfaceDefault,
+      );
+    } else if (!validateInterface(tempStoreSI)) {
+      this.edit(DIR_CONST.SETTINGS, FILE_CONST.INTERFACE, interfaceDefault);
       set(
         tempStore,
         [DIR_CONST.SETTINGS, FILE_CONST.INTERFACE],
@@ -143,8 +217,19 @@ class Store {
       );
     }
 
-    if (!get(tempStore, [DIR_CONST.SETTINGS, FILE_CONST.PERIPHERAL])) {
+    const tempStoreSP = get(tempStore, [
+      DIR_CONST.SETTINGS,
+      FILE_CONST.PERIPHERAL,
+    ]);
+    if (!tempStoreSP) {
       this.create(DIR_CONST.SETTINGS, FILE_CONST.PERIPHERAL, peripheralDefault);
+      set(
+        tempStore,
+        [DIR_CONST.SETTINGS, FILE_CONST.PERIPHERAL],
+        peripheralDefault,
+      );
+    } else if (!validatePeripheral(tempStoreSP)) {
+      this.edit(DIR_CONST.SETTINGS, FILE_CONST.PERIPHERAL, peripheralDefault);
       set(
         tempStore,
         [DIR_CONST.SETTINGS, FILE_CONST.PERIPHERAL],
