@@ -2,12 +2,17 @@ import { Icon } from "@blueprintjs/core";
 import { IconNames } from "@blueprintjs/icons";
 import clsx from "clsx";
 import React from "react";
-import { DumbbellIcon, FeatherIcon, PotentiometerSymbol } from "../Icons";
+import {
+  DumbbellIcon,
+  EngineMotorRegularIcon,
+  FeatherIcon,
+  PotentiometerSymbol,
+} from "../Icons";
 import { Container, Item } from "../SquareGrid/SquareGrid";
 import styles from "./Settings.module.css";
 
 const Motor = () => {
-  const position = 0.15;
+  const position = 15;
 
   return (
     <>
@@ -31,25 +36,45 @@ const Motor = () => {
         </Item>
       </Container>
       <Container>
-        <Item className={styles.flexColumn}>
-          <FeatherIcon className={styles.icon50} />
-          <div className={styles.text}>
-            <p>
-              <b>0.15</b>
-            </p>
-          </div>
+        <Item className={clsx(styles.flexColumn, styles.tinyPadding)}>
+          <Icon
+            className={clsx(styles.icon50, styles.blueIcon)}
+            icon={IconNames.REFRESH}
+          />
+          <EngineMotorRegularIcon
+            className={clsx(styles.icon50, styles.blueIcon)}
+          />
         </Item>
+        <Item className={clsx(styles.flexColumn, styles.tinyPadding)}>
+          <Icon
+            className={clsx(styles.icon50, styles.blueIcon)}
+            icon={IconNames.REFRESH}
+          />
+          <PotentiometerSymbol
+            className={clsx(styles.icon50, styles.blueIcon)}
+          />
+        </Item>
+
         <Item>
           <Icon
             className={clsx(styles.icon, styles.blueIcon)}
-            icon={IconNames.REFRESH}
+            icon={IconNames.FLOPPY_DISK}
           />
         </Item>
-        <Item className={styles.flexColumn}>
+
+        <Item className={clsx(styles.flexColumn, styles.tinyPadding)}>
+          <FeatherIcon className={styles.icon50} />
+          <div className={styles.text}>
+            <p>
+              <b>{position}</b>
+            </p>
+          </div>
+        </Item>
+        <Item className={clsx(styles.flexColumn, styles.tinyPadding)}>
           <DumbbellIcon className={styles.icon50} />
           <div className={styles.text}>
             <p>
-              <b>0.15</b>
+              <b>{position}</b>
             </p>
           </div>
         </Item>
