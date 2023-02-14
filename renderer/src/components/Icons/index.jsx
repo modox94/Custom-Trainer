@@ -5,6 +5,7 @@ import PropTypes from "prop-types";
 import React from "react";
 import { ReactComponent as CircuitSolidSvg } from "./circuit-solid.svg";
 import { ReactComponent as DumbbellSvg } from "./dumbbell-solid.svg";
+import { ReactComponent as EngineMotorElectroSvg } from "./engine-motor-electro.svg";
 import { ReactComponent as EngineMotorRegularSvg } from "./engine-motor-regular.svg";
 import { ReactComponent as EngineMotorSolidSvg } from "./engine-motor-solid.svg";
 import { ReactComponent as FeatherSvg } from "./feather.svg";
@@ -56,6 +57,16 @@ export const DumbbellIcon = props => {
   return (
     <IconWrapper {...otherProps}>
       <DumbbellSvg />
+    </IconWrapper>
+  );
+};
+
+export const EngineMotorElectroIcon = props => {
+  const { children, ...otherProps } = props;
+
+  return (
+    <IconWrapper {...otherProps}>
+      <EngineMotorElectroSvg />
     </IconWrapper>
   );
 };

@@ -2,7 +2,7 @@ import clsx from "clsx";
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import { PAGES, PAGES_PATHS, SUB_PATHS } from "../../constants/pathConst";
-import { EngineMotorRegularIcon } from "../Icons";
+import { EngineMotorElectroIcon } from "../Icons";
 import { Container, Item } from "../SquareGrid/SquareGrid";
 import styles from "./Settings.module.css";
 
@@ -30,7 +30,7 @@ const Peripheral = props => {
     <>
       <Container>
         <Item onClick={onClickMotor}>
-          <EngineMotorRegularIcon
+          <EngineMotorElectroIcon
             className={clsx(styles.icon, styles.blueIcon)}
           />
         </Item>

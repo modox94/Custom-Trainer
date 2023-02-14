@@ -44,6 +44,10 @@
   color: var(--blue2);
 }
 
+.grayIcon svg {
+  color: var(--gray1);
+}
+
 .langIconContainer {
   display: flex;
   flex-direction: row;
