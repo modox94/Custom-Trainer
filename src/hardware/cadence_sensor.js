@@ -79,7 +79,7 @@ class Frequency {
     const now = Date.now();
     const lastIndex = this.timecodes.length - 1;
     if (
-      lastIndex >= 0 &&
+      lastIndex > 0 &&
       Math.abs(now - this.timecodes[lastIndex]) < PAUSE_DELAY
     ) {
       const prevMills = this.timecodes[lastIndex - 1];
