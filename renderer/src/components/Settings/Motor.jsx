@@ -1,15 +1,22 @@
-import { Icon } from "@blueprintjs/core";
+import { Button, Classes, Dialog, Icon } from "@blueprintjs/core";
 import { IconNames } from "@blueprintjs/icons";
 import clsx from "clsx";
-import { get } from "lodash";
-import React from "react";
+import { get, isFinite, round } from "lodash";
+import React, { useState } from "react";
+import { useTranslation } from "react-i18next";
 import {
-  swapMotorWires,
-  swapPotentiometerWires,
+  DANGERmoveBack,
+  DANGERmoveForward,
+  editSettings,
   useGetPotentiometerQuery,
   useGetSettingsQuery,
 } from "../../api/ipc";
 import { FILE_CONST } from "../../constants/reduxConst";
+import {
+  TRANSLATION_KEYS,
+  TRANSLATION_ROOT_KEYS,
+} from "../../constants/translationConst";
+import { getTranslationPath } from "../../utils/translationUtils";
 import {
   DumbbellIcon,
   EngineMotorElectroIcon,
@@ -19,6 +26,9 @@ import {
 import { Container, Item } from "../SquareGrid/SquareGrid";
 import styles from "./Settings.module.css";
 
+const { COMMON } = TRANSLATION_ROOT_KEYS;
+const { ok } = TRANSLATION_KEYS[COMMON];
+
 // minPosition
 // maxPosition
 // sleepRatio
@@ -26,10 +36,15 @@ import styles from "./Settings.module.css";
 // swappedPotentiometerWires
 
 const Motor = () => {
-  const { data: potentiometerValue } =
+  const { t } = useTranslation();
+  const [loading, setLoading] = useState(false);
+  const [disclaimer, setDisclaimer] = useState(true);
+
+  const { data: potentiometerValueRaw } =
     useGetPotentiometerQuery(undefined, {
       pollingInterval: 500,
     }) || {};
+  const potentiometerValue = round(potentiometerValueRaw);
   const { data: settings = {} } =
     useGetSettingsQuery(undefined, { refetchOnMountOrArgChange: true }) || {};
   const minPosition = get(
@@ -53,38 +68,91 @@ const Motor = () => {
     null,
   );
 
-  const onClickLeft = () => {
-    // TODO
-    console.log("onClickLeft");
+  const disabled = loading || !isFinite(potentiometerValue);
+
+  const onClickLeft = async () => {
+    if (disabled) {
+      return;
+    }
+
+    setLoading(true);
+
+    try {
+      const result = await DANGERmoveBack();
+      if (result?.error) {
+        console.log("error", result.error);
+      }
+    } catch (error) {
+      console.log("error", error);
+    }
+    setLoading(false);
   };
 
-  const onClickRight = () => {
-    // TODO
-    console.log("onClickRight");
+  const onClickRight = async () => {
+    if (disabled) {
+      return;
+    }
+
+    setLoading(true);
+
+    try {
+      const result = await DANGERmoveForward();
+      if (result?.error) {
+        console.log("error", result.error);
+      }
+    } catch (error) {
+      console.log("error", error);
+    }
+    setLoading(false);
   };
 
   const onSelectMin = () => {
-    // TODO
-    console.log("onSelectMin");
+    if (disabled) {
+      return;
+    }
+
+    editSettings(FILE_CONST.PERIPHERAL, "minPosition", potentiometerValue);
   };
 
   const onSelectMax = () => {
-    // TODO
-    console.log("onSelectMax");
+    if (disabled) {
+      return;
+    }
+
+    editSettings(FILE_CONST.PERIPHERAL, "maxPosition", potentiometerValue);
   };
 
   const onSwapMotor = () => {
-    swapMotorWires(!swappedMotorWires);
+    if (disabled) {
+      return;
+    }
+
+    editSettings(
+      FILE_CONST.PERIPHERAL,
+      "swappedMotorWires",
+      !swappedMotorWires,
+    );
   };
 
   const onSwapPotentiometer = () => {
-    swapPotentiometerWires(!swappedPotentiometerWires);
+    if (disabled) {
+      return;
+    }
+
+    editSettings(
+      FILE_CONST.PERIPHERAL,
+      "swappedPotentiometerWires",
+      !swappedPotentiometerWires,
+    );
   };
 
   return (
     <>
       <Container>
-        <Item className={styles.tinyPadding} onClick={onClickLeft}>
+        <Item
+          className={clsx(styles.tinyPadding, { [Classes.SKELETON]: disabled })}
+          onClick={onClickLeft}
+        >
           <Icon className={styles.icon} icon={IconNames.CARET_LEFT} />
         </Item>
         <Item className={styles.flexColumn}>
@@ -98,17 +166,18 @@ const Motor = () => {
             </p>
           </div>
         </Item>
-        <Item className={styles.tinyPadding}>
-          <Icon
-            className={styles.icon}
-            icon={IconNames.CARET_RIGHT}
-            onClick={onClickRight}
-          />
+        <Item
+          className={clsx(styles.tinyPadding, { [Classes.SKELETON]: disabled })}
+          onClick={onClickRight}
+        >
+          <Icon className={styles.icon} icon={IconNames.CARET_RIGHT} />
         </Item>
       </Container>
       <Container>
         <Item
-          className={clsx(styles.flexColumn, styles.tinyPadding)}
+          className={clsx(styles.flexColumn, styles.tinyPadding, {
+            [Classes.SKELETON]: disabled,
+          })}
           onClick={onSwapMotor}
         >
           <Icon
@@ -126,7 +195,9 @@ const Motor = () => {
           />
         </Item>
         <Item
-          className={clsx(styles.flexColumn, styles.tinyPadding)}
+          className={clsx(styles.flexColumn, styles.tinyPadding, {
+            [Classes.SKELETON]: disabled,
+          })}
           onClick={onSwapPotentiometer}
         >
           <Icon
@@ -144,15 +215,10 @@ const Motor = () => {
           />
         </Item>
 
-        <Item>
-          <Icon
-            className={clsx(styles.icon, styles.blueIcon)}
-            icon={IconNames.FLOPPY_DISK}
-          />
-        </Item>
-
         <Item
-          className={clsx(styles.flexColumn, styles.tinyPadding)}
+          className={clsx(styles.flexColumn, styles.tinyPadding, {
+            [Classes.SKELETON]: disabled,
+          })}
           onClick={onSelectMin}
         >
           <FeatherIcon className={styles.icon50} />
@@ -163,7 +229,9 @@ const Motor = () => {
           </div>
         </Item>
         <Item
-          className={clsx(styles.flexColumn, styles.tinyPadding)}
+          className={clsx(styles.flexColumn, styles.tinyPadding, {
+            [Classes.SKELETON]: disabled,
+          })}
           onClick={onSelectMax}
         >
           <DumbbellIcon className={styles.icon50} />
@@ -174,6 +242,32 @@ const Motor = () => {
           </div>
         </Item>
       </Container>
+
+      <Dialog
+        isOpen={disclaimer}
+        title={"TODO"}
+        canEscapeKeyClose={false}
+        canOutsideClickClose={false}
+        isCloseButtonShown={false}
+        onClose={() => setDisclaimer(false)}
+      >
+        <div className={Classes.DIALOG_BODY}>
+          <p className={Classes.TEXT_LARGE}>
+            <Icon className={styles.greenIcon} icon={IconNames.SWAP_VERTICAL} />
+            {"TODO TODO TODO"}
+          </p>
+        </div>
+        <div className={Classes.DIALOG_FOOTER}>
+          <div className={Classes.DIALOG_FOOTER_ACTIONS}>
+            <Button
+              large
+              icon={IconNames.TICK}
+              text={t(getTranslationPath(COMMON, ok))}
+              onClick={() => setDisclaimer(false)}
+            />
+          </div>
+        </div>
+      </Dialog>
     </>
   );
 };

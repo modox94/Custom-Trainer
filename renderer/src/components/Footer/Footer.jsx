@@ -12,6 +12,7 @@ import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "react-redux";
 import { useLocation, useMatch } from "react-router-dom";
+import { DASH } from "../../constants/commonConst";
 import { PAGES, PAGES_PATHS, SUB_PATHS } from "../../constants/pathConst";
 import {
   TRANSLATION_KEYS,
@@ -22,6 +23,7 @@ import { hideFooter, showFooter } from "../../slices/environmentSlice";
 import { getTranslationPath } from "../../utils/translationUtils";
 import {
   DumbbellIcon,
+  EngineMotorElectroIcon,
   GaugeHighIcon,
   MicrochipIcon,
   WiresWireIcon,
@@ -29,7 +31,6 @@ import {
 import styles from "./Footer.module.css";
 
 const containerStyle = { top: "unset" };
-const DASH = " — ";
 
 const { MAIN, MANUAL_MODE, SETTINGS, SELECT_PROGRAM } = PAGES;
 const {
@@ -113,7 +114,9 @@ const Footer = props => {
         break;
       }
 
-      case PAGES_PATHS[SETTINGS]: {
+      case PAGES_PATHS[SETTINGS]:
+      case `${PAGES_PATHS[SETTINGS]}/${SUB_PATHS[SETTINGS].PERIPHERAL}`:
+      case `${PAGES_PATHS[SETTINGS]}/${SUB_PATHS[SETTINGS].PERIPHERAL}/${SUB_PATHS[SETTINGS].MOTOR}`: {
         if (!footerStatus) {
           dispatch(showFooter());
         }
@@ -314,6 +317,37 @@ const Footer = props => {
             }),
         },
       ],
+      [`${PAGES_PATHS[SETTINGS]}/${SUB_PATHS[SETTINGS].PERIPHERAL}`]: [
+        {
+          buttonIcon: <EngineMotorElectroIcon className={styles.blueIcon} />,
+          buttonText: "TODO", // t(getTranslationPath(SETTINGS_TRK, languageTKey)),
+          onClick: () =>
+            setTip({
+              body: (
+                <>
+                  <EngineMotorElectroIcon className={styles.blueIcon} />
+                  {`${DASH}${"TODO"}`}
+                </>
+              ),
+            }),
+        },
+      ],
+      [`${PAGES_PATHS[SETTINGS]}/${SUB_PATHS[SETTINGS].PERIPHERAL}/${SUB_PATHS[SETTINGS].MOTOR}`]:
+        [
+          {
+            buttonIcon: <EngineMotorElectroIcon className={styles.blueIcon} />,
+            buttonText: "TODO", // t(getTranslationPath(SETTINGS_TRK, languageTKey)),
+            onClick: () =>
+              setTip({
+                body: (
+                  <>
+                    <EngineMotorElectroIcon className={styles.blueIcon} />
+                    {`${DASH}${"TODO"}`}
+                  </>
+                ),
+              }),
+          },
+        ],
     };
   }, [t, setTip]);
 

@@ -98,14 +98,13 @@ export const checkProgramTitle = (...args) =>
 export const setFullScreen = () =>
   window.electron.ipcRenderer.send(EVENTS.SET_FULLSCREEN);
 
-export const swapMotorWires = (...args) =>
-  window.electron.ipcRenderer.send(EVENTS.SWAP_MOTOR_WIRES, ...args);
+export const DANGERmoveForward = async () => {
+  return await window.electron.ipcRenderer.invoke(EVENTS.DANGER_MOVE_FORWARD);
+};
 
-export const swapPotentiometerWires = (...args) =>
-  window.electron.ipcRenderer.send(EVENTS.SWAP_POTENTIOMETER_WIRES, ...args);
-
-// DANGER_MOVE_FORWARD
-// DANGER_MOVE_BACK
+export const DANGERmoveBack = async () => {
+  return await window.electron.ipcRenderer.invoke(EVENTS.DANGER_MOVE_BACK);
+};
 
 export const setMotorLevel = motorLevel =>
   window.electron.ipcRenderer.send(EVENTS.SET_MOTOR_LEVEL, motorLevel);

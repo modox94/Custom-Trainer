@@ -1,5 +1,5 @@
 const Promise = require("bluebird");
-const { round, noop, get, isFunction, isNumber } = require("lodash");
+const { round, noop, get, isFunction, isFinite } = require("lodash");
 const { stdin: input, stdout: output } = require("node:process");
 const readline = require("node:readline");
 const fs = require("node:fs");
@@ -257,13 +257,25 @@ class MotorDriver {
   }
 
   async DANGER_forward() {
-    // TODO
-    // forward
+    try {
+      this.forward();
+      await sleepCb(noop, DELAY);
+    } catch (error) {
+      return { error };
+    }
+
+    return { error: false };
   }
 
   async DANGER_back() {
-    // TODO
-    // back
+    try {
+      this.back();
+      await sleepCb(noop, DELAY);
+    } catch (error) {
+      return { error };
+    }
+
+    return { error: false };
   }
 
   get isReady() {
@@ -391,7 +403,7 @@ class MotorDriver {
     let targetPos;
     const isMaxPosGreater = this.maxPosition > this.minPosition;
 
-    if (!isNumber(this.maxPosition) || !isNumber(this.minPosition)) {
+    if (!isFinite(this.maxPosition) || !isFinite(this.minPosition)) {
       console.log("wrong motor edges");
       return;
     } else if (this.maxPosition > this.minPosition) {
@@ -432,7 +444,6 @@ class MotorDriver {
       ++counter;
 
       // TODO rewrite
-
       if (posCur > targetPos) {
         this.back();
       } else {

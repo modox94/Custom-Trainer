@@ -120,22 +120,12 @@ ipcMain.handle(EVENTS.GET_POTENTIOMETER, async () => {
   return await motor.readPosition();
 });
 
-ipcMain.on(EVENTS.SWAP_MOTOR_WIRES, (event, value) => {
-  store.editSettings(FILE_CONST.PERIPHERAL, "swappedMotorWires", value);
-  motor.swapMotorWires(value);
+ipcMain.handle(EVENTS.DANGER_MOVE_FORWARD, async () => {
+  return await motor.DANGER_forward();
 });
 
-ipcMain.on(EVENTS.SWAP_POTENTIOMETER_WIRES, (event, value) => {
-  store.editSettings(FILE_CONST.PERIPHERAL, "swappedPotentiometerWires", value);
-  motor.swapPotentiometerWires(value);
-});
-
-ipcMain.on(EVENTS.DANGER_MOVE_FORWARD, (event, motorLevel) => {
-  // TODO
-});
-
-ipcMain.on(EVENTS.DANGER_MOVE_BACK, (event, motorLevel) => {
-  // TODO
+ipcMain.handle(EVENTS.DANGER_MOVE_BACK, async () => {
+  return await motor.DANGER_back();
 });
 
 ipcMain.on(EVENTS.SET_MOTOR_LEVEL, (event, motorLevel) => {
