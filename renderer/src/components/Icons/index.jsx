@@ -224,7 +224,7 @@ export const WiresWireIcon = props => {
 export const PotentiometerSymbol = props => {
   const { position, ...otherProps } = props;
 
-  let lineX = 15 + round(0.7 * position);
+  let lineX = 15 + round(0.7 * (position || 0));
   if (lineX < 15) {
     lineX = 15;
   } else if (lineX > 85) {

@@ -13,6 +13,7 @@ Promise.config({ cancellation: true });
 const DELAY = 100;
 const DELAY_FOR_READ = 25;
 const RESIST_LEVELS = 10;
+const MOVE_DIRECTION = { forward: "forward", back: "back" }; // TODO
 
 const write = (value, cb = noop) => {
   console.log("write", value);
@@ -38,6 +39,12 @@ class MotorDriver {
     this.minPosition = get(options, ["minPosition"], null); // can be less then maxPosition!
     this.maxPosition = get(options, ["maxPosition"], null); // can be higher then minPosition!
     this.sleepRatio = get(options, ["sleepRatio"], null);
+    this.swappedMotorWires = get(options, ["swappedMotorWires"], null);
+    this.swappedPotentiometerWires = get(
+      options,
+      ["swappedPotentiometerWires"],
+      null,
+    );
 
     this.action = null;
     this.potentiometer = new PotentiometerSensor();
@@ -204,14 +211,36 @@ class MotorDriver {
     });
   }
 
+  swapMotorWires(value) {
+    this.swappedMotorWires = Boolean(value);
+  }
+
+  swapPotentiometerWires(value) {
+    this.swappedPotentiometerWires = Boolean(value);
+  }
+
+  move(direction) {
+    if (
+      (direction === MOVE_DIRECTION.forward && !this.swappedMotorWires) ||
+      (direction === MOVE_DIRECTION.back && this.swappedMotorWires)
+    ) {
+      this.in1.writeSync(0);
+      this.in2.writeSync(1);
+    } else if (
+      (direction === MOVE_DIRECTION.back && !this.swappedMotorWires) ||
+      (direction === MOVE_DIRECTION.forward && this.swappedMotorWires)
+    ) {
+      this.in1.writeSync(1);
+      this.in2.writeSync(0);
+    }
+  }
+
   forward() {
-    this.in1.writeSync(0);
-    this.in2.writeSync(1);
+    this.move(MOVE_DIRECTION.forward);
   }
 
   back() {
-    this.in1.writeSync(1);
-    this.in2.writeSync(0);
+    this.move(MOVE_DIRECTION.back);
   }
 
   stop() {
@@ -227,6 +256,16 @@ class MotorDriver {
     this.in2.writeSync(0);
   }
 
+  async DANGER_forward() {
+    // TODO
+    // forward
+  }
+
+  async DANGER_back() {
+    // TODO
+    // back
+  }
+
   get isReady() {
     return this.potentiometer?.condition?.isReady;
   }
@@ -236,10 +275,15 @@ class MotorDriver {
   }
 
   async readPosition() {
-    return await this.potentiometer.readPosition();
+    const rawValue = await this.potentiometer.readPosition();
+    return this.swappedPotentiometerWires ? 100 - rawValue : rawValue;
   }
 
-  readPositionCb(cb) {
+  readPositionCb(rawCb) {
+    const cb = rawValue => {
+      const value = this.swappedPotentiometerWires ? 100 - rawValue : rawValue;
+      rawCb(value);
+    };
     return this.potentiometer.readPositionCb(cb);
   }
 

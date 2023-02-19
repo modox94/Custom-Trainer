@@ -1,7 +1,15 @@
 import { Icon } from "@blueprintjs/core";
 import { IconNames } from "@blueprintjs/icons";
 import clsx from "clsx";
-import React, { useState } from "react";
+import { get } from "lodash";
+import React from "react";
+import {
+  swapMotorWires,
+  swapPotentiometerWires,
+  useGetPotentiometerQuery,
+  useGetSettingsQuery,
+} from "../../api/ipc";
+import { FILE_CONST } from "../../constants/reduxConst";
 import {
   DumbbellIcon,
   EngineMotorElectroIcon,
@@ -18,35 +26,59 @@ import styles from "./Settings.module.css";
 // swappedPotentiometerWires
 
 const Motor = () => {
-  const [position, setPosition] = useState(15);
-  const [minPosition, setMinPosition] = useState(null);
-  const [maxPosition, setMaxPosition] = useState(null);
-  const [swappedMotorWires, setSwappedMotorWires] = useState(null);
-  const [swappedPotentiometerWires, setSwappedPotentiometerWires] =
-    useState(null);
+  const { data: potentiometerValue } =
+    useGetPotentiometerQuery(undefined, {
+      pollingInterval: 500,
+    }) || {};
+  const { data: settings = {} } =
+    useGetSettingsQuery(undefined, { refetchOnMountOrArgChange: true }) || {};
+  const minPosition = get(
+    settings,
+    [FILE_CONST.PERIPHERAL, "minPosition"],
+    null,
+  );
+  const maxPosition = get(
+    settings,
+    [FILE_CONST.PERIPHERAL, "maxPosition"],
+    null,
+  );
+  const swappedMotorWires = get(
+    settings,
+    [FILE_CONST.PERIPHERAL, "swappedMotorWires"],
+    null,
+  );
+  const swappedPotentiometerWires = get(
+    settings,
+    [FILE_CONST.PERIPHERAL, "swappedPotentiometerWires"],
+    null,
+  );
 
   const onClickLeft = () => {
-    setPosition(position - 5);
+    // TODO
+    console.log("onClickLeft");
   };
 
   const onClickRight = () => {
-    setPosition(position + 5);
+    // TODO
+    console.log("onClickRight");
   };
 
   const onSelectMin = () => {
-    setMinPosition(position);
+    // TODO
+    console.log("onSelectMin");
   };
 
   const onSelectMax = () => {
-    setMaxPosition(position);
+    // TODO
+    console.log("onSelectMax");
   };
 
   const onSwapMotor = () => {
-    setSwappedMotorWires(!swappedMotorWires);
+    swapMotorWires(!swappedMotorWires);
   };
 
   const onSwapPotentiometer = () => {
-    setSwappedPotentiometerWires(!swappedPotentiometerWires);
+    swapPotentiometerWires(!swappedPotentiometerWires);
   };
 
   return (
@@ -58,11 +90,11 @@ const Motor = () => {
         <Item className={styles.flexColumn}>
           <PotentiometerSymbol
             className={clsx(styles.icon50, styles.blueIcon)}
-            position={position}
+            position={potentiometerValue}
           />
           <div className={styles.text}>
             <p>
-              <b>{position}</b>
+              <b>{String(potentiometerValue)}</b>
             </p>
           </div>
         </Item>
