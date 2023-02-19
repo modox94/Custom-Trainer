@@ -1,12 +1,12 @@
 const { Gpio } = require("onoff");
 const { random, noop, get } = require("lodash");
 const {
+  DEFAULT_M_C,
+  DEFAULT_WINDOW,
   DIRECTION,
   EDGE,
-  PHYSICAL_TO_GPIO,
   PAUSE_DELAY,
-  DEFAULT_WINDOW,
-  DEFAULT_M_C,
+  PHYSICAL_TO_GPIO,
 } = require("../constants/constants");
 
 const cadenceSensorPin = PHYSICAL_TO_GPIO[11];
@@ -79,7 +79,7 @@ class Frequency {
     const now = Date.now();
     const lastIndex = this.timecodes.length - 1;
     if (
-      lastIndex >= 0 &&
+      lastIndex > 0 &&
       Math.abs(now - this.timecodes[lastIndex]) < PAUSE_DELAY
     ) {
       const prevMills = this.timecodes[lastIndex - 1];

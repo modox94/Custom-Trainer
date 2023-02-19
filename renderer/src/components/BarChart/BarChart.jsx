@@ -1,5 +1,5 @@
 import clsx from "clsx";
-import { get, isNumber, noop, round, set, unset } from "lodash";
+import { get, isFinite, noop, round, set, unset } from "lodash";
 import PropTypes from "prop-types";
 import React, { useEffect, useMemo, useRef } from "react";
 import { MAX_RES_LEVEL, MAX_RPM_LEVEL } from "../../constants/settingsConst";
@@ -49,7 +49,7 @@ const BarChart = props => {
       const onWheel = event => {
         const { shiftKey, deltaY, wheelDelta } = event || {};
 
-        if (!shiftKey && isNumber(deltaY) && isNumber(wheelDelta)) {
+        if (!shiftKey && isFinite(deltaY) && isFinite(wheelDelta)) {
           event.preventDefault();
           const factor = deltaY >= 0 ? 1 : -1;
           element.scrollTo({

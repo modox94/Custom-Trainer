@@ -1,5 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { get, isNumber, noop } from "lodash";
+import { get, isFinite, noop } from "lodash";
 import { updateRunningStatus } from "../actions/environmentActions";
 import { NAMES, RUNNINIG_STATUS } from "../constants/reduxConst";
 import { isProduction } from "../utils/commonUtils";
@@ -32,7 +32,7 @@ const environmentSlice = createSlice({
     [updateRunningStatus.pending]: (state, action) => {
       const lastTimecode = get(action, ["meta", "arg"]);
       const requestId = get(action, ["meta", "requestId"]);
-      const isValid = isNumber(lastTimecode);
+      const isValid = isFinite(lastTimecode);
 
       if (!isValid) {
         state.runningStatus = RUNNINIG_STATUS.PAUSE;

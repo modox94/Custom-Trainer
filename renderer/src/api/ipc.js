@@ -81,6 +81,14 @@ const ipcApi = createApi({
         removeListener();
       },
     }),
+    getPotentiometer: builder.query({
+      queryFn: async () => {
+        const data = await window.electron.ipcRenderer.invoke(
+          EVENTS.GET_POTENTIOMETER,
+        );
+        return { data };
+      },
+    }),
   }),
 });
 
@@ -89,6 +97,14 @@ export const checkProgramTitle = (...args) =>
 
 export const setFullScreen = () =>
   window.electron.ipcRenderer.send(EVENTS.SET_FULLSCREEN);
+
+export const DANGERmoveForward = async () => {
+  return await window.electron.ipcRenderer.invoke(EVENTS.DANGER_MOVE_FORWARD);
+};
+
+export const DANGERmoveBack = async () => {
+  return await window.electron.ipcRenderer.invoke(EVENTS.DANGER_MOVE_BACK);
+};
 
 export const setMotorLevel = motorLevel =>
   window.electron.ipcRenderer.send(EVENTS.SET_MOTOR_LEVEL, motorLevel);
@@ -127,6 +143,10 @@ export const editSettings = (filename, field, value) => {
 
 export const appQuit = () => window.electron.ipcRenderer.send(EVENTS.APP_QUIT);
 
-export const { useGetCadenceQuery, useGetProgramsQuery, useGetSettingsQuery } =
-  ipcApi;
+export const {
+  useGetCadenceQuery,
+  useGetProgramsQuery,
+  useGetSettingsQuery,
+  useGetPotentiometerQuery,
+} = ipcApi;
 export default ipcApi;

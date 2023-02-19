@@ -116,6 +116,18 @@ ipcMain.on(EVENTS.SET_FULLSCREEN, () => {
   win.setFullScreen(!isFullScreen);
 });
 
+ipcMain.handle(EVENTS.GET_POTENTIOMETER, async () => {
+  return await motor.readPosition();
+});
+
+ipcMain.handle(EVENTS.DANGER_MOVE_FORWARD, async () => {
+  return await motor.DANGER_forward();
+});
+
+ipcMain.handle(EVENTS.DANGER_MOVE_BACK, async () => {
+  return await motor.DANGER_back();
+});
+
 ipcMain.on(EVENTS.SET_MOTOR_LEVEL, (event, motorLevel) => {
   motor.setLevel(motorLevel);
 });

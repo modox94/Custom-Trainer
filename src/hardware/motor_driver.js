@@ -1,5 +1,5 @@
 const Promise = require("bluebird");
-const { round, noop, get, isFunction, isNumber } = require("lodash");
+const { round, noop, get, isFunction, isFinite } = require("lodash");
 const { stdin: input, stdout: output } = require("node:process");
 const readline = require("node:readline");
 const fs = require("node:fs");
@@ -13,6 +13,7 @@ Promise.config({ cancellation: true });
 const DELAY = 100;
 const DELAY_FOR_READ = 25;
 const RESIST_LEVELS = 10;
+const MOVE_DIRECTION = { forward: "forward", back: "back" }; // TODO
 
 const write = (value, cb = noop) => {
   console.log("write", value);
@@ -38,6 +39,12 @@ class MotorDriver {
     this.minPosition = get(options, ["minPosition"], null); // can be less then maxPosition!
     this.maxPosition = get(options, ["maxPosition"], null); // can be higher then minPosition!
     this.sleepRatio = get(options, ["sleepRatio"], null);
+    this.swappedMotorWires = get(options, ["swappedMotorWires"], null);
+    this.swappedPotentiometerWires = get(
+      options,
+      ["swappedPotentiometerWires"],
+      null,
+    );
 
     this.action = null;
     this.potentiometer = new PotentiometerSensor();
@@ -204,14 +211,36 @@ class MotorDriver {
     });
   }
 
+  swapMotorWires(value) {
+    this.swappedMotorWires = Boolean(value);
+  }
+
+  swapPotentiometerWires(value) {
+    this.swappedPotentiometerWires = Boolean(value);
+  }
+
+  move(direction) {
+    if (
+      (direction === MOVE_DIRECTION.forward && !this.swappedMotorWires) ||
+      (direction === MOVE_DIRECTION.back && this.swappedMotorWires)
+    ) {
+      this.in1.writeSync(0);
+      this.in2.writeSync(1);
+    } else if (
+      (direction === MOVE_DIRECTION.back && !this.swappedMotorWires) ||
+      (direction === MOVE_DIRECTION.forward && this.swappedMotorWires)
+    ) {
+      this.in1.writeSync(1);
+      this.in2.writeSync(0);
+    }
+  }
+
   forward() {
-    this.in1.writeSync(0);
-    this.in2.writeSync(1);
+    this.move(MOVE_DIRECTION.forward);
   }
 
   back() {
-    this.in1.writeSync(1);
-    this.in2.writeSync(0);
+    this.move(MOVE_DIRECTION.back);
   }
 
   stop() {
@@ -227,6 +256,28 @@ class MotorDriver {
     this.in2.writeSync(0);
   }
 
+  async DANGER_forward() {
+    try {
+      this.forward();
+      await sleepCb(noop, DELAY);
+    } catch (error) {
+      return { error };
+    }
+
+    return { error: false };
+  }
+
+  async DANGER_back() {
+    try {
+      this.back();
+      await sleepCb(noop, DELAY);
+    } catch (error) {
+      return { error };
+    }
+
+    return { error: false };
+  }
+
   get isReady() {
     return this.potentiometer?.condition?.isReady;
   }
@@ -236,10 +287,15 @@ class MotorDriver {
   }
 
   async readPosition() {
-    return await this.potentiometer.readPosition();
+    const rawValue = await this.potentiometer.readPosition();
+    return this.swappedPotentiometerWires ? 100 - rawValue : rawValue;
   }
 
-  readPositionCb(cb) {
+  readPositionCb(rawCb) {
+    const cb = rawValue => {
+      const value = this.swappedPotentiometerWires ? 100 - rawValue : rawValue;
+      rawCb(value);
+    };
     return this.potentiometer.readPositionCb(cb);
   }
 
@@ -347,7 +403,7 @@ class MotorDriver {
     let targetPos;
     const isMaxPosGreater = this.maxPosition > this.minPosition;
 
-    if (!isNumber(this.maxPosition) || !isNumber(this.minPosition)) {
+    if (!isFinite(this.maxPosition) || !isFinite(this.minPosition)) {
       console.log("wrong motor edges");
       return;
     } else if (this.maxPosition > this.minPosition) {
@@ -379,8 +435,8 @@ class MotorDriver {
     while (
       Math.abs(posCur - targetPos) > 1 &&
       (isMaxPosGreater
-        ? posCur < this.maxPosition || posCur > this.minPosition
-        : posCur > this.maxPosition || posCur < this.minPosition)
+        ? posCur < this.maxPosition && posCur > this.minPosition
+        : posCur > this.maxPosition && posCur < this.minPosition)
     ) {
       if (isCancelled()) {
         return;
@@ -388,7 +444,6 @@ class MotorDriver {
       ++counter;
 
       // TODO rewrite
-
       if (posCur > targetPos) {
         this.back();
       } else {
