@@ -86,3 +86,5 @@ exports.FILE_CONST = {
   INTERFACE: "interface.json",
   PERIPHERAL: "peripheral.json",
 };
+
+exports.MOVE_DIRECTION = { forward: "forward", back: "back" };

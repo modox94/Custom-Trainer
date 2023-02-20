@@ -1,19 +1,20 @@
 const Promise = require("bluebird");
 const { round, noop, get, isFunction, isFinite } = require("lodash");
-const { stdin: input, stdout: output } = require("node:process");
-const readline = require("node:readline");
 const fs = require("node:fs");
 const { Gpio } = require("onoff");
-const { DIRECTION, PHYSICAL_TO_GPIO } = require("../constants/constants");
+const {
+  DIRECTION,
+  PHYSICAL_TO_GPIO,
+  MOVE_DIRECTION,
+} = require("../constants/constants");
 const { sleepCb } = require("../utils/utils");
 const { PotentiometerSensor } = require("./potentiometer_sensor");
 
 Promise.config({ cancellation: true });
 
-const DELAY = 100;
-const DELAY_FOR_READ = 25;
-const RESIST_LEVELS = 10;
-const MOVE_DIRECTION = { forward: "forward", back: "back" }; // TODO
+const DELAY = 100; // TODO transfer to settings
+const DELAY_FOR_READ = 25; // TODO transfer to settings
+const RESIST_LEVELS = 10; // TODO transfer to settings
 
 const write = (value, cb = noop) => {
   console.log("write", value);
@@ -71,144 +72,6 @@ class MotorDriver {
     this.in1.unexport();
     this.in2.unexport();
     this.potentiometer.off();
-  }
-
-  async initialize() {
-    // TODO remove
-    this.in1.writeSync(0);
-    this.in2.writeSync(0);
-
-    if (!this.minPosition && !this.maxPosition) {
-      console.log(
-        "Нужно найти положение двигателя соответствующее минимальной нагрузке",
-      );
-      console.log(
-        "Отправляйте f (вперед) или b (назад) для управления мотором",
-      );
-      console.log("При достижении соответсвующего положения отправьте next");
-    } else {
-      console.log("Мотор уже инициализирован.");
-      console.log(`Позиция минимальной нагрузки: ${this.minPosition}.`);
-      console.log(`Позиция максимальной нагрузки ${this.maxPosition}.`);
-      console.log("Для сброса настроек отправьте reset.");
-    }
-
-    const rl = readline.createInterface({ input, output });
-
-    rl.prompt();
-
-    return new Promise(resolve => {
-      rl.on("line", async inputRaw => {
-        const input = inputRaw.trim();
-
-        switch (input) {
-          case "exit":
-            console.log("Остановка...");
-            this.stop();
-            rl.close();
-            break;
-
-          case "reset":
-            console.log("Cброс настроек...");
-            this.stop();
-            delete this.minPosition;
-            delete this.maxPosition;
-            console.log(
-              "Нужно найти положение двигателя соответствующее минимальной нагрузке",
-            );
-            console.log(
-              "Отправляйте f (вперед) или b (назад) для управления мотором",
-            );
-            console.log(
-              "При достижении соответсвующего положения отправьте next",
-            );
-            break;
-
-          case "g":
-            console.log("pos", await this.readPosition());
-            break;
-
-          case "f": {
-            const posCur = await this.readPosition();
-
-            if (posCur >= 95) {
-              console.log("Дальше нельзя!");
-              break;
-            }
-
-            this.forward();
-            await sleepCb(noop, DELAY);
-            this.stop();
-            console.log("pos", await this.readPosition());
-            break;
-          }
-
-          case "b": {
-            const posCur = await this.readPosition();
-
-            if (posCur <= 5) {
-              console.log("Дальше нельзя!");
-              break;
-            }
-
-            this.back();
-            await sleepCb(noop, DELAY);
-            this.stop();
-            console.log("pos", await this.readPosition());
-            break;
-          }
-
-          case "next": {
-            let positionSum = 0;
-            for (let i = 0; i < 3; i++) {
-              positionSum += await this.readPosition();
-            }
-            const positionRes = round(positionSum / 3);
-            if (!this.minPosition) {
-              this.minPosition = positionRes;
-
-              console.log("Значение записано", positionRes);
-              console.log("");
-
-              console.log(
-                "Нужно найти положение двигателя соответствующее максимальной нагрузке",
-              );
-              console.log(
-                "Отправляйте f (вперед) или b (назад) для управления мотором",
-              );
-              console.log(
-                "При достижении соответсвующего положения отправьте next",
-              );
-            } else if (!this.maxPosition) {
-              this.maxPosition = positionRes;
-
-              console.log("Значение записано", positionRes);
-              console.log("");
-
-              fs.writeFileSync(
-                "./motor_settings.json",
-                JSON.stringify({
-                  minPosition: this.minPosition,
-                  maxPosition: this.maxPosition,
-                }),
-              );
-
-              await this.calibration();
-
-              rl.close();
-            }
-            break;
-          }
-
-          default:
-            console.log("Не знаю таких команд.");
-            break;
-        }
-      }).on("close", () => {
-        console.log("readline closed");
-        resolve();
-      });
-    });
   }
 
   swapMotorWires(value) {
@@ -301,6 +164,7 @@ class MotorDriver {
     return this.potentiometer.readPositionCb(cb);
   }
 
+  // TODO remove
   async calibration(loops = 1) {
     if (!this.minPosition || !this.maxPosition) {
       return console.log("Невозможно проводить калибровку без инициализации!");
@@ -403,7 +267,6 @@ class MotorDriver {
     const interval =
       Math.abs(this.maxPosition - this.minPosition) / (RESIST_LEVELS - 1);
     let targetPos;
-    const isMaxPosGreater = this.maxPosition > this.minPosition;
 
     if (!isFinite(this.maxPosition) || !isFinite(this.minPosition)) {
       console.log("wrong motor edges");
@@ -434,22 +297,17 @@ class MotorDriver {
       firstTime = (Math.abs(posCur - targetPos) / interval) * this.sleepRatio;
     }
 
-    while (
-      Math.abs(posCur - targetPos) > 1 &&
-      (isMaxPosGreater
-        ? posCur < this.maxPosition && posCur > this.minPosition
-        : posCur > this.maxPosition && posCur < this.minPosition)
-    ) {
+    // TODO improve checking position
+    while (Math.abs(posCur - targetPos) > 1) {
       if (isCancelled()) {
         return;
       }
       ++counter;
 
-      // TODO rewrite
-      if (posCur > targetPos) {
-        this.back();
-      } else {
+      if (posCur < targetPos) {
         this.forward();
+      } else {
+        this.back();
       }
 
       if (firstTime) {
