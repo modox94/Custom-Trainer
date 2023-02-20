@@ -146,9 +146,19 @@ ipcMain.on(EVENTS.EDIT_PROGRAM, async (event, filename, programObject) =>
   store.editProgram(filename, programObject),
 );
 
-ipcMain.on(EVENTS.EDIT_SETTINGS, async (event, filename, field, value) =>
-  store.editSettings(filename, field, value),
-);
+ipcMain.on(EVENTS.EDIT_SETTINGS, async (event, filename, field, value) => {
+  if (filename === FILE_CONST.PERIPHERAL && field === "swappedMotorWires") {
+    motor.swapMotorWires(value);
+  }
+  if (
+    filename === FILE_CONST.PERIPHERAL &&
+    field === "swappedPotentiometerWires"
+  ) {
+    motor.swapPotentiometerWires(value);
+  }
+
+  store.editSettings(filename, field, value);
+});
 
 ipcMain.on(EVENTS.DELETE_PROGRAM, async (event, filename) =>
   store.delete(DIR_CONST.PROGRAMS, filename),
