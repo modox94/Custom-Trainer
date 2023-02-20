@@ -260,6 +260,7 @@ class MotorDriver {
     try {
       this.forward();
       await sleepCb(noop, DELAY);
+      this.stop();
     } catch (error) {
       return { error };
     }
@@ -271,6 +272,7 @@ class MotorDriver {
     try {
       this.back();
       await sleepCb(noop, DELAY);
+      this.stop();
     } catch (error) {
       return { error };
     }
