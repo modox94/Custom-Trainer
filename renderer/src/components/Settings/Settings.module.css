@@ -6,6 +6,10 @@
   align-items: center;
 }
 
+.smallPadding {
+  padding: var(--small-gap);
+}
+
 .tinyPadding {
   padding: var(--tiny-gap);
 }

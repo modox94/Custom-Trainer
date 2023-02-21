@@ -1,8 +1,14 @@
+import { Icon } from "@blueprintjs/core";
+import { IconNames } from "@blueprintjs/icons";
 import clsx from "clsx";
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import { PAGES, PAGES_PATHS, SUB_PATHS } from "../../constants/pathConst";
-import { CaliperPlainIcon, EngineMotorElectroIcon } from "../Icons";
+import {
+  CaliperPlainIcon,
+  EngineMotorElectroIcon,
+  GaugeHighIcon,
+} from "../Icons";
 import { Container, Item } from "../SquareGrid/SquareGrid";
 import styles from "./Settings.module.css";
 
@@ -44,11 +50,14 @@ const Peripheral = props => {
         </Item>
       </Container>
       <Container>
-        <Item onClick={onClickHeartBeat}>
-          <h1>TODO HeartBeat</h1>
-        </Item>
         <Item onClick={onClickRPM}>
-          <h1>TODO RPM</h1>
+          <GaugeHighIcon className={clsx(styles.icon, styles.blueIcon)} />
+        </Item>
+        <Item onClick={onClickHeartBeat}>
+          <Icon
+            className={clsx(styles.icon, styles.blueIcon)}
+            icon={IconNames.PULSE}
+          />
         </Item>
       </Container>
     </>

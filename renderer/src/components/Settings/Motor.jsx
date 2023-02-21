@@ -1,9 +1,10 @@
-import { Button, Classes, Dialog, Icon } from "@blueprintjs/core";
+import { Button, Classes, Dialog, Icon, Intent } from "@blueprintjs/core";
 import { IconNames } from "@blueprintjs/icons";
 import clsx from "clsx";
 import { get, isFinite, round } from "lodash";
 import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
+import { useNavigate } from "react-router-dom";
 import {
   DANGERmoveBack,
   DANGERmoveForward,
@@ -11,6 +12,7 @@ import {
   useGetPotentiometerQuery,
   useGetSettingsQuery,
 } from "../../api/ipc";
+import { DASH } from "../../constants/commonConst";
 import { FILE_CONST } from "../../constants/reduxConst";
 import {
   TRANSLATION_KEYS,
@@ -26,17 +28,13 @@ import {
 import { Container, Item } from "../SquareGrid/SquareGrid";
 import styles from "./Settings.module.css";
 
-const { COMMON } = TRANSLATION_ROOT_KEYS;
-const { ok } = TRANSLATION_KEYS[COMMON];
-
-// minPosition
-// maxPosition
-// sleepRatio
-// swappedMotorWires
-// swappedPotentiometerWires
+const { COMMON, SETTINGS } = TRANSLATION_ROOT_KEYS;
+const { ok, back } = TRANSLATION_KEYS[COMMON];
+const { motorDisclaimerHead, motorDisclaimerMsg } = TRANSLATION_KEYS[SETTINGS];
 
 const Motor = () => {
   const { t } = useTranslation();
+  const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [disclaimer, setDisclaimer] = useState(true);
 
@@ -69,6 +67,10 @@ const Motor = () => {
   );
 
   const disabled = loading || !isFinite(potentiometerValue);
+
+  const goBack = () => {
+    navigate(-1);
+  };
 
   const onClickLeft = async () => {
     if (disabled) {
@@ -155,7 +157,7 @@ const Motor = () => {
         >
           <Icon className={styles.icon} icon={IconNames.CARET_LEFT} />
         </Item>
-        <Item className={styles.flexColumn}>
+        <Item className={clsx(styles.flexColumn, styles.smallPadding)}>
           <PotentiometerSymbol
             className={clsx(styles.icon50, styles.blueIcon)}
             position={potentiometerValue}
@@ -175,40 +177,40 @@ const Motor = () => {
       </Container>
       <Container>
         <Item
-          className={clsx(styles.flexColumn, styles.tinyPadding, {
+          className={clsx(styles.flexColumn, styles.smallPadding, {
             [Classes.SKELETON]: disabled,
           })}
           onClick={onSwapMotor}
         >
           <Icon
-            className={clsx(styles.icon50, {
+            className={clsx(styles.icon50, styles.tinyPadding, {
               [styles.blueIcon]: swappedMotorWires,
               [styles.grayIcon]: !swappedMotorWires,
             })}
             icon={IconNames.REFRESH}
           />
           <EngineMotorElectroIcon
-            className={clsx(styles.icon50, {
+            className={clsx(styles.icon50, styles.tinyPadding, {
               [styles.blueIcon]: swappedMotorWires,
               [styles.grayIcon]: !swappedMotorWires,
             })}
           />
         </Item>
         <Item
-          className={clsx(styles.flexColumn, styles.tinyPadding, {
+          className={clsx(styles.flexColumn, styles.smallPadding, {
             [Classes.SKELETON]: disabled,
           })}
           onClick={onSwapPotentiometer}
         >
           <Icon
-            className={clsx(styles.icon50, {
+            className={clsx(styles.icon50, styles.tinyPadding, {
               [styles.blueIcon]: swappedPotentiometerWires,
               [styles.grayIcon]: !swappedPotentiometerWires,
             })}
             icon={IconNames.REFRESH}
           />
           <PotentiometerSymbol
-            className={clsx(styles.icon50, {
+            className={clsx(styles.icon50, styles.tinyPadding, {
               [styles.blueIcon]: swappedPotentiometerWires,
               [styles.grayIcon]: !swappedPotentiometerWires,
             })}
@@ -216,7 +218,7 @@ const Motor = () => {
         </Item>
 
         <Item
-          className={clsx(styles.flexColumn, styles.tinyPadding, {
+          className={clsx(styles.flexColumn, styles.smallPadding, {
             [Classes.SKELETON]: disabled,
           })}
           onClick={onSelectMin}
@@ -224,12 +226,12 @@ const Motor = () => {
           <FeatherIcon className={styles.icon50} />
           <div className={styles.text}>
             <p>
-              <b>{minPosition === null ? "---" : minPosition}</b>
+              <b>{!isFinite(minPosition) ? DASH : minPosition}</b>
             </p>
           </div>
         </Item>
         <Item
-          className={clsx(styles.flexColumn, styles.tinyPadding, {
+          className={clsx(styles.flexColumn, styles.smallPadding, {
             [Classes.SKELETON]: disabled,
           })}
           onClick={onSelectMax}
@@ -237,7 +239,7 @@ const Motor = () => {
           <DumbbellIcon className={styles.icon50} />
           <div className={styles.text}>
             <p>
-              <b>{maxPosition === null ? "---" : maxPosition}</b>
+              <b>{!isFinite(maxPosition) ? DASH : maxPosition}</b>
             </p>
           </div>
         </Item>
@@ -245,7 +247,7 @@ const Motor = () => {
 
       <Dialog
         isOpen={disclaimer}
-        title={"TODO"}
+        title={t(getTranslationPath(SETTINGS, motorDisclaimerHead))}
         canEscapeKeyClose={false}
         canOutsideClickClose={false}
         isCloseButtonShown={false}
@@ -253,14 +255,20 @@ const Motor = () => {
       >
         <div className={Classes.DIALOG_BODY}>
           <p className={Classes.TEXT_LARGE}>
-            <Icon className={styles.greenIcon} icon={IconNames.SWAP_VERTICAL} />
-            {"TODO TODO TODO"}
+            {t(getTranslationPath(SETTINGS, motorDisclaimerMsg))}
           </p>
         </div>
         <div className={Classes.DIALOG_FOOTER}>
           <div className={Classes.DIALOG_FOOTER_ACTIONS}>
             <Button
               large
+              icon={IconNames.ARROW_LEFT}
+              text={t(getTranslationPath(COMMON, back))}
+              onClick={goBack}
+            />
+            <Button
+              large
+              intent={Intent.DANGER}
               icon={IconNames.TICK}
               text={t(getTranslationPath(COMMON, ok))}
               onClick={() => setDisclaimer(false)}
