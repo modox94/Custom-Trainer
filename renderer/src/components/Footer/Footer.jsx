@@ -22,6 +22,7 @@ import { getFooterStatus } from "../../selectors/environmentSelectors";
 import { hideFooter, showFooter } from "../../slices/environmentSlice";
 import { getTranslationPath } from "../../utils/translationUtils";
 import {
+  DashboardIcon,
   DumbbellIcon,
   EngineMotorElectroIcon,
   GaugeHighIcon,
@@ -286,18 +287,13 @@ const Footer = props => {
             }),
         },
         {
-          buttonIcon: (
-            <Icon className={styles.blueIcon} icon={IconNames.APPLICATION} />
-          ),
+          buttonIcon: <DashboardIcon className={styles.blueIcon} />,
           buttonText: t(getTranslationPath(SETTINGS_TRK, interfaceTKey)),
           onClick: () =>
             setTip({
               body: (
                 <>
-                  <Icon
-                    className={styles.blueIcon}
-                    icon={IconNames.APPLICATION}
-                  />
+                  <DashboardIcon className={styles.blueIcon} />
                   {`${DASH}${t(getTPath(interfaceTip))}`}
                 </>
               ),

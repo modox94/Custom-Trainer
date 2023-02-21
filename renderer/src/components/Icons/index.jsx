@@ -3,7 +3,11 @@ import clsx from "clsx";
 import { round } from "lodash";
 import PropTypes from "prop-types";
 import React from "react";
+import { ReactComponent as CaliperAndRulerSvg } from "./caliper-and-ruler.svg";
+import { ReactComponent as CaliperComplexSvg } from "./caliper-complex.svg";
+import { ReactComponent as CaliperPlainSvg } from "./caliper-plain.svg";
 import { ReactComponent as CircuitSolidSvg } from "./circuit-solid.svg";
+import { ReactComponent as DashboardSvg } from "./dashboard.svg";
 import { ReactComponent as DumbbellSvg } from "./dumbbell-solid.svg";
 import { ReactComponent as EngineMotorElectroSvg } from "./engine-motor-electro.svg";
 import { ReactComponent as EngineMotorRegularSvg } from "./engine-motor-regular.svg";
@@ -20,6 +24,8 @@ import { ReactComponent as PotentiometerRegularSvg } from "./potentiometer-regul
 import { ReactComponent as PotentiometerSolidSvg } from "./potentiometer-solid.svg";
 import { ReactComponent as RankingStarSvg } from "./ranking-star-solid.svg";
 import { ReactComponent as RuSvg } from "./ru.svg";
+import { ReactComponent as Speedometer1Svg } from "./speedometer-1.svg";
+import { ReactComponent as Speedometer2Svg } from "./speedometer-2.svg";
 import { ReactComponent as UsSvg } from "./us.svg";
 import { ReactComponent as WiresWireSvg } from "./wires-wire-solid.svg";
 
@@ -41,12 +47,50 @@ IconWrapper.defaultProps = {
   className: "",
 };
 
+export const CaliperAndRulerIcon = props => {
+  const { children, ...otherProps } = props;
+
+  return (
+    <IconWrapper {...otherProps}>
+      <CaliperAndRulerSvg />
+    </IconWrapper>
+  );
+};
+export const CaliperComplexIcon = props => {
+  const { children, ...otherProps } = props;
+
+  return (
+    <IconWrapper {...otherProps}>
+      <CaliperComplexSvg />
+    </IconWrapper>
+  );
+};
+export const CaliperPlainIcon = props => {
+  const { children, ...otherProps } = props;
+
+  return (
+    <IconWrapper {...otherProps}>
+      <CaliperPlainSvg />
+    </IconWrapper>
+  );
+};
+
 export const CircuitSolidIcon = props => {
   const { children, ...otherProps } = props;
 
   return (
     <IconWrapper {...otherProps}>
       <CircuitSolidSvg />
+    </IconWrapper>
+  );
+};
+
+export const DashboardIcon = props => {
+  const { children, ...otherProps } = props;
+
+  return (
+    <IconWrapper {...otherProps}>
+      <DashboardSvg />
     </IconWrapper>
   );
 };
@@ -197,6 +241,26 @@ export const RuIcon = props => {
   return (
     <IconWrapper {...otherProps}>
       <RuSvg />
+    </IconWrapper>
+  );
+};
+
+export const Speedometer1Icon = props => {
+  const { children, ...otherProps } = props;
+
+  return (
+    <IconWrapper {...otherProps}>
+      <Speedometer1Svg />
+    </IconWrapper>
+  );
+};
+
+export const Speedometer2Icon = props => {
+  const { children, ...otherProps } = props;
+
+  return (
+    <IconWrapper {...otherProps}>
+      <Speedometer2Svg />
     </IconWrapper>
   );
 };

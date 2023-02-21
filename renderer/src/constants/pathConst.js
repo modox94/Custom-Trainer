@@ -30,6 +30,7 @@ export const SUB_PATHS = {
     PERFORMANCE: "performance",
     ADVANCED: "advanced",
     MOTOR: "motor",
+    CALIBRATION: "calibration",
     RPM: "rpm",
     HEARTBEAT: "heartbeat",
   },
