@@ -1,3 +1,4 @@
+const { isFunction } = require("lodash");
 const fs = require("node:fs");
 const { DEV_CONSTS } = require("../constants/constants");
 
@@ -45,3 +46,12 @@ exports.sleepCb = (cb, delay = 1000) =>
       cb();
     }, delay);
   });
+
+exports.getIsCancelledFn = localAction => {
+  if (isFunction(localAction?.isCancelled) && localAction.isCancelled()) {
+    console.log("canceled");
+    return true;
+  }
+
+  return false;
+};

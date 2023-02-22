@@ -6,8 +6,13 @@ const {
   DIRECTION,
   PHYSICAL_TO_GPIO,
   MOVE_DIRECTION,
+  ERRORS,
+  MOTOR_FIELDS,
+  LOADING_TIMER,
+  LOADING_PAUSE,
+  TEST_IN_PROGRESS,
 } = require("../constants/constants");
-const { sleepCb } = require("../utils/utils");
+const { sleepCb, getIsCancelledFn } = require("../utils/utils");
 const { PotentiometerSensor } = require("./potentiometer_sensor");
 
 Promise.config({ cancellation: true });
@@ -37,13 +42,21 @@ class MotorDriver {
   constructor(options) {
     // { "minPosition": 5, "maxPosition": 95, "sleepRatio": 1435 }
 
-    this.minPosition = get(options, ["minPosition"], null); // can be less then maxPosition!
-    this.maxPosition = get(options, ["maxPosition"], null); // can be higher then minPosition!
-    this.sleepRatio = get(options, ["sleepRatio"], null);
-    this.swappedMotorWires = get(options, ["swappedMotorWires"], null);
-    this.swappedPotentiometerWires = get(
+    this[MOTOR_FIELDS.MIN_POS] = get(options, [MOTOR_FIELDS.MIN_POS], null); // can be less then maxPosition!
+    this[MOTOR_FIELDS.MAX_POS] = get(options, [MOTOR_FIELDS.MAX_POS], null); // can be higher then minPosition!
+    this[MOTOR_FIELDS.SLEEP_RATIO] = get(
       options,
-      ["swappedPotentiometerWires"],
+      [MOTOR_FIELDS.SLEEP_RATIO],
+      null,
+    );
+    this[MOTOR_FIELDS.SWAP_MOTOR_WIRES] = get(
+      options,
+      [MOTOR_FIELDS.SWAP_MOTOR_WIRES],
+      null,
+    );
+    this[MOTOR_FIELDS.SWAP_POTEN_WIRES] = get(
+      options,
+      [MOTOR_FIELDS.SWAP_POTEN_WIRES],
       null,
     );
 
@@ -64,22 +77,43 @@ class MotorDriver {
     this.in2.writeSync(0);
   }
 
-  async off() {
-    if (isFunction(this.action?.cancel)) {
+  actionCancel() {
+    if (
+      isFunction(this.action?.isFulfilled) &&
+      !this.action.isFulfilled() &&
+      isFunction(this.action?.cancel)
+    ) {
       this.action.cancel();
+      this.action = null;
     }
+  }
+
+  async off() {
+    this.actionCancel();
     this.stop();
     this.in1.unexport();
     this.in2.unexport();
     this.potentiometer.off();
   }
 
-  swapMotorWires(value) {
-    this.swappedMotorWires = Boolean(value);
-  }
+  updateField(field, value) {
+    switch (field) {
+      case MOTOR_FIELDS.MIN_POS:
+      case MOTOR_FIELDS.MAX_POS:
+      case MOTOR_FIELDS.SLEEP_RATIO:
+        if (isFinite(value)) {
+          this[field] = round(value);
+        }
+        break;
 
-  swapPotentiometerWires(value) {
-    this.swappedPotentiometerWires = Boolean(value);
+      case MOTOR_FIELDS.SWAP_MOTOR_WIRES:
+      case MOTOR_FIELDS.SWAP_POTEN_WIRES:
+        this[field] = Boolean(value);
+        break;
+
+      default:
+        break;
+    }
   }
 
   move(direction) {
@@ -98,43 +132,30 @@ class MotorDriver {
     }
   }
 
-  forward() {
-    this.move(MOVE_DIRECTION.forward);
-  }
-
-  back() {
-    this.move(MOVE_DIRECTION.back);
-  }
-
   stop() {
-    if (
-      isFunction(this.action?.isFulfilled) &&
-      !this.action.isFulfilled() &&
-      isFunction(this.action?.cancel)
-    ) {
-      this.action.cancel();
-    }
-
+    this.actionCancel();
     this.in1.writeSync(0);
     this.in2.writeSync(0);
   }
 
-  async DANGER_forward() {
-    try {
-      this.forward();
-      await sleepCb(noop, DELAY);
-      this.stop();
-    } catch (error) {
-      return { error };
+  async DANGER_move(direction) {
+    this.actionCancel();
+
+    if (!Object.values(MOVE_DIRECTION).includes(direction)) {
+      console.log("DANGER_move wrong direction");
+      return { error: "wrong direction" };
     }
 
-    return { error: false };
-  }
+    const onCancelFn = () => this.stop();
 
-  async DANGER_back() {
     try {
-      this.back();
-      await sleepCb(noop, DELAY);
+      this.move(direction);
+      const localAction = new Promise((resolve, reject, onCancel) => {
+        onCancel(onCancelFn);
+        sleepCb(resolve, DELAY);
+      });
+      this.action = localAction;
+      await localAction;
       this.stop();
     } catch (error) {
       return { error };
@@ -164,14 +185,76 @@ class MotorDriver {
     return this.potentiometer.readPositionCb(cb);
   }
 
+  async calibration() {
+    this.actionCancel();
+
+    if (!this[MOTOR_FIELDS.MIN_POS] || !this[MOTOR_FIELDS.MAX_POS]) {
+      return { error: ERRORS.CALIBRATION_NO_DATA };
+    }
+
+    const onCancelFn = () => this.stop();
+    let localAction;
+    const isCancelled = getIsCancelledFn(localAction);
+    let loadingCounter = LOADING_TIMER;
+    // TODO improve this part
+    while (!this.isReady && !this.isError) {
+      if (loadingCounter-- <= 0) {
+        return "error";
+      }
+      if (isCancelled()) {
+        return;
+      }
+
+      console.log("loading...");
+
+      localAction = new Promise((resolve, reject, onCancel) => {
+        onCancel(onCancelFn);
+        sleepCb(resolve, LOADING_PAUSE);
+      });
+      this.action = localAction;
+      await localAction;
+    }
+
+    if (this.isError) {
+      console.log("potentiometer not working");
+      return;
+    }
+
+    localAction = new Promise((resolve, reject, onCancel) => {
+      onCancel(onCancelFn);
+      this.readPositionCb(resolve);
+    });
+    this.action = localAction;
+    let posCur = await localAction;
+
+    const posData = []; // 65, 66, 66, MOVE_DIRECTION, 66, 66, 66, MOVE_DIRECTION, 67, 67, 67,...
+    const checkPosData = () => {
+      console.log("posData", posData);
+
+      if (posData.length > 3) {
+        return {
+          error: "error",
+          [MOTOR_FIELDS.SLEEP_RATIO]: 1300,
+        };
+      }
+
+      return TEST_IN_PROGRESS;
+    };
+    while (checkPosData() === TEST_IN_PROGRESS) {
+      posData.push(posCur);
+      // this.DANGER_move
+      // MOVE_DIRECTION
+    }
+  }
+
   // TODO remove
-  async calibration(loops = 1) {
-    if (!this.minPosition || !this.maxPosition) {
+  async calibration_old(loops = 1) {
+    if (!this[MOTOR_FIELDS.MIN_POS] || !this[MOTOR_FIELDS.MAX_POS]) {
       return console.log("Невозможно проводить калибровку без инициализации!");
     }
 
-    if (this.sleepRatio) {
-      delete this.sleepRatio;
+    if (this[MOTOR_FIELDS.SLEEP_RATIO]) {
+      delete this[MOTOR_FIELDS.SLEEP_RATIO];
     }
 
     const result = await this.setLevel(1);
@@ -201,61 +284,48 @@ class MotorDriver {
       (driveTimeSum / 2 / loops / (RESIST_LEVELS - 1)) * 0.95,
     );
 
-    this.sleepRatio = sleepRatio;
+    this[MOTOR_FIELDS.SLEEP_RATIO] = sleepRatio;
 
     fs.writeFileSync(
       "./motor_settings.json",
       JSON.stringify({
-        minPosition: this.minPosition,
-        maxPosition: this.maxPosition,
-        sleepRatio: this.sleepRatio,
+        minPosition: this[MOTOR_FIELDS.MIN_POS],
+        maxPosition: this[MOTOR_FIELDS.MAX_POS],
+        sleepRatio: this[MOTOR_FIELDS.SLEEP_RATIO],
       }),
     );
 
-    return this.sleepRatio;
+    return this[MOTOR_FIELDS.SLEEP_RATIO];
   }
 
   async setLevel(level, isCalibration) {
-    if (
-      isFunction(this.action?.isFulfilled) &&
-      !this.action.isFulfilled() &&
-      isFunction(this.action?.cancel)
-    ) {
-      this.action.cancel();
-      this.action = null;
-      console.log("setLevel canceled previous action");
-    }
-
-    const onCancelFn = () => this.stop();
-
-    let localAction;
-    const isCancelled = () => {
-      if (isFunction(localAction?.isCancelled) && localAction.isCancelled()) {
-        console.log("canceled");
-        return true;
-      }
-
-      return false;
-    };
+    this.actionCancel();
 
     if (level < 1 || level > RESIST_LEVELS) {
       console.log("wrong resist level");
       return "error";
     }
 
+    const onCancelFn = () => this.stop();
+    let localAction;
+    const isCancelled = getIsCancelledFn(localAction);
+    let loadingCounter = LOADING_TIMER;
+    // TODO improve this part
     while (!this.isReady && !this.isError) {
-      console.log("loading...");
-
+      if (loadingCounter-- <= 0) {
+        return "error";
+      }
       if (isCancelled()) {
         return;
       }
 
+      console.log("loading...");
+
       localAction = new Promise((resolve, reject, onCancel) => {
         onCancel(onCancelFn);
-        sleepCb(resolve, 200);
+        sleepCb(resolve, LOADING_PAUSE);
       });
       this.action = localAction;
-
       await localAction;
     }
 
@@ -265,16 +335,20 @@ class MotorDriver {
     }
 
     const interval =
-      Math.abs(this.maxPosition - this.minPosition) / (RESIST_LEVELS - 1);
+      Math.abs(this[MOTOR_FIELDS.MAX_POS] - this[MOTOR_FIELDS.MIN_POS]) /
+      (RESIST_LEVELS - 1);
     let targetPos;
 
-    if (!isFinite(this.maxPosition) || !isFinite(this.minPosition)) {
+    if (
+      !isFinite(this[MOTOR_FIELDS.MAX_POS]) ||
+      !isFinite(this[MOTOR_FIELDS.MIN_POS])
+    ) {
       console.log("wrong motor edges");
       return;
-    } else if (this.maxPosition > this.minPosition) {
-      targetPos = this.minPosition + interval * (level - 1);
-    } else if (this.maxPosition < this.minPosition) {
-      targetPos = this.minPosition - interval * (level - 1);
+    } else if (this[MOTOR_FIELDS.MAX_POS] > this[MOTOR_FIELDS.MIN_POS]) {
+      targetPos = this[MOTOR_FIELDS.MIN_POS] + interval * (level - 1);
+    } else if (this[MOTOR_FIELDS.MAX_POS] < this[MOTOR_FIELDS.MIN_POS]) {
+      targetPos = this[MOTOR_FIELDS.MIN_POS] - interval * (level - 1);
     } else {
       console.log("wrong motor edges");
       return;
@@ -293,8 +367,10 @@ class MotorDriver {
     let counter = 0;
     let firstTime = false;
 
-    if (this.sleepRatio) {
-      firstTime = (Math.abs(posCur - targetPos) / interval) * this.sleepRatio;
+    if (this[MOTOR_FIELDS.SLEEP_RATIO]) {
+      firstTime =
+        (Math.abs(posCur - targetPos) / interval) *
+        this[MOTOR_FIELDS.SLEEP_RATIO];
     }
 
     // TODO improve checking position
@@ -305,9 +381,9 @@ class MotorDriver {
       ++counter;
 
       if (posCur < targetPos) {
-        this.forward();
+        this.move(MOVE_DIRECTION.forward);
       } else {
-        this.back();
+        this.move(MOVE_DIRECTION.back);
       }
 
       if (firstTime) {

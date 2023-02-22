@@ -14,6 +14,7 @@ import {
 } from "../../api/ipc";
 import { DASH } from "../../constants/commonConst";
 import { FILE_CONST } from "../../constants/reduxConst";
+import { MOTOR_FIELDS } from "../../constants/settingsConst";
 import {
   TRANSLATION_KEYS,
   TRANSLATION_ROOT_KEYS,
@@ -47,22 +48,22 @@ const Motor = () => {
     useGetSettingsQuery(undefined, { refetchOnMountOrArgChange: true }) || {};
   const minPosition = get(
     settings,
-    [FILE_CONST.PERIPHERAL, "minPosition"],
+    [FILE_CONST.PERIPHERAL, MOTOR_FIELDS.MIN_POS],
     null,
   );
   const maxPosition = get(
     settings,
-    [FILE_CONST.PERIPHERAL, "maxPosition"],
+    [FILE_CONST.PERIPHERAL, MOTOR_FIELDS.MAX_POS],
     null,
   );
   const swappedMotorWires = get(
     settings,
-    [FILE_CONST.PERIPHERAL, "swappedMotorWires"],
+    [FILE_CONST.PERIPHERAL, MOTOR_FIELDS.SWAP_MOTOR_WIRES],
     null,
   );
   const swappedPotentiometerWires = get(
     settings,
-    [FILE_CONST.PERIPHERAL, "swappedPotentiometerWires"],
+    [FILE_CONST.PERIPHERAL, MOTOR_FIELDS.SWAP_POTEN_WIRES],
     null,
   );
 
@@ -113,7 +114,11 @@ const Motor = () => {
       return;
     }
 
-    editSettings(FILE_CONST.PERIPHERAL, "minPosition", potentiometerValue);
+    editSettings(
+      FILE_CONST.PERIPHERAL,
+      MOTOR_FIELDS.MIN_POS,
+      potentiometerValue,
+    );
   };
 
   const onSelectMax = () => {
@@ -121,7 +126,11 @@ const Motor = () => {
       return;
     }
 
-    editSettings(FILE_CONST.PERIPHERAL, "maxPosition", potentiometerValue);
+    editSettings(
+      FILE_CONST.PERIPHERAL,
+      MOTOR_FIELDS.MAX_POS,
+      potentiometerValue,
+    );
   };
 
   const onSwapMotor = () => {
@@ -131,7 +140,7 @@ const Motor = () => {
 
     editSettings(
       FILE_CONST.PERIPHERAL,
-      "swappedMotorWires",
+      MOTOR_FIELDS.SWAP_MOTOR_WIRES,
       !swappedMotorWires,
     );
   };
@@ -143,7 +152,7 @@ const Motor = () => {
 
     editSettings(
       FILE_CONST.PERIPHERAL,
-      "swappedPotentiometerWires",
+      MOTOR_FIELDS.SWAP_POTEN_WIRES,
       !swappedPotentiometerWires,
     );
   };

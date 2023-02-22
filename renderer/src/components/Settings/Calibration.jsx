@@ -4,6 +4,7 @@ import { useTranslation } from "react-i18next";
 import { useGetSettingsQuery } from "../../api/ipc";
 import { DASH } from "../../constants/commonConst";
 import { FILE_CONST } from "../../constants/reduxConst";
+import { MOTOR_FIELDS } from "../../constants/settingsConst";
 import {
   TRANSLATION_KEYS,
   TRANSLATION_ROOT_KEYS,
@@ -26,7 +27,11 @@ const Calibration = () => {
   const { t } = useTranslation();
   const { data: settings = {} } =
     useGetSettingsQuery(undefined, { refetchOnMountOrArgChange: true }) || {};
-  const sleepRatio = get(settings, [FILE_CONST.PERIPHERAL, "sleepRatio"], null);
+  const sleepRatio = get(
+    settings,
+    [FILE_CONST.PERIPHERAL, MOTOR_FIELDS.SLEEP_RATIO],
+    null,
+  );
 
   return (
     <>

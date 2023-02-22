@@ -4,7 +4,13 @@ const { rate } = require("./src/hardware/cadence_sensor");
 const MotorDriver = require("./src/hardware/motor_driver");
 const Store = require("./src/software/store");
 const { isFunction, get } = require("lodash");
-const { DIR_CONST, EVENTS, FILE_CONST } = require("./src/constants/constants");
+const {
+  DIR_CONST,
+  EVENTS,
+  FILE_CONST,
+  MOVE_DIRECTION,
+  MOTOR_FIELDS,
+} = require("./src/constants/constants");
 
 const store = new Store();
 const motor = new MotorDriver(
@@ -121,11 +127,15 @@ ipcMain.handle(EVENTS.GET_POTENTIOMETER, async () => {
 });
 
 ipcMain.handle(EVENTS.DANGER_MOVE_FORWARD, async () => {
-  return await motor.DANGER_forward();
+  return await motor.DANGER_move(MOVE_DIRECTION.forward);
 });
 
 ipcMain.handle(EVENTS.DANGER_MOVE_BACK, async () => {
-  return await motor.DANGER_back();
+  return await motor.DANGER_move(MOVE_DIRECTION.back);
+});
+
+ipcMain.handle(EVENTS.MOTOR_CALIBRATION, async () => {
+  return await motor.calibration();
 });
 
 ipcMain.on(EVENTS.SET_MOTOR_LEVEL, (event, motorLevel) => {
@@ -147,14 +157,26 @@ ipcMain.on(EVENTS.EDIT_PROGRAM, async (event, filename, programObject) =>
 );
 
 ipcMain.on(EVENTS.EDIT_SETTINGS, async (event, filename, field, value) => {
-  if (filename === FILE_CONST.PERIPHERAL && field === "swappedMotorWires") {
-    motor.swapMotorWires(value);
-  }
-  if (
-    filename === FILE_CONST.PERIPHERAL &&
-    field === "swappedPotentiometerWires"
-  ) {
-    motor.swapPotentiometerWires(value);
+  switch (filename) {
+    case FILE_CONST.PERIPHERAL: {
+      switch (field) {
+        case MOTOR_FIELDS.MIN_POS:
+        case MOTOR_FIELDS.MAX_POS:
+        case MOTOR_FIELDS.SLEEP_RATIO:
+        case MOTOR_FIELDS.SWAP_MOTOR_WIRES:
+        case MOTOR_FIELDS.SWAP_POTEN_WIRES:
+          motor.updateField(field, value);
+          break;
+
+        default:
+          break;
+      }
+
+      break;
+    }
+
+    default:
+      break;
   }
 
   store.editSettings(filename, field, value);
