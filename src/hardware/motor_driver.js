@@ -188,8 +188,15 @@ class MotorDriver {
   async calibration() {
     this.actionCancel();
 
-    if (!this[MOTOR_FIELDS.MIN_POS] || !this[MOTOR_FIELDS.MAX_POS]) {
+    if (
+      !isFinite(this[MOTOR_FIELDS.MAX_POS]) ||
+      !isFinite(this[MOTOR_FIELDS.MIN_POS])
+    ) {
       return { error: ERRORS.CALIBRATION_NO_DATA };
+    } else if (
+      Math.abs(this[MOTOR_FIELDS.MAX_POS] - this[MOTOR_FIELDS.MIN_POS]) <= 10
+    ) {
+      return { error: ERRORS.CALIBRATION_INVALID_EDGES };
     }
 
     const onCancelFn = () => this.stop();
@@ -199,7 +206,7 @@ class MotorDriver {
     // TODO improve this part
     while (!this.isReady && !this.isError) {
       if (loadingCounter-- <= 0) {
-        return "error";
+        return { error: ERRORS.LOADING_TIMER_EXPIRED };
       }
       if (isCancelled()) {
         return;
@@ -216,8 +223,7 @@ class MotorDriver {
     }
 
     if (this.isError) {
-      console.log("potentiometer not working");
-      return;
+      return { error: ERRORS.POTEN_ERROR };
     }
 
     localAction = new Promise((resolve, reject, onCancel) => {
@@ -226,6 +232,14 @@ class MotorDriver {
     });
     this.action = localAction;
     let posCur = await localAction;
+
+    // this[MOTOR_FIELDS.MIN_POS];
+    // this[MOTOR_FIELDS.MAX_POS];
+
+    // TODO
+    // получить два диапазона от текущего положения до одной и другой грани
+    // сравнить и понять где больше места
+    // задать направление в эту сторону
 
     const posData = []; // 65, 66, 66, MOVE_DIRECTION, 66, 66, 66, MOVE_DIRECTION, 67, 67, 67,...
     const checkPosData = () => {
@@ -258,10 +272,11 @@ class MotorDriver {
     }
 
     const result = await this.setLevel(1);
-    if (result === "error") {
+    if (result?.error) {
+      // TODO
       console.log("Что-то не так с двигателем!");
       this.stop();
-      return "error";
+      return result;
     }
 
     let loopsCounter = loops;
@@ -302,8 +317,7 @@ class MotorDriver {
     this.actionCancel();
 
     if (level < 1 || level > RESIST_LEVELS) {
-      console.log("wrong resist level");
-      return "error";
+      return { error: ERRORS.INVALID_RESIST_LEVEL };
     }
 
     const onCancelFn = () => this.stop();
@@ -313,9 +327,10 @@ class MotorDriver {
     // TODO improve this part
     while (!this.isReady && !this.isError) {
       if (loadingCounter-- <= 0) {
-        return "error";
+        return { error: ERRORS.LOADING_TIMER_EXPIRED };
       }
       if (isCancelled()) {
+        // TODO default result { driveTime: counter (0) * DELAY }
         return;
       }
 
@@ -330,8 +345,7 @@ class MotorDriver {
     }
 
     if (this.isError) {
-      console.log("potentiometer not working");
-      return;
+      return { error: ERRORS.POTEN_ERROR };
     }
 
     const interval =
@@ -343,18 +357,21 @@ class MotorDriver {
       !isFinite(this[MOTOR_FIELDS.MAX_POS]) ||
       !isFinite(this[MOTOR_FIELDS.MIN_POS])
     ) {
-      console.log("wrong motor edges");
-      return;
+      return { error: ERRORS.CALIBRATION_NO_DATA };
+    } else if (
+      Math.abs(this[MOTOR_FIELDS.MAX_POS] - this[MOTOR_FIELDS.MIN_POS]) <= 10
+    ) {
+      return { error: ERRORS.CALIBRATION_INVALID_EDGES };
     } else if (this[MOTOR_FIELDS.MAX_POS] > this[MOTOR_FIELDS.MIN_POS]) {
       targetPos = this[MOTOR_FIELDS.MIN_POS] + interval * (level - 1);
     } else if (this[MOTOR_FIELDS.MAX_POS] < this[MOTOR_FIELDS.MIN_POS]) {
       targetPos = this[MOTOR_FIELDS.MIN_POS] - interval * (level - 1);
     } else {
-      console.log("wrong motor edges");
-      return;
+      return { error: ERRORS.CALIBRATION_INVALID_EDGES };
     }
 
     if (isCancelled()) {
+      // TODO
       return;
     }
     localAction = new Promise((resolve, reject, onCancel) => {
@@ -374,8 +391,10 @@ class MotorDriver {
     }
 
     // TODO improve checking position
+    // TODO add max counter for stop cycle, i.e. 100 max moves
     while (Math.abs(posCur - targetPos) > 1) {
       if (isCancelled()) {
+        // TODO
         return;
       }
       ++counter;
@@ -407,6 +426,7 @@ class MotorDriver {
       this.stop();
 
       if (isCancelled()) {
+        // TODO
         return;
       }
       localAction = new Promise((resolve, reject, onCancel) => {
@@ -417,6 +437,7 @@ class MotorDriver {
       await localAction;
 
       if (isCancelled()) {
+        // TODO
         return;
       }
       localAction = new Promise((resolve, reject, onCancel) => {
@@ -428,6 +449,7 @@ class MotorDriver {
       posCur = await localAction;
     }
 
+    // TODO
     return isCalibration ? { driveTime: counter * DELAY } : "done";
   }
 }
