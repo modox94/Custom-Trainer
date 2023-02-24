@@ -270,7 +270,7 @@ class MotorDriver {
               if (posEl > posPrevEl) {
                 behaviorСounter = +1;
               } else if (posEl < posPrevEl) {
-                return { error: ERRORS.CALIBRATION_WRONG_DIRECTION };
+                return { posData, error: ERRORS.CALIBRATION_WRONG_DIRECTION };
               }
               break;
 
@@ -278,7 +278,7 @@ class MotorDriver {
               if (posEl < posPrevEl) {
                 behaviorСounter = +1;
               } else if (posEl > posPrevEl) {
-                return { error: ERRORS.CALIBRATION_WRONG_DIRECTION };
+                return { posData, error: ERRORS.CALIBRATION_WRONG_DIRECTION };
               }
               break;
 
