@@ -373,10 +373,10 @@ class MotorDriver {
 
       const driveTimeSum = driveTimeToMax + driveTimeToMin;
       const sleepRatio = round((driveTimeSum / 2) * 0.95);
-      this.updateField(sleepRatio);
+      this.updateField(MOTOR_FIELDS.SLEEP_RATIO, sleepRatio);
     }
 
-    return true;
+    return this[MOTOR_FIELDS.SLEEP_RATIO];
   }
 
   // TODO remove
