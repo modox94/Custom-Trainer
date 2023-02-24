@@ -302,7 +302,11 @@ class MotorDriver {
       }
 
       if (posData.length > CALIBRATION_MAX_MOVES) {
-        return { error: ERRORS.CALIBRATION_TOO_LONG };
+        return {
+          CALIBRATION_MAX_MOVES,
+          posData,
+          error: ERRORS.CALIBRATION_TOO_LONG,
+        };
       }
 
       return TEST_IN_PROGRESS;
