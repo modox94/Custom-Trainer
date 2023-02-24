@@ -10,7 +10,7 @@ import {
   TRANSLATION_ROOT_KEYS,
 } from "../../constants/translationConst";
 import { getTranslationPath } from "../../utils/translationUtils";
-import { WiresWireIcon } from "../Icons";
+import { DashboardIcon, WiresWireIcon } from "../Icons";
 import { Container, Item } from "../SquareGrid/SquareGrid";
 import styles from "./Settings.module.css";
 
@@ -62,10 +62,7 @@ const Settings = props => {
           />
         </Item>
         <Item onClick={onClickInterface}>
-          <Icon
-            className={clsx(styles.icon, styles.blueIcon)}
-            icon={IconNames.APPLICATION}
-          />
+          <DashboardIcon className={clsx(styles.icon, styles.blueIcon)} />
         </Item>
         <Item onClick={onClickPeripheral}>
           <WiresWireIcon className={clsx(styles.icon, styles.blueIcon)} />

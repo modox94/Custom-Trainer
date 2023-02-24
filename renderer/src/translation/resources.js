@@ -217,6 +217,43 @@ const resources = {
       [en]: "Show tips at the bottom of the page",
       [ru]: "Показывать подсказки внизу страницы",
     },
+    [TK[SETTINGS].motorDisclaimerHead]: {
+      [en]: "TODO motorDisclaimerHead",
+      [ru]: "TODO motorDisclaimerHead",
+    },
+    [TK[SETTINGS].motorDisclaimerMsg]: {
+      [en]: "TODO motorDisclaimerMsg",
+      [ru]: "TODO motorDisclaimerMsg",
+    },
+    [TK[SETTINGS].toCalibrateBut]: {
+      [en]: "TODO calibrationBut",
+      [ru]: "TODO calibrationBut",
+    },
+
+    [TK[SETTINGS].toCalibrateHead]: {
+      [en]: "TODO calibrationHead",
+      [ru]: "TODO calibrationHead",
+    },
+
+    [TK[SETTINGS].toCalibrateMsg]: {
+      [en]: "TODO calibrationMsg",
+      [ru]: "TODO calibrationMsg",
+    },
+
+    [TK[SETTINGS].sleepRatioKey]: {
+      [en]: "TODO sleepRatioKey",
+      [ru]: "TODO sleepRatioKey",
+    },
+
+    [TK[SETTINGS].sleepRatioHead]: {
+      [en]: "TODO sleepRatioHead",
+      [ru]: "TODO sleepRatioHead",
+    },
+
+    [TK[SETTINGS].sleepRatioMsg]: {
+      [en]: "TODO sleepRatioMsg",
+      [ru]: "TODO sleepRatioMsg",
+    },
   },
   [TIPS]: {
     [TK[TIPS].tipBut]: {
@@ -244,8 +281,8 @@ const resources = {
       [ru]: "выход из приложения.",
     },
     [TK[TIPS].rpmBut]: {
-      [en]: "RPM",
-      [ru]: "RPM",
+      [en]: "Speed",
+      [ru]: "Скорость",
     },
     [TK[TIPS].rpmTip]: {
       [en]: "the desired running speed on the sector.",
@@ -290,6 +327,94 @@ const resources = {
     [TK[TIPS].programEditorTip]: {
       [en]: "program editor for training in auto mode.",
       [ru]: "редактор программ для тренировки в автоматическом режиме.",
+    },
+    [TK[TIPS].motorBut]: {
+      [en]: "Motor",
+      [ru]: "Двигатель",
+    },
+    [TK[TIPS].motorTip]: {
+      [en]: "TODO motorTip",
+      [ru]: "TODO motorTip",
+    },
+    [TK[TIPS].calibrationBut]: {
+      [en]: "Calibration",
+      [ru]: "Калибровка",
+    },
+    [TK[TIPS].calibrationTip]: {
+      [en]: "TODO calibrationTip",
+      [ru]: "TODO calibrationTip",
+    },
+    [TK[TIPS].heartBeatSettingsBut]: {
+      [en]: "Heartbeat",
+      [ru]: "Сердцебиение",
+    },
+    [TK[TIPS].heartBeatSettingsTip]: {
+      [en]: "TODO heartBeatSettingsTip",
+      [ru]: "TODO heartBeatSettingsTip",
+    },
+    [TK[TIPS].rpmSettingsBut]: {
+      [en]: "Speedometer",
+      [ru]: "Спидометр",
+    },
+    [TK[TIPS].rpmSettingsTip]: {
+      [en]: "TODO rpmSettingsTip",
+      [ru]: "TODO rpmSettingsTip",
+    },
+    [TK[TIPS].motorToLeftBut]: {
+      [en]: "TODO motorToLeftBut",
+      [ru]: "TODO motorToLeftBut",
+    },
+    [TK[TIPS].motorToLeftTip]: {
+      [en]: "TODO motorToLeftTip",
+      [ru]: "TODO motorToLeftTip",
+    },
+    [TK[TIPS].motorToRightBut]: {
+      [en]: "TODO motorToRightBut",
+      [ru]: "TODO motorToRightBut",
+    },
+    [TK[TIPS].motorToRightTip]: {
+      [en]: "TODO motorToRightTip",
+      [ru]: "TODO motorToRightTip",
+    },
+    [TK[TIPS].motorPotenBut]: {
+      [en]: "Potentiometer",
+      [ru]: "Потенциометр",
+    },
+    [TK[TIPS].motorPotenTip]: {
+      [en]: "TODO motorPotenTip",
+      [ru]: "Текущие показания потенциометра двигателя, другими словами значения положения двигателя.",
+    },
+    [TK[TIPS].motorMinPosBut]: {
+      [en]: "Easiest position",
+      [ru]: "Легчайшее положение",
+    },
+    [TK[TIPS].motorMinPosTip]: {
+      [en]: "TODO motorMinPosTip",
+      [ru]: "TODO motorMinPosTip",
+    },
+    [TK[TIPS].motorMaxPosBut]: {
+      [en]: "Hardest position",
+      [ru]: "Тяжелейшее положение",
+    },
+    [TK[TIPS].motorMaxPosTip]: {
+      [en]: "TODO motorMaxPosTip",
+      [ru]: "TODO motorMaxPosTip",
+    },
+    [TK[TIPS].motorSwapMotorWiresBut]: {
+      [en]: "Swap motor wires",
+      [ru]: "Поменять местами провода двигателя",
+    },
+    [TK[TIPS].motorSwapMotorWiresTip]: {
+      [en]: "TODO motorSwapMotorWiresTip",
+      [ru]: "TODO motorSwapMotorWiresTip",
+    },
+    [TK[TIPS].motorSwapPotenWiresBut]: {
+      [en]: "Swap potentiometer wires",
+      [ru]: "Поменять местами провода потенциометра",
+    },
+    [TK[TIPS].motorSwapPotenWiresTip]: {
+      [en]: "TODO motorSwapPotenWiresTip",
+      [ru]: "TODO motorSwapPotenWiresTip",
     },
   },
 };

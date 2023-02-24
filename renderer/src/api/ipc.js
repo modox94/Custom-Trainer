@@ -106,6 +106,10 @@ export const DANGERmoveBack = async () => {
   return await window.electron.ipcRenderer.invoke(EVENTS.DANGER_MOVE_BACK);
 };
 
+export const motorCalibration = async () => {
+  return await window.electron.ipcRenderer.invoke(EVENTS.MOTOR_CALIBRATION);
+};
+
 export const setMotorLevel = motorLevel =>
   window.electron.ipcRenderer.send(EVENTS.SET_MOTOR_LEVEL, motorLevel);
 

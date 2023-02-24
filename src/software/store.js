@@ -17,6 +17,7 @@ const {
   DIR_CONST,
   FILE_CONST,
   LANGS_CODES,
+  MOTOR_FIELDS,
 } = require("../constants/constants");
 
 const ajv = new Ajv();
@@ -59,29 +60,33 @@ const interfaceSchema = {
 };
 
 const peripheralDefault = {
-  minPosition: null,
-  maxPosition: null,
-  sleepRatio: null,
-  swappedMotorWires: null,
-  swappedPotentiometerWires: null,
+  [MOTOR_FIELDS.MIN_POS]: null,
+  [MOTOR_FIELDS.MAX_POS]: null,
+  [MOTOR_FIELDS.SLEEP_RATIO]: null,
+  [MOTOR_FIELDS.SWAP_MOTOR_WIRES]: null,
+  [MOTOR_FIELDS.SWAP_POTEN_WIRES]: null,
 };
 
 const peripheralSchema = {
   type: "object",
   properties: {
-    minPosition: { type: "number", maximum: 100, minimum: 0, nullable: true },
-    maxPosition: { type: "number", maximum: 100, minimum: 0, nullable: true },
-    sleepRatio: { type: "number", nullable: true },
-    swappedMotorWires: { type: "boolean", nullable: true },
-    swappedPotentiometerWires: { type: "boolean", nullable: true },
+    [MOTOR_FIELDS.MIN_POS]: {
+      type: "number",
+      maximum: 100,
+      minimum: 0,
+      nullable: true,
+    },
+    [MOTOR_FIELDS.MAX_POS]: {
+      type: "number",
+      maximum: 100,
+      minimum: 0,
+      nullable: true,
+    },
+    [MOTOR_FIELDS.SLEEP_RATIO]: { type: "number", nullable: true },
+    [MOTOR_FIELDS.SWAP_MOTOR_WIRES]: { type: "boolean", nullable: true },
+    [MOTOR_FIELDS.SWAP_POTEN_WIRES]: { type: "boolean", nullable: true },
   },
-  required: [
-    "minPosition",
-    "maxPosition",
-    "sleepRatio",
-    "swappedMotorWires",
-    "swappedPotentiometerWires",
-  ],
+  required: Object.values(MOTOR_FIELDS),
   additionalProperties: true,
 };
 
@@ -93,7 +98,8 @@ const DIR_CONST_ARRAY = Object.values(DIR_CONST);
 
 class Store {
   constructor() {
-    this.userDataPath = app.getPath("userData");
+    this.userDataPath =
+      app?.getPath("userData") || "/home/pi/.config/custom-trainer";
 
     this.callbacks = DIR_CONST_ARRAY.reduce((callbacksObj, dir) => {
       callbacksObj[dir] = [];

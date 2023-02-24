@@ -12,7 +12,7 @@ import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "react-redux";
 import { useLocation, useMatch } from "react-router-dom";
-import { DASH } from "../../constants/commonConst";
+import { DASH, SPACE } from "../../constants/commonConst";
 import { PAGES, PAGES_PATHS, SUB_PATHS } from "../../constants/pathConst";
 import {
   TRANSLATION_KEYS,
@@ -22,10 +22,14 @@ import { getFooterStatus } from "../../selectors/environmentSelectors";
 import { hideFooter, showFooter } from "../../slices/environmentSlice";
 import { getTranslationPath } from "../../utils/translationUtils";
 import {
+  CaliperPlainIcon,
+  DashboardIcon,
   DumbbellIcon,
   EngineMotorElectroIcon,
+  FeatherIcon,
   GaugeHighIcon,
   MicrochipIcon,
+  PotentiometerSymbol,
   WiresWireIcon,
 } from "../Icons";
 import styles from "./Footer.module.css";
@@ -61,6 +65,28 @@ const {
   manualModeTip,
   selectProgramTip,
   programEditorTip,
+  motorBut,
+  motorTip,
+  calibrationBut,
+  calibrationTip,
+  heartBeatSettingsBut,
+  heartBeatSettingsTip,
+  rpmSettingsBut,
+  rpmSettingsTip,
+  motorToLeftBut,
+  motorToLeftTip,
+  motorToRightBut,
+  motorToRightTip,
+  motorPotenBut,
+  motorPotenTip,
+  motorMinPosBut,
+  motorMinPosTip,
+  motorMaxPosBut,
+  motorMaxPosTip,
+  motorSwapMotorWiresBut,
+  motorSwapMotorWiresTip,
+  motorSwapPotenWiresBut,
+  motorSwapPotenWiresTip,
 } = TRANSLATION_KEYS[TIPS];
 
 const getTPath = (...args) => getTranslationPath(TIPS, ...args);
@@ -286,18 +312,13 @@ const Footer = props => {
             }),
         },
         {
-          buttonIcon: (
-            <Icon className={styles.blueIcon} icon={IconNames.APPLICATION} />
-          ),
+          buttonIcon: <DashboardIcon className={styles.blueIcon} />,
           buttonText: t(getTranslationPath(SETTINGS_TRK, interfaceTKey)),
           onClick: () =>
             setTip({
               body: (
                 <>
-                  <Icon
-                    className={styles.blueIcon}
-                    icon={IconNames.APPLICATION}
-                  />
+                  <DashboardIcon className={styles.blueIcon} />
                   {`${DASH}${t(getTPath(interfaceTip))}`}
                 </>
               ),
@@ -320,13 +341,54 @@ const Footer = props => {
       [`${PAGES_PATHS[SETTINGS]}/${SUB_PATHS[SETTINGS].PERIPHERAL}`]: [
         {
           buttonIcon: <EngineMotorElectroIcon className={styles.blueIcon} />,
-          buttonText: "TODO", // t(getTranslationPath(SETTINGS_TRK, languageTKey)),
+          buttonText: t(getTPath(motorBut)),
           onClick: () =>
             setTip({
               body: (
                 <>
                   <EngineMotorElectroIcon className={styles.blueIcon} />
-                  {`${DASH}${"TODO"}`}
+                  {`${DASH}${t(getTPath(motorTip))}`}
+                </>
+              ),
+            }),
+        },
+        {
+          buttonIcon: <CaliperPlainIcon className={styles.blueIcon} />,
+          buttonText: t(getTPath(calibrationBut)),
+          onClick: () =>
+            setTip({
+              body: (
+                <>
+                  <CaliperPlainIcon className={styles.blueIcon} />
+                  {`${DASH}${t(getTPath(calibrationTip))}`}
+                </>
+              ),
+            }),
+        },
+        {
+          buttonIcon: <GaugeHighIcon className={styles.blueIcon} />,
+          buttonText: t(getTPath(rpmSettingsBut)),
+          onClick: () =>
+            setTip({
+              body: (
+                <>
+                  <GaugeHighIcon className={styles.blueIcon} />
+                  {`${DASH}${t(getTPath(rpmSettingsTip))}`}
+                </>
+              ),
+            }),
+        },
+        {
+          buttonIcon: (
+            <Icon className={styles.blueIcon} icon={IconNames.PULSE} />
+          ),
+          buttonText: t(getTPath(heartBeatSettingsBut)),
+          onClick: () =>
+            setTip({
+              body: (
+                <>
+                  <Icon className={styles.blueIcon} icon={IconNames.PULSE} />
+                  {`${DASH}${t(getTPath(heartBeatSettingsTip))}`}
                 </>
               ),
             }),
@@ -335,18 +397,124 @@ const Footer = props => {
       [`${PAGES_PATHS[SETTINGS]}/${SUB_PATHS[SETTINGS].PERIPHERAL}/${SUB_PATHS[SETTINGS].MOTOR}`]:
         [
           {
-            buttonIcon: <EngineMotorElectroIcon className={styles.blueIcon} />,
-            buttonText: "TODO", // t(getTranslationPath(SETTINGS_TRK, languageTKey)),
+            buttonIcon: <Icon icon={IconNames.CARET_LEFT} />,
+            buttonText: t(getTPath(motorToLeftBut)),
             onClick: () =>
               setTip({
                 body: (
                   <>
-                    <EngineMotorElectroIcon className={styles.blueIcon} />
-                    {`${DASH}${"TODO"}`}
+                    <Icon icon={IconNames.CARET_LEFT} />
+                    {`${DASH}${t(getTPath(motorToLeftTip))}`}
                   </>
                 ),
               }),
           },
+          {
+            buttonIcon: <PotentiometerSymbol className={styles.blueIcon} />,
+            buttonText: t(getTPath(motorPotenBut)),
+            onClick: () => setTip({ body: t(getTPath(motorPotenTip)) }),
+          },
+          {
+            buttonIcon: <Icon icon={IconNames.CARET_RIGHT} />,
+            buttonText: t(getTPath(motorToRightBut)),
+            onClick: () =>
+              setTip({
+                body: (
+                  <>
+                    <Icon icon={IconNames.CARET_RIGHT} />
+                    {`${DASH}${t(getTPath(motorToRightTip))}`}
+                  </>
+                ),
+              }),
+          },
+          {
+            buttonIcon: (
+              <>
+                <Icon className={styles.blueIcon} icon={IconNames.REFRESH} />
+                <EngineMotorElectroIcon className={styles.blueIcon} />
+              </>
+            ),
+            buttonText: t(getTPath(motorSwapMotorWiresBut)),
+            onClick: () =>
+              setTip({
+                body: (
+                  <>
+                    <Icon
+                      className={styles.blueIcon}
+                      icon={IconNames.REFRESH}
+                    />
+                    {SPACE}
+                    <EngineMotorElectroIcon className={styles.blueIcon} />
+                    {`${DASH}${t(getTPath(motorSwapMotorWiresTip))}`}
+                  </>
+                ),
+              }),
+          },
+          {
+            buttonIcon: (
+              <>
+                <Icon className={styles.blueIcon} icon={IconNames.REFRESH} />
+                <PotentiometerSymbol className={styles.blueIcon} />
+              </>
+            ),
+            buttonText: t(getTPath(motorSwapPotenWiresBut)),
+            onClick: () =>
+              setTip({
+                body: (
+                  <>
+                    <Icon
+                      className={styles.blueIcon}
+                      icon={IconNames.REFRESH}
+                    />
+                    {SPACE}
+                    <PotentiometerSymbol className={styles.blueIcon} />
+                    {`${DASH}${t(getTPath(motorSwapPotenWiresTip))}`}
+                  </>
+                ),
+              }),
+          },
+          {
+            buttonIcon: <FeatherIcon />,
+            buttonText: t(getTPath(motorMinPosBut)),
+            onClick: () =>
+              setTip({
+                body: (
+                  <>
+                    <FeatherIcon />
+                    {`${DASH}${t(getTPath(motorMinPosTip))}`}
+                  </>
+                ),
+              }),
+          },
+          {
+            buttonIcon: <DumbbellIcon />,
+            buttonText: t(getTPath(motorMaxPosBut)),
+            onClick: () =>
+              setTip({
+                body: (
+                  <>
+                    <DumbbellIcon />
+                    {`${DASH}${t(getTPath(motorMaxPosTip))}`}
+                  </>
+                ),
+              }),
+          },
+
+          /*
+<Icon className={styles.icon} icon={IconNames.CARET_LEFT} />
+ <Icon className={styles.icon} icon={IconNames.CARET_RIGHT} />
+EngineMotorElectroIcon
+<Icon
+            className={clsx(styles.icon50, styles.tinyPadding, {
+              [styles.blueIcon]: swappedPotentiometerWires,
+              [styles.grayIcon]: !swappedPotentiometerWires,
+            })}
+            icon={IconNames.REFRESH}
+          />
+PotentiometerSymbol
+FeatherIcon
+DumbbellIcon
+          */
         ],
     };
   }, [t, setTip]);

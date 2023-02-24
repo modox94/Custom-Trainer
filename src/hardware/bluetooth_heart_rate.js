@@ -1,3 +1,16 @@
+/*
+Другая возможная реализация с помощью штатных средств electron.
+Просим юзера подключить датчик штатными средствами системы.
+В main.js добавляем эту строку:
+  app.commandLine.appendSwitch("enable-experimental-web-platform-features", true)
+Показываем список устройств как в этом примере:
+  https://www.electronjs.org/docs/latest/tutorial/devices#example-2
+Далее подключаемся через GATT и делаем аналогично примеру ниже.
+
+Возможно будет полезно:
+  https://stackoverflow.com/questions/59568260/electron-web-bluetooth-api-requestdevice-error
+*/
+
 const { createBluetooth } = require("node-ble");
 const { bluetooth, destroy } = createBluetooth();
 
