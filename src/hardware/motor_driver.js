@@ -288,7 +288,7 @@ class MotorDriver {
         }
       }
 
-      if (behaviorСounter >= CALIBRATION_MIN_POINTS && !directionChanged) {
+      if (behaviorСounter >= CALIBRATION_MIN_POINTS) {
         if (!directionChanged) {
           directionCur =
             directionCur === MOVE_DIRECTION.forward
