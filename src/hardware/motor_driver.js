@@ -341,7 +341,10 @@ class MotorDriver {
 
     const testResult = checkPosData();
     if (testResult !== true) {
-      return { error: testResult?.error || ERRORS.CALIBRATION_UNKNOWN };
+      return {
+        ...testResult,
+        error: testResult?.error || ERRORS.CALIBRATION_UNKNOWN,
+      };
     }
     await this.setLevel(1);
 
