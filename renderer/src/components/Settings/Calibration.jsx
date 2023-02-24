@@ -1,7 +1,9 @@
+import { Classes } from "@blueprintjs/core";
+import clsx from "clsx";
 import { get, isFinite } from "lodash";
-import React from "react";
+import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
-import { useGetSettingsQuery } from "../../api/ipc";
+import { motorCalibration, useGetSettingsQuery } from "../../api/ipc";
 import { DASH } from "../../constants/commonConst";
 import { FILE_CONST } from "../../constants/reduxConst";
 import { MOTOR_FIELDS } from "../../constants/settingsConst";
@@ -25,6 +27,8 @@ const getTPath = (...args) => getTranslationPath(SETTINGS, ...args);
 
 const Calibration = () => {
   const { t } = useTranslation();
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(false);
   const { data: settings = {} } =
     useGetSettingsQuery(undefined, { refetchOnMountOrArgChange: true }) || {};
   const sleepRatio = get(
@@ -33,10 +37,25 @@ const Calibration = () => {
     null,
   );
 
+  const toCalibrateMotor = async () => {
+    if (loading) {
+      return;
+    }
+    setLoading(true);
+    const result = await motorCalibration();
+    if (result?.error) {
+      setError(result?.error);
+    }
+    setLoading(false);
+  };
+
   return (
     <>
       <Container>
-        <Item>
+        <Item
+          className={clsx({ [Classes.SKELETON]: loading })}
+          onClick={toCalibrateMotor}
+        >
           <h1>{t(getTPath(toCalibrateBut))}</h1>
         </Item>
         <Item>
@@ -45,7 +64,9 @@ const Calibration = () => {
         </Item>
       </Container>
       <Container>
-        <Item></Item>
+        <Item>
+          <h1>{error && String(error)}</h1>
+        </Item>
         <Item></Item>
       </Container>
     </>
