@@ -47,7 +47,7 @@ exports.sleepCb = (cb, delay = 1000) =>
     }, delay);
   });
 
-exports.getIsCancelledFn = localAction => {
+exports.getIsCancelledFn = localAction => () => {
   if (isFunction(localAction?.isCancelled) && localAction.isCancelled()) {
     console.log("canceled");
     return true;
