@@ -137,7 +137,21 @@ ipcMain.handle(EVENTS.DANGER_MOVE_BACK, async () => {
 ipcMain.handle(EVENTS.MOTOR_CALIBRATION, async () => {
   motor.updateField(MOTOR_FIELDS.SLEEP_RATIO, null);
   store.editSettings(FILE_CONST.PERIPHERAL, MOTOR_FIELDS.SLEEP_RATIO, null);
-  return await motor.calibration();
+
+  const calibResult = await motor.calibration();
+  if (isFinite(calibResult)) {
+    motor.updateField(MOTOR_FIELDS.SLEEP_RATIO, calibResult);
+    store.editSettings(
+      FILE_CONST.PERIPHERAL,
+      MOTOR_FIELDS.SLEEP_RATIO,
+      calibResult,
+    );
+    return true;
+  }
+
+  motor.updateField(MOTOR_FIELDS.SLEEP_RATIO, null);
+  store.editSettings(FILE_CONST.PERIPHERAL, MOTOR_FIELDS.SLEEP_RATIO, null);
+  return calibResult;
 });
 
 ipcMain.on(EVENTS.SET_MOTOR_LEVEL, (event, motorLevel) => {

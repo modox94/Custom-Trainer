@@ -270,7 +270,7 @@ class MotorDriver {
               if (posEl > posPrevEl) {
                 behaviorСounter += 1;
               } else if (posEl < posPrevEl) {
-                return { posData, error: ERRORS.CALIBRATION_WRONG_DIRECTION };
+                return { error: ERRORS.CALIBRATION_WRONG_DIRECTION };
               }
               break;
 
@@ -278,7 +278,7 @@ class MotorDriver {
               if (posEl < posPrevEl) {
                 behaviorСounter += 1;
               } else if (posEl > posPrevEl) {
-                return { posData, error: ERRORS.CALIBRATION_WRONG_DIRECTION };
+                return { error: ERRORS.CALIBRATION_WRONG_DIRECTION };
               }
               break;
 
@@ -302,11 +302,7 @@ class MotorDriver {
       }
 
       if (posData.length > CALIBRATION_MAX_MOVES) {
-        return {
-          CALIBRATION_MAX_MOVES,
-          posData,
-          error: ERRORS.CALIBRATION_TOO_LONG,
-        };
+        return { error: ERRORS.CALIBRATION_TOO_LONG };
       }
 
       return TEST_IN_PROGRESS;
