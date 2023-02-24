@@ -268,7 +268,7 @@ class MotorDriver {
           switch (directionEl) {
             case MOVE_DIRECTION.forward:
               if (posEl > posPrevEl) {
-                behaviorСounter = +1;
+                behaviorСounter += 1;
               } else if (posEl < posPrevEl) {
                 return { posData, error: ERRORS.CALIBRATION_WRONG_DIRECTION };
               }
@@ -276,7 +276,7 @@ class MotorDriver {
 
             case MOVE_DIRECTION.back:
               if (posEl < posPrevEl) {
-                behaviorСounter = +1;
+                behaviorСounter += 1;
               } else if (posEl > posPrevEl) {
                 return { posData, error: ERRORS.CALIBRATION_WRONG_DIRECTION };
               }
