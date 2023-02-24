@@ -1,6 +1,5 @@
 const Promise = require("bluebird");
 const { round, noop, get, isFunction, isFinite } = require("lodash");
-const fs = require("node:fs");
 const { Gpio } = require("onoff");
 const {
   DIRECTION,
@@ -371,58 +370,6 @@ class MotorDriver {
       const sleepRatio = round((driveTimeSum / 2) * 0.95);
       this.updateField(MOTOR_FIELDS.SLEEP_RATIO, sleepRatio);
     }
-
-    return this[MOTOR_FIELDS.SLEEP_RATIO];
-  }
-
-  // TODO remove
-  async calibration_old(loops = 1) {
-    if (!this[MOTOR_FIELDS.MIN_POS] || !this[MOTOR_FIELDS.MAX_POS]) {
-      return console.log("Невозможно проводить калибровку без инициализации!");
-    }
-
-    if (this[MOTOR_FIELDS.SLEEP_RATIO]) {
-      delete this[MOTOR_FIELDS.SLEEP_RATIO];
-    }
-
-    const result = await this.setLevel(1);
-    if (result?.error) {
-      // TODO
-      console.log("Что-то не так с двигателем!");
-      this.stop();
-      return result;
-    }
-
-    let loopsCounter = loops;
-    let driveTimeSum = 0;
-
-    while (loopsCounter > 0) {
-      const { driveTime: driveTimeUp } = await this.setLevel(
-        RESIST_LEVELS,
-        true,
-      );
-      driveTimeSum += driveTimeUp;
-
-      const { driveTime: driveTimeDown } = await this.setLevel(1, true);
-      driveTimeSum += driveTimeDown;
-
-      loopsCounter -= 1;
-    }
-
-    const sleepRatio = round(
-      (driveTimeSum / 2 / loops / (RESIST_LEVELS - 1)) * 0.95,
-    );
-
-    this[MOTOR_FIELDS.SLEEP_RATIO] = sleepRatio;
-
-    fs.writeFileSync(
-      "./motor_settings.json",
-      JSON.stringify({
-        minPosition: this[MOTOR_FIELDS.MIN_POS],
-        maxPosition: this[MOTOR_FIELDS.MAX_POS],
-        sleepRatio: this[MOTOR_FIELDS.SLEEP_RATIO],
-      }),
-    );
 
     return this[MOTOR_FIELDS.SLEEP_RATIO];
   }
