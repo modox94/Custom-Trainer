@@ -98,7 +98,8 @@ const DIR_CONST_ARRAY = Object.values(DIR_CONST);
 
 class Store {
   constructor() {
-    this.userDataPath = app.getPath("userData");
+    this.userDataPath =
+      app?.getPath("userData") || "/home/pi/.config/custom-trainer";
 
     this.callbacks = DIR_CONST_ARRAY.reduce((callbacksObj, dir) => {
       callbacksObj[dir] = [];

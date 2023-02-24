@@ -268,17 +268,17 @@ class MotorDriver {
           switch (directionEl) {
             case MOVE_DIRECTION.forward:
               if (posEl > posPrevEl) {
-                behaviorСounter = +1;
+                behaviorСounter += 1;
               } else if (posEl < posPrevEl) {
-                return { error: ERRORS.CALIBRATION_WRONG_DIRECTION };
+                return { posData, error: ERRORS.CALIBRATION_WRONG_DIRECTION };
               }
               break;
 
             case MOVE_DIRECTION.back:
               if (posEl < posPrevEl) {
-                behaviorСounter = +1;
+                behaviorСounter += 1;
               } else if (posEl > posPrevEl) {
-                return { error: ERRORS.CALIBRATION_WRONG_DIRECTION };
+                return { posData, error: ERRORS.CALIBRATION_WRONG_DIRECTION };
               }
               break;
 
@@ -288,7 +288,7 @@ class MotorDriver {
         }
       }
 
-      if (behaviorСounter >= CALIBRATION_MIN_POINTS && !directionChanged) {
+      if (behaviorСounter >= CALIBRATION_MIN_POINTS) {
         if (!directionChanged) {
           directionCur =
             directionCur === MOVE_DIRECTION.forward
@@ -302,7 +302,11 @@ class MotorDriver {
       }
 
       if (posData.length > CALIBRATION_MAX_MOVES) {
-        return { error: ERRORS.CALIBRATION_TOO_LONG };
+        return {
+          CALIBRATION_MAX_MOVES,
+          posData,
+          error: ERRORS.CALIBRATION_TOO_LONG,
+        };
       }
 
       return TEST_IN_PROGRESS;
@@ -337,7 +341,10 @@ class MotorDriver {
 
     const testResult = checkPosData();
     if (testResult !== true) {
-      return { error: testResult?.error || ERRORS.CALIBRATION_UNKNOWN };
+      return {
+        ...testResult,
+        error: testResult?.error || ERRORS.CALIBRATION_UNKNOWN,
+      };
     }
     await this.setLevel(1);
 
@@ -366,10 +373,10 @@ class MotorDriver {
 
       const driveTimeSum = driveTimeToMax + driveTimeToMin;
       const sleepRatio = round((driveTimeSum / 2) * 0.95);
-      this.updateField(sleepRatio);
+      this.updateField(MOTOR_FIELDS.SLEEP_RATIO, sleepRatio);
     }
 
-    return true;
+    return this[MOTOR_FIELDS.SLEEP_RATIO];
   }
 
   // TODO remove
