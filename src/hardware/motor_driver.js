@@ -1,4 +1,3 @@
-const Promise = require("bluebird");
 const { round, noop, get, isFunction, isFinite } = require("lodash");
 const { Gpio } = require("onoff");
 const {
@@ -14,10 +13,8 @@ const {
   CALIBRATION_MAX_MOVES,
   CALIBRATION_ST_CYCLES,
 } = require("../constants/constants");
-const { sleepCb, getIsCancelledFn } = require("../utils/utils");
+const { sleepCb, getIsCancelledFn, Promise } = require("../utils/utils");
 const { PotentiometerSensor } = require("./potentiometer_sensor");
-
-Promise.config({ cancellation: true });
 
 const MOVE_DIRECTION_ARRAY = Object.values(MOVE_DIRECTION);
 const DELAY = 100; // TODO transfer to settings

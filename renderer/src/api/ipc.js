@@ -1,6 +1,12 @@
 import { createApi } from "@reduxjs/toolkit/query/react";
 import { noop } from "lodash";
-import { EVENTS, FILE_CONST, NAMES } from "../constants/reduxConst";
+import {
+  BOOT_CONFIG_OPT,
+  EVENTS,
+  FILE_CONST,
+  NAMES,
+} from "../constants/reduxConst";
+import { getBuilderQueryOpt } from "../utils/reduxUtils";
 
 const ipcApi = createApi({
   reducerPath: NAMES.ipcApi,
@@ -27,60 +33,15 @@ const ipcApi = createApi({
         removeListener();
       },
     }),
-    getPrograms: builder.query({
-      queryFn: async () => {
-        const data = await window.electron.ipcRenderer.invoke(
-          EVENTS.GET_PROGRAMS,
-        );
-        return { data };
-      },
-      async onCacheEntryAdded(
-        arg,
-        { updateCachedData, cacheDataLoaded, cacheEntryRemoved },
-      ) {
-        let removeListener = noop;
-        try {
-          await cacheDataLoaded;
-          const listener = storeData => updateCachedData(() => storeData);
-          removeListener = window.electron.ipcRenderer.on(
-            EVENTS.WATCH_PROGRAMS,
-            listener,
-          );
-        } catch (error) {
-          console.log("ipc error", error);
-        }
-
-        await cacheEntryRemoved;
-        removeListener();
-      },
-    }),
-    getSettings: builder.query({
-      queryFn: async () => {
-        const data = await window.electron.ipcRenderer.invoke(
-          EVENTS.GET_SETTINGS,
-        );
-        return { data };
-      },
-      async onCacheEntryAdded(
-        arg,
-        { updateCachedData, cacheDataLoaded, cacheEntryRemoved },
-      ) {
-        let removeListener = noop;
-        try {
-          await cacheDataLoaded;
-          const listener = storeData => updateCachedData(() => storeData);
-          removeListener = window.electron.ipcRenderer.on(
-            EVENTS.WATCH_SETTINGS,
-            listener,
-          );
-        } catch (error) {
-          console.log("ipc error", error);
-        }
-
-        await cacheEntryRemoved;
-        removeListener();
-      },
-    }),
+    getPrograms: builder.query(
+      getBuilderQueryOpt(EVENTS.GET_PROGRAMS, EVENTS.WATCH_PROGRAMS),
+    ),
+    getSettings: builder.query(
+      getBuilderQueryOpt(EVENTS.GET_SETTINGS, EVENTS.WATCH_SETTINGS),
+    ),
+    getBoot: builder.query(
+      getBuilderQueryOpt(EVENTS.GET_BOOT, EVENTS.WATCH_BOOT),
+    ),
     getPotentiometer: builder.query({
       queryFn: async () => {
         const data = await window.electron.ipcRenderer.invoke(
@@ -145,12 +106,21 @@ export const editSettings = (filename, field, value) => {
   }
 };
 
+export const turnOnSPI = async () => {
+  return await window.electron.ipcRenderer.invoke(
+    EVENTS.EDIT_BOOT_CONFIG,
+    BOOT_CONFIG_OPT.SPI,
+    true,
+  );
+};
+
 export const appQuit = () => window.electron.ipcRenderer.send(EVENTS.APP_QUIT);
 
 export const {
   useGetCadenceQuery,
   useGetProgramsQuery,
   useGetSettingsQuery,
+  useGetBootQuery,
   useGetPotentiometerQuery,
 } = ipcApi;
 export default ipcApi;

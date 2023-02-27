@@ -3,7 +3,11 @@ import clsx from "clsx";
 import { get, isFinite } from "lodash";
 import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
-import { motorCalibration, useGetSettingsQuery } from "../../api/ipc";
+import {
+  motorCalibration,
+  turnOnSPI,
+  useGetSettingsQuery,
+} from "../../api/ipc";
 import { DASH } from "../../constants/commonConst";
 import { FILE_CONST } from "../../constants/reduxConst";
 import { MOTOR_FIELDS } from "../../constants/settingsConst";
@@ -28,6 +32,7 @@ const getTPath = (...args) => getTranslationPath(SETTINGS, ...args);
 const Calibration = () => {
   const { t } = useTranslation();
   const [loading, setLoading] = useState(false);
+  const [l2, setL2] = useState(false);
   const [error, setError] = useState(false);
   const { data: settings = {} } =
     useGetSettingsQuery(undefined, { refetchOnMountOrArgChange: true }) || {};
@@ -49,6 +54,15 @@ const Calibration = () => {
     setLoading(false);
   };
 
+  const testFn = async () => {
+    console.log("testFn - 1");
+    setL2(true);
+    const res = await turnOnSPI();
+    setL2(false);
+    console.log("res", res);
+    console.log("testFn - 2");
+  };
+
   return (
     <>
       <Container>
@@ -67,7 +81,9 @@ const Calibration = () => {
         <Item>
           <h1>{error && String(error)}</h1>
         </Item>
-        <Item></Item>
+        <Item className={clsx({ [Classes.SKELETON]: l2 })} onClick={testFn}>
+          <h1>TestFn</h1>
+        </Item>
       </Container>
     </>
   );

@@ -39,13 +39,7 @@ exports.PHYSICAL_TO_GPIO = {
   40: 21,
 };
 
-exports.DEV_CONSTS = {
-  dataFile: "data.txt",
-  LF: "\n",
-  PL: "Program launched: ",
-  FRQ_R: "frequencyRaw: ",
-  FRQ: "frequency: ",
-};
+exports.LINE_FEED = "\n";
 
 exports.DEFAULT_WINDOW = 60;
 
@@ -73,6 +67,8 @@ exports.EVENTS = {
   GET_PROGRAMS: "GET_PROGRAMS",
   WATCH_SETTINGS: "WATCH_SETTINGS",
   GET_SETTINGS: "GET_SETTINGS",
+  WATCH_BOOT: "WATCH_BOOT",
+  GET_BOOT: "GET_BOOT",
   CHECK_PROGRAM_TITLE: "CHECK_PROGRAM_TITLE",
   SET_FULLSCREEN: "SET_FULLSCREEN",
   GET_POTENTIOMETER: "GET_POTENTIOMETER",
@@ -84,12 +80,19 @@ exports.EVENTS = {
   PREVENT_DISPLAY_SLEEP: "PREVENT_DISPLAY_SLEEP",
   EDIT_PROGRAM: "EDIT_PROGRAM",
   EDIT_SETTINGS: "EDIT_SETTINGS",
+  EDIT_BOOT_CONFIG: "EDIT_BOOT_CONFIG",
   SAVE_NEW_PROGRAM: "SAVE_NEW_PROGRAM",
   DELETE_PROGRAM: "DELETE_PROGRAM",
   APP_QUIT: "APP_QUIT",
 };
 
 exports.LANGS_CODES = { en: "en", ru: "ru" };
+
+exports.DOT_JSON = ".json";
+
+exports.ABSOLUTE_DIR_CONST = {
+  BOOT: "/boot",
+};
 
 exports.DIR_CONST = {
   SETTINGS: "settings",
@@ -100,7 +103,10 @@ exports.DIR_CONST = {
 exports.FILE_CONST = {
   INTERFACE: "interface.json",
   PERIPHERAL: "peripheral.json",
+  CONFIG: "config.txt",
 };
+
+exports.BOOT_CONFIG_OPT = { SPI: "SPI" };
 
 exports.MOTOR_FIELDS = {
   MIN_POS: "minPosition",
@@ -124,4 +130,6 @@ exports.ERRORS = {
   CALIBRATION_TOO_LONG: "CALIBRATION_TOO_LONG",
   CALIBRATION_UNKNOWN: "CALIBRATION_UNKNOWN",
   PROMISE_CANCELLED: "PROMISE_CANCELLED",
+  BOOT_CONFIG_NOT_EXIST: "BOOT_CONFIG_NOT_EXIST",
+  BOOT_CONFIG_WRONG_ARGS: "BOOT_CONFIG_WRONG_ARGS",
 };

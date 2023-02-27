@@ -1,44 +1,11 @@
+const Promise = require("bluebird");
 const { isFunction } = require("lodash");
-const fs = require("node:fs");
-const { DEV_CONSTS } = require("../constants/constants");
 
-const { dataFile, LF, PL, FRQ_R, FRQ } = DEV_CONSTS;
+Promise.config({ cancellation: true });
 
-const stringSlice = (fullString, forCut) =>
-  fullString.slice(fullString.indexOf(forCut) + forCut.length);
+exports.Promise = Promise;
 
-exports.getTimecodes = () => {
-  const data = fs.readFileSync(dataFile, "utf-8");
-  const resultObject = {
-    frqR: [],
-    frq: [],
-    sensorSignals: [],
-  };
-
-  const rowsArray = data.split(LF);
-
-  for (const rowEl of rowsArray) {
-    if (rowEl.includes(FRQ_R)) {
-      resultObject.frqR.push(stringSlice(rowEl, FRQ_R));
-      continue;
-    }
-
-    if (rowEl.includes(FRQ)) {
-      resultObject.frq.push(stringSlice(rowEl, FRQ));
-      continue;
-    }
-
-    if (rowEl.includes(PL)) {
-      resultObject.pl = new Date(Number(stringSlice(rowEl, PL)));
-      continue;
-    }
-
-    resultObject.sensorSignals.push(new Date(Number(rowEl)));
-  }
-
-  return resultObject;
-};
-
+// TODO add onCancel
 exports.sleepCb = (cb, delay = 1000) =>
   new Promise(resolve => {
     setTimeout(() => {
