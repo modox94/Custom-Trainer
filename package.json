@@ -28,7 +28,8 @@
     "lodash": "^4.17.21",
     "mcp-spi-adc": "^3.2.0",
     "node-ble": "^1.9.0",
-    "onoff": "^6.0.3"
+    "onoff": "^6.0.3",
+    "sudo-prompt": "^9.2.1"
   },
   "devDependencies": {
     "@electron-forge/cli": "^6.0.5",
