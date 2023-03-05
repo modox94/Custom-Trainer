@@ -29,9 +29,10 @@ import {
 import { Container, Item } from "../SquareGrid/SquareGrid";
 import styles from "./Settings.module.css";
 
-const { COMMON, SETTINGS } = TRANSLATION_ROOT_KEYS;
-const { ok, back } = TRANSLATION_KEYS[COMMON];
-const { motorDisclaimerHead, motorDisclaimerMsg } = TRANSLATION_KEYS[SETTINGS];
+const { COMMON_TRK, SETTINGS_TRK } = TRANSLATION_ROOT_KEYS;
+const { ok, back } = TRANSLATION_KEYS[COMMON_TRK];
+const { motorDisclaimerHead, motorDisclaimerMsg } =
+  TRANSLATION_KEYS[SETTINGS_TRK];
 
 const Motor = () => {
   const { t } = useTranslation();
@@ -256,7 +257,7 @@ const Motor = () => {
 
       <Dialog
         isOpen={disclaimer}
-        title={t(getTranslationPath(SETTINGS, motorDisclaimerHead))}
+        title={t(getTranslationPath(SETTINGS_TRK, motorDisclaimerHead))}
         canEscapeKeyClose={false}
         canOutsideClickClose={false}
         isCloseButtonShown={false}
@@ -264,7 +265,7 @@ const Motor = () => {
       >
         <div className={Classes.DIALOG_BODY}>
           <p className={Classes.TEXT_LARGE}>
-            {t(getTranslationPath(SETTINGS, motorDisclaimerMsg))}
+            {t(getTranslationPath(SETTINGS_TRK, motorDisclaimerMsg))}
           </p>
         </div>
         <div className={Classes.DIALOG_FOOTER}>
@@ -272,14 +273,14 @@ const Motor = () => {
             <Button
               large
               icon={IconNames.ARROW_LEFT}
-              text={t(getTranslationPath(COMMON, back))}
+              text={t(getTranslationPath(COMMON_TRK, back))}
               onClick={goBack}
             />
             <Button
               large
               intent={Intent.DANGER}
               icon={IconNames.TICK}
-              text={t(getTranslationPath(COMMON, ok))}
+              text={t(getTranslationPath(COMMON_TRK, ok))}
               onClick={() => setDisclaimer(false)}
             />
           </div>

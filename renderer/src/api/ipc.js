@@ -2,6 +2,7 @@ import { createApi } from "@reduxjs/toolkit/query/react";
 import { noop } from "lodash";
 import {
   BOOT_CONFIG_OPT,
+  BOOT_CONFIG_VALUE,
   EVENTS,
   FILE_CONST,
   NAMES,
@@ -110,7 +111,7 @@ export const turnOnSPI = async () => {
   return await window.electron.ipcRenderer.invoke(
     EVENTS.EDIT_BOOT_CONFIG,
     BOOT_CONFIG_OPT.SPI,
-    true,
+    BOOT_CONFIG_VALUE.ON,
   );
 };
 

@@ -7,15 +7,16 @@ export const i18nNamespace = "translation";
 export const i18nKeySeparator = ".";
 
 export const TRANSLATION_ROOT_KEYS = {
-  COMMON: "COMMON",
-  WORKOUT: "WORKOUT",
-  PROGRAM_EDITOR: "PROGRAM_EDITOR",
-  SETTINGS: "SETTINGS",
-  TIPS: "TIPS",
+  COMMON_TRK: "COMMON_TRK",
+  WORKOUT_TRK: "WORKOUT_TRK",
+  PROGRAM_EDITOR_TRK: "PROGRAM_EDITOR_TRK",
+  SETTINGS_TRK: "SETTINGS_TRK",
+  TIPS_TRK: "TIPS_TRK",
+  ERRORS_TRK: "ERRORS_TRK",
 };
 
 export const TRANSLATION_KEYS = {
-  [TRANSLATION_ROOT_KEYS.COMMON]: {
+  [TRANSLATION_ROOT_KEYS.COMMON_TRK]: {
     back: "back",
     fullscreen: "fullscreen",
     [PAGES.MAIN]: PAGES.MAIN,
@@ -32,17 +33,19 @@ export const TRANSLATION_KEYS = {
     copyTKey: "copyTKey",
     ok: "ok",
     yes: "yes",
+    turnOn: "turnOn",
+    turnOff: "turnOff",
   },
-  [TRANSLATION_ROOT_KEYS.WORKOUT]: {
+  [TRANSLATION_ROOT_KEYS.WORKOUT_TRK]: {
     programMode: "programMode",
-    current: "current",
+    current_T: "current_T",
     remaining: "remaining",
     elapsed: "elapsed",
-    time: "time",
+    time_T: "time_T",
     trainingDone: "trainingDone",
     trainingDoneMsg: "trainingDoneMsg",
   },
-  [TRANSLATION_ROOT_KEYS.PROGRAM_EDITOR]: {
+  [TRANSLATION_ROOT_KEYS.PROGRAM_EDITOR_TRK]: {
     newProgram: "newProgram",
     editProgram: "editProgram",
     copyProgram: "copyProgram",
@@ -56,7 +59,7 @@ export const TRANSLATION_KEYS = {
     copyProgHead: "copyProgHead",
     copyProgMsg: "copyProgMsg",
   },
-  [TRANSLATION_ROOT_KEYS.SETTINGS]: {
+  [TRANSLATION_ROOT_KEYS.SETTINGS_TRK]: {
     [LANGS_CODES.en]: LANGS_CODES.en,
     [LANGS_CODES.ru]: LANGS_CODES.ru,
     languageTKey: "languageTKey",
@@ -75,8 +78,14 @@ export const TRANSLATION_KEYS = {
     sleepRatioKey: "sleepRatioKey",
     sleepRatioHead: "sleepRatioHead",
     sleepRatioMsg: "sleepRatioMsg",
+    spiTitle: "spiTitle",
+    spiOnHead: "spiOnHead",
+    spiOnMsg: "spiOnMsg",
+    spiTipHead: "spiTipHead",
+    spiTipMsg: "spiTipMsg",
+    spiAboutMsg: "spiAboutMsg",
   },
-  [TRANSLATION_ROOT_KEYS.TIPS]: {
+  [TRANSLATION_ROOT_KEYS.TIPS_TRK]: {
     tipBut: "tipBut",
     tipDescrip: "tipDescrip",
     tipTitle: "tipTitle",

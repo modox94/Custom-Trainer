@@ -13,3 +13,8 @@ export const MOTOR_FIELDS = {
   SWAP_MOTOR_WIRES: "swappedMotorWires",
   SWAP_POTEN_WIRES: "swappedPotentiometerWires",
 };
+
+export const DIALOG_PERFORMANCE = {
+  SPI_TURN_ON: "SPI_TURN_ON",
+  SPI_TIP: "SPI_TIP",
+};

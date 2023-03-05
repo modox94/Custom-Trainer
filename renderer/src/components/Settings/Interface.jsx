@@ -16,10 +16,10 @@ import { Container, Item } from "../SquareGrid/SquareGrid";
 import AlertWithTimer from "./AlertWithTimer";
 import styles from "./Settings.module.css";
 
-const { COMMON, SETTINGS } = TRANSLATION_ROOT_KEYS;
-const { cancelTKey, yes } = TRANSLATION_KEYS[COMMON];
+const { COMMON_TRK, SETTINGS_TRK } = TRANSLATION_ROOT_KEYS;
+const { cancelTKey, yes } = TRANSLATION_KEYS[COMMON_TRK];
 const { cursorNoneTitle, cursorNoneMsg, showTipsTKey } =
-  TRANSLATION_KEYS[SETTINGS];
+  TRANSLATION_KEYS[SETTINGS_TRK];
 
 const Interface = props => {
   const { t } = useTranslation();
@@ -63,14 +63,14 @@ const Interface = props => {
           <Switch
             large
             alignIndicator={Alignment.RIGHT}
-            label={t(getTranslationPath(SETTINGS, cursorNoneTitle))}
+            label={t(getTranslationPath(SETTINGS_TRK, cursorNoneTitle))}
             checked={Boolean(cursorNone)}
             onChange={onChangeCursorNone}
           />
           <Switch
             large
             alignIndicator={Alignment.RIGHT}
-            label={t(getTranslationPath(SETTINGS, showTipsTKey))}
+            label={t(getTranslationPath(SETTINGS_TRK, showTipsTKey))}
             checked={Boolean(showTips)}
             onChange={onChangeShowTips}
           />
@@ -86,12 +86,12 @@ const Interface = props => {
           canOutsideClickCancel
           intent={Intent.SUCCESS}
           icon={IconNames.CONFIRM}
-          cancelButtonText={t(getTranslationPath(COMMON, cancelTKey))}
-          confirmButtonText={t(getTranslationPath(COMMON, yes))}
+          cancelButtonText={t(getTranslationPath(COMMON_TRK, cancelTKey))}
+          confirmButtonText={t(getTranslationPath(COMMON_TRK, yes))}
           onCancel={onCancelCursorNone}
           onConfirm={onConfirmCursorNone}
         >
-          <p>{t(getTranslationPath(SETTINGS, cursorNoneMsg))}</p>
+          <p>{t(getTranslationPath(SETTINGS_TRK, cursorNoneMsg))}</p>
         </AlertWithTimer>
       )}
     </>

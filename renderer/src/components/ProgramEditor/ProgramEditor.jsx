@@ -32,10 +32,10 @@ import EnterTitle from "./EnterTitle";
 import styles from "./ProgramEditor.module.css";
 
 const { MAIN, PROGRAM_EDITOR } = PAGES;
-const { COMMON } = TRANSLATION_ROOT_KEYS;
-const { add, deleteTKey, save } = TRANSLATION_KEYS[COMMON];
+const { COMMON_TRK } = TRANSLATION_ROOT_KEYS;
+const { add, deleteTKey, save } = TRANSLATION_KEYS[COMMON_TRK];
 
-const getTPath = (...args) => getTranslationPath(COMMON, ...args);
+const getTPath = (...args) => getTranslationPath(COMMON_TRK, ...args);
 
 const ProgramEditor = props => {
   const { mode } = props;

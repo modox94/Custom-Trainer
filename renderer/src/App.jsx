@@ -50,13 +50,7 @@ const App = () => {
   const lang = get(settings, [FILE_CONST.INTERFACE, "lang"], "");
   const cursorNone = get(settings, [FILE_CONST.INTERFACE, "cursorNone"], false);
   const showTips = get(settings, [FILE_CONST.INTERFACE, "showTips"], false);
-  const { data: boot = {} } =
-    useGetBootQuery(undefined, { refetchOnMountOrArgChange: true }) || {};
-  const bootConfig = get(boot, [FILE_CONST.CONFIG]);
-
-  useEffect(() => {
-    console.log("bootConfig", bootConfig);
-  }, [bootConfig]);
+  useGetBootQuery(undefined, { refetchOnMountOrArgChange: true });
 
   useEffect(() => {
     if (lang && LANGS_CODES[lang] && i18n.language !== lang) {

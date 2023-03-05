@@ -41,6 +41,8 @@ exports.PHYSICAL_TO_GPIO = {
 
 exports.LINE_FEED = "\n";
 
+exports.HASH_SIGN = "#";
+
 exports.DEFAULT_WINDOW = 60;
 
 exports.DEFAULT_M_C = 1;
@@ -106,7 +108,14 @@ exports.FILE_CONST = {
   CONFIG: "config.txt",
 };
 
-exports.BOOT_CONFIG_OPT = { SPI: "SPI" };
+exports.BOOT_CONFIG_OPT = {
+  SPI: "spi",
+  DTPARAM: "dtparam",
+  LCD_ROTATE: "lcd_rotate",
+  CM4: "[cm4]",
+  ALL: "[all]",
+  PI4: "[pi4]",
+};
 
 exports.MOTOR_FIELDS = {
   MIN_POS: "minPosition",
@@ -119,6 +128,7 @@ exports.MOTOR_FIELDS = {
 exports.MOVE_DIRECTION = { forward: "forward", back: "back" };
 
 exports.ERRORS = {
+  UNKNOWN_ERROR: "UNKNOWN_ERROR",
   GPIO_EPERM: "GPIO_EPERM",
   POTEN_ERROR: "POTEN_ERROR",
   INVALID_RESIST_LEVEL: "INVALID_RESIST_LEVEL",
@@ -132,4 +142,6 @@ exports.ERRORS = {
   PROMISE_CANCELLED: "PROMISE_CANCELLED",
   BOOT_CONFIG_NOT_EXIST: "BOOT_CONFIG_NOT_EXIST",
   BOOT_CONFIG_WRONG_ARGS: "BOOT_CONFIG_WRONG_ARGS",
+  BOOT_CONFIG_INVALID_ARG: "BOOT_CONFIG_INVALID_ARG",
+  SUDO_NOT_GRANT_PERMISSION: "User did not grant permission.",
 };

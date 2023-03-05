@@ -14,15 +14,15 @@ import { getTranslationPath } from "../../utils/translationUtils";
 import { Item } from "../SquareGrid/SquareGrid";
 import styles from "./Timer.module.css";
 
-const { WORKOUT } = TRANSLATION_ROOT_KEYS;
+const { WORKOUT_TRK } = TRANSLATION_ROOT_KEYS;
 const {
   remaining: remaining_T,
   elapsed: elapsed_T,
   time: time_T,
-} = TRANSLATION_KEYS[WORKOUT];
+} = TRANSLATION_KEYS[WORKOUT_TRK];
 const { RUN } = RUNNINIG_STATUS;
 
-const getTPath = (...args) => getTranslationPath(WORKOUT, ...args);
+const getTPath = (...args) => getTranslationPath(WORKOUT_TRK, ...args);
 
 const TIMER_TYPES = { REMAIN: "REMAIN", ELAPSE: "ELAPSE" };
 

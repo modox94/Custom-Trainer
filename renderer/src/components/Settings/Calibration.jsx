@@ -3,11 +3,7 @@ import clsx from "clsx";
 import { get, isFinite } from "lodash";
 import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
-import {
-  motorCalibration,
-  turnOnSPI,
-  useGetSettingsQuery,
-} from "../../api/ipc";
+import { motorCalibration, useGetSettingsQuery } from "../../api/ipc";
 import { DASH } from "../../constants/commonConst";
 import { FILE_CONST } from "../../constants/reduxConst";
 import { MOTOR_FIELDS } from "../../constants/settingsConst";
@@ -18,7 +14,7 @@ import {
 import { getTranslationPath } from "../../utils/translationUtils";
 import { Container, Item } from "../SquareGrid/SquareGrid";
 
-const { SETTINGS } = TRANSLATION_ROOT_KEYS;
+const { SETTINGS_TRK } = TRANSLATION_ROOT_KEYS;
 const {
   toCalibrateBut,
   toCalibrateHead,
@@ -26,13 +22,12 @@ const {
   sleepRatioKey,
   sleepRatioHead,
   sleepRatioMsg,
-} = TRANSLATION_KEYS[SETTINGS];
-const getTPath = (...args) => getTranslationPath(SETTINGS, ...args);
+} = TRANSLATION_KEYS[SETTINGS_TRK];
+const getTPath = (...args) => getTranslationPath(SETTINGS_TRK, ...args);
 
 const Calibration = () => {
   const { t } = useTranslation();
   const [loading, setLoading] = useState(false);
-  const [l2, setL2] = useState(false);
   const [error, setError] = useState(false);
   const { data: settings = {} } =
     useGetSettingsQuery(undefined, { refetchOnMountOrArgChange: true }) || {};
@@ -54,15 +49,6 @@ const Calibration = () => {
     setLoading(false);
   };
 
-  const testFn = async () => {
-    console.log("testFn - 1");
-    setL2(true);
-    const res = await turnOnSPI();
-    setL2(false);
-    console.log("res", res);
-    console.log("testFn - 2");
-  };
-
   return (
     <>
       <Container>
@@ -81,9 +67,7 @@ const Calibration = () => {
         <Item>
           <h1>{error && String(error)}</h1>
         </Item>
-        <Item className={clsx({ [Classes.SKELETON]: l2 })} onClick={testFn}>
-          <h1>TestFn</h1>
-        </Item>
+        <Item></Item>
       </Container>
     </>
   );

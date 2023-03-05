@@ -28,13 +28,13 @@ import { Container, Item } from "../SquareGrid/SquareGrid";
 import Timer from "../Timer/Timer";
 import styles from "./ProgramMode.module.css";
 
-const { COMMON, WORKOUT } = TRANSLATION_ROOT_KEYS;
-const { back, repeat } = TRANSLATION_KEYS[COMMON];
-const { trainingDone, trainingDoneMsg } = TRANSLATION_KEYS[WORKOUT];
+const { COMMON_TRK, WORKOUT_TRK } = TRANSLATION_ROOT_KEYS;
+const { back, repeat } = TRANSLATION_KEYS[COMMON_TRK];
+const { trainingDone, trainingDoneMsg } = TRANSLATION_KEYS[WORKOUT_TRK];
 const { RUN } = RUNNINIG_STATUS;
 const { SELECT_PROGRAM } = PAGES;
 
-const getTPath = (...args) => getTranslationPath(COMMON, ...args);
+const getTPath = (...args) => getTranslationPath(COMMON_TRK, ...args);
 
 // const minute = 500;
 // const minute = 3000;
@@ -190,13 +190,13 @@ const ProgramMode = props => {
     <>
       <Dialog
         isOpen={isDone}
-        title={t(getTranslationPath(WORKOUT, trainingDone))}
+        title={t(getTranslationPath(WORKOUT_TRK, trainingDone))}
         canOutsideClickClose={false}
         isCloseButtonShown={false}
       >
         <div className={Classes.DIALOG_BODY}>
           <p className={Classes.TEXT_LARGE}>
-            {t(getTranslationPath(WORKOUT, trainingDoneMsg))}
+            {t(getTranslationPath(WORKOUT_TRK, trainingDoneMsg))}
           </p>
         </div>
         <div className={Classes.DIALOG_FOOTER}>

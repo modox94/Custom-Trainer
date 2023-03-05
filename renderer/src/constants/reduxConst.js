@@ -35,4 +35,6 @@ export const FILE_CONST = {
   CONFIG: "config.txt",
 };
 
-export const BOOT_CONFIG_OPT = { SPI: "SPI" };
+export const BOOT_CONFIG_OPT = { SPI: "spi", DTPARAM: "dtparam" };
+
+export const BOOT_CONFIG_VALUE = { ON: "on", OFF: "off" };

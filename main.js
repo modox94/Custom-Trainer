@@ -3,19 +3,24 @@ const { isFunction, get, noop } = require("lodash");
 const path = require("node:path");
 const sudo = require("sudo-prompt");
 const {
-  DIR_CONST,
-  EVENTS,
-  FILE_CONST,
-  MOVE_DIRECTION,
-  MOTOR_FIELDS,
   ABSOLUTE_DIR_CONST,
   BOOT_CONFIG_OPT,
+  DIR_CONST,
   ERRORS,
+  EVENTS,
+  FILE_CONST,
+  LINE_FEED,
+  MOTOR_FIELDS,
+  MOVE_DIRECTION,
 } = require("./src/constants/constants");
 const { rate } = require("./src/hardware/cadence_sensor");
 const MotorDriver = require("./src/hardware/motor_driver");
 const Store = require("./src/software/store");
-const { Promise } = require("./src/utils/utils");
+const {
+  Promise,
+  commentConfigOpt,
+  convertConfigToObj,
+} = require("./src/utils/utils");
 
 const store = new Store();
 const motor = new MotorDriver(
@@ -118,16 +123,21 @@ store.watch(DIR_CONST.SETTINGS, onSettingsChange);
 
 ipcMain.handle(EVENTS.GET_SETTINGS, () => store.store[DIR_CONST.SETTINGS]);
 
-const onBootChange = data => {
+const onBootChange = dataRaw => {
   if (isFunction(win?.webContents?.send)) {
-    win.webContents.send(EVENTS.WATCH_BOOT, data);
+    const data = get(dataRaw, [FILE_CONST.CONFIG], null);
+    win.webContents.send(EVENTS.WATCH_BOOT, convertConfigToObj(data));
   }
 };
 store.watch(store.constants[ABSOLUTE_DIR_CONST.BOOT], onBootChange);
 
-ipcMain.handle(
-  EVENTS.GET_BOOT,
-  () => store.store[store.constants[ABSOLUTE_DIR_CONST.BOOT]],
+ipcMain.handle(EVENTS.GET_BOOT, () =>
+  convertConfigToObj(
+    get(store.store, [
+      store.constants[ABSOLUTE_DIR_CONST.BOOT],
+      FILE_CONST.CONFIG,
+    ]),
+  ),
 );
 
 ipcMain.handle(EVENTS.CHECK_PROGRAM_TITLE, (event, value) => {
@@ -155,13 +165,22 @@ ipcMain.handle(EVENTS.EDIT_BOOT_CONFIG, async (event, opt, value) => {
   switch (opt) {
     case BOOT_CONFIG_OPT.SPI:
       if (value) {
-        // TODO
+        const configData = get(store.store, [
+          store.constants[ABSOLUTE_DIR_CONST.BOOT],
+          FILE_CONST.CONFIG,
+        ]);
+        let newConfigData = commentConfigOpt(configData, opt);
+        newConfigData += `${LINE_FEED}${BOOT_CONFIG_OPT.ALL}${LINE_FEED}${BOOT_CONFIG_OPT.DTPARAM}=${BOOT_CONFIG_OPT.SPI}=${value}`;
+        const fullConfigPath = path.join(
+          ABSOLUTE_DIR_CONST.BOOT,
+          FILE_CONST.CONFIG,
+        );
+        const sudoCommand = `echo "${newConfigData}" > ${fullConfigPath}`;
         const options = { name: "Custom Trainer" };
         const [error, stdout, stderr] = (await new Promise(
           (resolve, reject, onCancel) => {
             onCancel(noop);
-            //  echo '456' > 'test.txt'
-            sudo.exec("echo hello", options, function (...args) {
+            sudo.exec(sudoCommand, options, function (...args) {
               resolve(args);
             });
           },
@@ -169,24 +188,12 @@ ipcMain.handle(EVENTS.EDIT_BOOT_CONFIG, async (event, opt, value) => {
 
         return [error, stdout, stderr];
       }
-      return;
+      return [ERRORS.BOOT_CONFIG_WRONG_ARGS];
 
     default:
       return [ERRORS.BOOT_CONFIG_WRONG_ARGS];
   }
 });
-
-// var sudo = require('sudo-prompt');
-// var options = {
-//   name: 'Electron',
-//   icns: '/Applications/Electron.app/Contents/Resources/Electron.icns', // (optional)
-// };
-// sudo.exec('echo hello', options,
-//   function(error, stdout, stderr) {
-//     if (error) throw error;
-//     console.log('stdout: ' + stdout);
-//   }
-// );
 
 ipcMain.handle(EVENTS.MOTOR_CALIBRATION, async () => {
   motor.updateField(MOTOR_FIELDS.SLEEP_RATIO, null);

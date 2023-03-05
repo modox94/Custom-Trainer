@@ -36,14 +36,9 @@ import styles from "./Footer.module.css";
 
 const containerStyle = { top: "unset" };
 
-const { MAIN, MANUAL_MODE, SETTINGS, SELECT_PROGRAM } = PAGES;
-const {
-  COMMON,
-  PROGRAM_EDITOR,
-  TIPS,
-  SETTINGS: SETTINGS_TRK,
-} = TRANSLATION_ROOT_KEYS;
-const { ok } = TRANSLATION_KEYS[COMMON];
+const { MAIN, MANUAL_MODE, SETTINGS, SELECT_PROGRAM, PROGRAM_EDITOR } = PAGES;
+const { COMMON_TRK, TIPS_TRK, SETTINGS_TRK } = TRANSLATION_ROOT_KEYS;
+const { ok } = TRANSLATION_KEYS[COMMON_TRK];
 const { languageTKey, interfaceTKey, peripheral } =
   TRANSLATION_KEYS[SETTINGS_TRK];
 const {
@@ -87,9 +82,9 @@ const {
   motorSwapMotorWiresTip,
   motorSwapPotenWiresBut,
   motorSwapPotenWiresTip,
-} = TRANSLATION_KEYS[TIPS];
+} = TRANSLATION_KEYS[TIPS_TRK];
 
-const getTPath = (...args) => getTranslationPath(TIPS, ...args);
+const getTPath = (...args) => getTranslationPath(TIPS_TRK, ...args);
 
 const TIP_DEFAULT = null;
 const TIPS_PATH_DEFAULT = null;
@@ -180,7 +175,7 @@ const Footer = props => {
           buttonIcon: (
             <Icon className={styles.greenIcon} icon={IconNames.SWAP_VERTICAL} />
           ),
-          buttonText: t(getTranslationPath(COMMON, MANUAL_MODE)),
+          buttonText: t(getTranslationPath(COMMON_TRK, MANUAL_MODE)),
           onClick: () =>
             setTip({
               body: (
@@ -196,7 +191,7 @@ const Footer = props => {
         },
         {
           buttonIcon: <MicrochipIcon className={styles.greenIcon} />,
-          buttonText: t(getTranslationPath(COMMON, SELECT_PROGRAM)),
+          buttonText: t(getTranslationPath(COMMON_TRK, SELECT_PROGRAM)),
           onClick: () =>
             setTip({
               body: (
@@ -211,7 +206,7 @@ const Footer = props => {
           buttonIcon: (
             <Icon className={styles.blueIcon} icon={IconNames.EDIT} />
           ),
-          buttonText: t(getTranslationPath(COMMON, PROGRAM_EDITOR)),
+          buttonText: t(getTranslationPath(COMMON_TRK, PROGRAM_EDITOR)),
           onClick: () =>
             setTip({
               body: (
@@ -224,7 +219,7 @@ const Footer = props => {
         },
         {
           buttonIcon: <Icon className={styles.blueIcon} icon={IconNames.COG} />,
-          buttonText: t(getTranslationPath(COMMON, SETTINGS)),
+          buttonText: t(getTranslationPath(COMMON_TRK, SETTINGS)),
           onClick: () =>
             setTip({
               body: (
@@ -560,7 +555,7 @@ DumbbellIcon
             <Button
               large
               icon={IconNames.TICK}
-              text={t(getTranslationPath(COMMON, ok))}
+              text={t(getTranslationPath(COMMON_TRK, ok))}
               onClick={onTipClose}
             />
           </div>

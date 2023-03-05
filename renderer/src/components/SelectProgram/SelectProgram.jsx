@@ -16,10 +16,10 @@ import { getTranslationPath } from "../../utils/translationUtils";
 import { Container, Item } from "../SquareGrid/SquareGrid";
 
 const { SELECT_PROGRAM, PROGRAM_EDITOR } = PAGES;
-const { COMMON, PROGRAM_EDITOR: PE_TRK } = TRANSLATION_ROOT_KEYS;
-const { deleteTKey, cancelTKey, copyTKey } = TRANSLATION_KEYS[COMMON];
+const { COMMON_TRK, PROGRAM_EDITOR_TRK } = TRANSLATION_ROOT_KEYS;
+const { deleteTKey, cancelTKey, copyTKey } = TRANSLATION_KEYS[COMMON_TRK];
 const { deleteProgHead, deleteProgMsg, copyProgHead, copyProgMsg } =
-  TRANSLATION_KEYS[PE_TRK];
+  TRANSLATION_KEYS[PROGRAM_EDITOR_TRK];
 
 const TARGET_DEFAULT = null;
 
@@ -87,23 +87,23 @@ const SelectProgram = props => {
 
     switch (mode) {
       case SP_MODE.COPY:
-        header = getTranslationPath(PE_TRK, copyProgHead);
-        message = getTranslationPath(PE_TRK, copyProgMsg);
+        header = getTranslationPath(PROGRAM_EDITOR_TRK, copyProgHead);
+        message = getTranslationPath(PROGRAM_EDITOR_TRK, copyProgMsg);
 
-        btn1Text = getTranslationPath(COMMON, copyTKey);
+        btn1Text = getTranslationPath(COMMON_TRK, copyTKey);
         btn1Icon = IconNames.DUPLICATE;
         btn1Intent = Intent.PRIMARY;
-        btn2Text = getTranslationPath(COMMON, cancelTKey);
+        btn2Text = getTranslationPath(COMMON_TRK, cancelTKey);
         break;
 
       case SP_MODE.DELETE:
-        header = getTranslationPath(PE_TRK, deleteProgHead);
-        message = getTranslationPath(PE_TRK, deleteProgMsg);
+        header = getTranslationPath(PROGRAM_EDITOR_TRK, deleteProgHead);
+        message = getTranslationPath(PROGRAM_EDITOR_TRK, deleteProgMsg);
 
-        btn1Text = getTranslationPath(COMMON, deleteTKey);
+        btn1Text = getTranslationPath(COMMON_TRK, deleteTKey);
         btn1Icon = IconNames.TRASH;
         btn1Intent = Intent.DANGER;
-        btn2Text = getTranslationPath(COMMON, cancelTKey);
+        btn2Text = getTranslationPath(COMMON_TRK, cancelTKey);
         break;
 
       default:
