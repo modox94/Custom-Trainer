@@ -1,0 +1,8 @@
+{
+  "SPI": "spi",
+  "DTPARAM": "dtparam",
+  "LCD_ROTATE": "lcd_rotate",
+  "CM4": "[cm4]",
+  "ALL": "[all]",
+  "PI4": "[pi4]"
+}

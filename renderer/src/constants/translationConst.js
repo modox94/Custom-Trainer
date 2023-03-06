@@ -1,6 +1,8 @@
+import { ERRORS } from "./commonConst";
 import { PAGES } from "./pathConst";
+import LANGS_CODES from "./LANGS_CODES.json";
 
-export const LANGS_CODES = { en: "en", ru: "ru" };
+export { LANGS_CODES };
 
 export const i18nNamespace = "translation";
 
@@ -17,13 +19,9 @@ export const TRANSLATION_ROOT_KEYS = {
 
 export const TRANSLATION_KEYS = {
   [TRANSLATION_ROOT_KEYS.COMMON_TRK]: {
+    ...PAGES,
     back: "back",
     fullscreen: "fullscreen",
-    [PAGES.MAIN]: PAGES.MAIN,
-    [PAGES.MANUAL_MODE]: PAGES.MANUAL_MODE,
-    [PAGES.SETTINGS]: PAGES.SETTINGS,
-    [PAGES.SELECT_PROGRAM]: PAGES.SELECT_PROGRAM,
-    [PAGES.PROGRAM_EDITOR]: PAGES.PROGRAM_EDITOR,
     next: "next",
     add: "add",
     deleteTKey: "deleteTKey",
@@ -60,8 +58,7 @@ export const TRANSLATION_KEYS = {
     copyProgMsg: "copyProgMsg",
   },
   [TRANSLATION_ROOT_KEYS.SETTINGS_TRK]: {
-    [LANGS_CODES.en]: LANGS_CODES.en,
-    [LANGS_CODES.ru]: LANGS_CODES.ru,
+    ...LANGS_CODES,
     languageTKey: "languageTKey",
     interfaceTKey: "interfaceTKey",
     peripheral: "peripheral",
@@ -126,5 +123,8 @@ export const TRANSLATION_KEYS = {
     motorSwapMotorWiresTip: "motorSwapMotorWiresTip",
     motorSwapPotenWiresBut: "motorSwapPotenWiresBut",
     motorSwapPotenWiresTip: "motorSwapPotenWiresTip",
+  },
+  [TRANSLATION_ROOT_KEYS.ERRORS_TRK]: {
+    ...ERRORS,
   },
 };

@@ -1,0 +1,5 @@
+{
+  "INTERFACE": "interface.json",
+  "PERIPHERAL": "peripheral.json",
+  "CONFIG": "config.txt"
+}
