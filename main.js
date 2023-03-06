@@ -186,6 +186,10 @@ ipcMain.handle(EVENTS.EDIT_BOOT_CONFIG, async (event, opt, value) => {
           },
         )) || [ERRORS.BOOT_CONFIG_WRONG_ARGS];
 
+        if (get(error, ["message"], "") === "User did not grant permission.") {
+          return [ERRORS.SUDO_NOT_GRANT_PERMISSION, stdout, stderr];
+        }
+
         return [error, stdout, stderr];
       }
       return [ERRORS.BOOT_CONFIG_WRONG_ARGS];

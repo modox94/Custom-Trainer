@@ -1,4 +1,12 @@
-import { Button, Classes, Dialog, Icon, Intent } from "@blueprintjs/core";
+import {
+  Button,
+  Classes,
+  Dialog,
+  DialogBody,
+  DialogFooter,
+  Icon,
+  Intent,
+} from "@blueprintjs/core";
 import { IconNames } from "@blueprintjs/icons";
 import clsx from "clsx";
 import { get, isFinite, round } from "lodash";
@@ -263,12 +271,12 @@ const Motor = () => {
         isCloseButtonShown={false}
         onClose={() => setDisclaimer(false)}
       >
-        <div className={Classes.DIALOG_BODY}>
+        <DialogBody>
           <p className={Classes.TEXT_LARGE}>
             {t(getTranslationPath(SETTINGS_TRK, motorDisclaimerMsg))}
           </p>
-        </div>
-        <div className={Classes.DIALOG_FOOTER}>
+        </DialogBody>
+        <DialogFooter minimal>
           <div className={Classes.DIALOG_FOOTER_ACTIONS}>
             <Button
               large
@@ -284,7 +292,7 @@ const Motor = () => {
               onClick={() => setDisclaimer(false)}
             />
           </div>
-        </div>
+        </DialogFooter>
       </Dialog>
     </>
   );

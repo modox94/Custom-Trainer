@@ -1,4 +1,10 @@
-import { Button, Classes, Dialog } from "@blueprintjs/core";
+import {
+  Button,
+  Classes,
+  Dialog,
+  DialogBody,
+  DialogFooter,
+} from "@blueprintjs/core";
 import { IconNames } from "@blueprintjs/icons";
 import { get, round } from "lodash";
 import React, { useEffect, useMemo, useState } from "react";
@@ -194,12 +200,12 @@ const ProgramMode = props => {
         canOutsideClickClose={false}
         isCloseButtonShown={false}
       >
-        <div className={Classes.DIALOG_BODY}>
+        <DialogBody>
           <p className={Classes.TEXT_LARGE}>
             {t(getTranslationPath(WORKOUT_TRK, trainingDoneMsg))}
           </p>
-        </div>
-        <div className={Classes.DIALOG_FOOTER}>
+        </DialogBody>
+        <DialogFooter minimal>
           <div className={Classes.DIALOG_FOOTER_ACTIONS}>
             <Button
               large
@@ -214,7 +220,7 @@ const ProgramMode = props => {
               onClick={goBack}
             />
           </div>
-        </div>
+        </DialogFooter>
       </Dialog>
       <Container>
         <Clock />

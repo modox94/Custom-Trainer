@@ -1,4 +1,11 @@
-import { Button, Classes, Dialog, Intent } from "@blueprintjs/core";
+import {
+  Button,
+  Classes,
+  Dialog,
+  DialogBody,
+  DialogFooter,
+  Intent,
+} from "@blueprintjs/core";
 import { IconNames } from "@blueprintjs/icons";
 import { chunk, get } from "lodash";
 import PropTypes from "prop-types";
@@ -168,14 +175,14 @@ const SelectProgram = props => {
         isCloseButtonShown
         onClose={onDialogClose}
       >
-        <div className={Classes.DIALOG_BODY}>
+        <DialogBody>
           <p className={Classes.TEXT_LARGE}>
             {t(dialogProps.message, {
               programTitle: get(programs, [target, "title"], ""),
             })}
           </p>
-        </div>
-        <div className={Classes.DIALOG_FOOTER}>
+        </DialogBody>
+        <DialogFooter minimal>
           <div className={Classes.DIALOG_FOOTER_ACTIONS}>
             <Button
               large
@@ -192,7 +199,7 @@ const SelectProgram = props => {
               onClick={onDialogBtn2}
             />
           </div>
-        </div>
+        </DialogFooter>
       </Dialog>
       {items.map(row => (
         <Container key={row.reduce((acc, item) => acc + item.key, "")}>

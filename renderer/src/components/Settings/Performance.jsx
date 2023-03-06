@@ -3,48 +3,39 @@ import {
   Button,
   Classes,
   Dialog,
+  DialogBody,
+  DialogFooter,
   Intent,
   Switch,
 } from "@blueprintjs/core";
+import { IconNames } from "@blueprintjs/icons";
+import clsx from "clsx";
 import { get, isObject } from "lodash";
-import React, {
-  useCallback,
-  useMemo,
-  useState,
-  useSyncExternalStore,
-} from "react";
+import React, { useCallback, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { turnOnSPI, useGetBootQuery } from "../../api/ipc";
+import { ERRORS } from "../../constants/commonConst";
 import { BOOT_CONFIG_OPT, BOOT_CONFIG_VALUE } from "../../constants/reduxConst";
-import { IconNames } from "@blueprintjs/icons";
+import { DIALOG_PERFORMANCE } from "../../constants/settingsConst";
 import {
   TRANSLATION_KEYS,
   TRANSLATION_ROOT_KEYS,
 } from "../../constants/translationConst";
 import { getTranslationPath } from "../../utils/translationUtils";
+import Error from "../Error/Error";
 import { Container, Item } from "../SquareGrid/SquareGrid";
 import styles from "./Settings.module.css";
-import { DIALOG_PERFORMANCE } from "../../constants/settingsConst";
-import { ERRORS } from "../../constants/commonConst";
 
 const { COMMON_TRK, SETTINGS_TRK } = TRANSLATION_ROOT_KEYS;
-const { ok, cancelTKey, yes, turnOn, turnOff } = TRANSLATION_KEYS[COMMON_TRK];
-const {
-  cursorNoneTitle,
-  cursorNoneMsg,
-  showTipsTKey,
-  spiTitle,
-  spiOnHead,
-  spiOnMsg,
-  spiTipHead,
-  spiTipMsg,
-  spiAboutMsg,
-} = TRANSLATION_KEYS[SETTINGS_TRK];
+const { ok, turnOn } = TRANSLATION_KEYS[COMMON_TRK];
+const { spiTitle, spiOnHead, spiOnMsg, spiTipHead, spiTipMsg, spiAboutMsg } =
+  TRANSLATION_KEYS[SETTINGS_TRK];
 
 const Performance = props => {
   const { t } = useTranslation();
   const [dialogType, setDialogType] = useState(false);
   const [dialogError, setDialogError] = useState(false);
+  const [loading, setLoading] = useState(false);
   const { data: bootConfig } =
     useGetBootQuery(undefined, { refetchOnMountOrArgChange: true }) || {};
   const spiStatus = get(bootConfig, [BOOT_CONFIG_OPT.SPI], null);
@@ -52,12 +43,14 @@ const Performance = props => {
   const closeDialog = () => {
     setDialogType(false);
     setDialogError(false);
+    setLoading(false);
   };
 
   const turnOnSpiFn = useCallback(async () => {
-    // TODO
     if (spiStatus !== BOOT_CONFIG_VALUE.ON) {
+      setLoading(true);
       let [error] = (await turnOnSPI()) || [];
+      setLoading(false);
 
       if (error && isObject(error)) {
         error = get(error, ["message"], ERRORS.UNKNOWN_ERROR);
@@ -97,20 +90,22 @@ const Performance = props => {
       case DIALOG_PERFORMANCE.SPI_TIP:
         return (
           <>
-            {dialogError && String(dialogError)}
-            {t(getTranslationPath(SETTINGS_TRK, spiTipMsg))}
-            <br />
-            {t(getTranslationPath(SETTINGS_TRK, spiAboutMsg))}
+            <p>
+              <Error error={dialogError} />
+            </p>
+            <p>{t(getTranslationPath(SETTINGS_TRK, spiTipMsg))}</p>
+            <p>{t(getTranslationPath(SETTINGS_TRK, spiAboutMsg))}</p>
           </>
         );
 
       case DIALOG_PERFORMANCE.SPI_TURN_ON:
         return (
           <>
-            {dialogError && String(dialogError)}
-            {t(getTranslationPath(SETTINGS_TRK, spiOnMsg))}
-            <br />
-            {t(getTranslationPath(SETTINGS_TRK, spiAboutMsg))}
+            <p>
+              <Error error={dialogError} />
+            </p>
+            <p>{t(getTranslationPath(SETTINGS_TRK, spiOnMsg))}</p>
+            <p>{t(getTranslationPath(SETTINGS_TRK, spiAboutMsg))}</p>
           </>
         );
 
@@ -118,7 +113,7 @@ const Performance = props => {
         break;
     }
     return;
-  }, [dialogType, t]);
+  }, [dialogError, dialogType, t]);
 
   const dialogFooter = useMemo(() => {
     switch (dialogType) {
@@ -158,7 +153,11 @@ const Performance = props => {
 
   return (
     <>
-      <Container className={styles.fullHeightContainer}>
+      <Container
+        className={clsx(styles.fullHeightContainer, {
+          [Classes.SKELETON]: loading,
+        })}
+      >
         <Item className={styles.overflowItem}>
           <Switch
             large
@@ -172,6 +171,7 @@ const Performance = props => {
       </Container>
 
       <Dialog
+        className={clsx({ [Classes.SKELETON]: loading })}
         isOpen={Boolean(dialogType)}
         title={dialogHead}
         canEscapeKeyClose
@@ -179,12 +179,12 @@ const Performance = props => {
         isCloseButtonShown
         onClose={closeDialog}
       >
-        <div className={Classes.DIALOG_BODY}>
+        <DialogBody>
           <p className={Classes.TEXT_LARGE}>{dialogBody}</p>
-        </div>
-        <div className={Classes.DIALOG_FOOTER}>
+        </DialogBody>
+        <DialogFooter minimal>
           <div className={Classes.DIALOG_FOOTER_ACTIONS}>{dialogFooter}</div>
-        </div>
+        </DialogFooter>
       </Dialog>
     </>
   );

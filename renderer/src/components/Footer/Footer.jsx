@@ -3,6 +3,8 @@ import {
   ButtonGroup,
   Classes,
   Dialog,
+  DialogBody,
+  DialogFooter,
   Icon,
   Navbar,
 } from "@blueprintjs/core";
@@ -547,10 +549,10 @@ DumbbellIcon
         isCloseButtonShown
         onClose={onTipClose}
       >
-        <div className={Classes.DIALOG_BODY}>
+        <DialogBody>
           <p className={Classes.TEXT_LARGE}>{get(tip, ["body"], "")}</p>
-        </div>
-        <div className={Classes.DIALOG_FOOTER}>
+        </DialogBody>
+        <DialogFooter minimal>
           <div className={Classes.DIALOG_FOOTER_ACTIONS}>
             <Button
               large
@@ -559,7 +561,7 @@ DumbbellIcon
               onClick={onTipClose}
             />
           </div>
-        </div>
+        </DialogFooter>
       </Dialog>
     </Navbar>
   );

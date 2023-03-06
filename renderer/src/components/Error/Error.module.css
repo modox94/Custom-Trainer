@@ -1,0 +1,7 @@
+.redText {
+  color: var(--red2);
+}
+
+.redIcon svg {
+  color: var(--red2);
+}

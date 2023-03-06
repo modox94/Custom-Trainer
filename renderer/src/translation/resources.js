@@ -265,28 +265,31 @@ const resources = {
       [ru]: "TODO sleepRatioMsg",
     },
     [TK[SETTINGS_TRK].spiTitle]: {
-      [en]: "TODO spiTitle",
-      [ru]: "TODO spiTitle",
+      [en]: "SPI (Serial Peripheral Interface)",
+      [ru]: "SPI (Последовательный Периферийный Интерфейс)",
     },
     [TK[SETTINGS_TRK].spiOnHead]: {
-      [en]: "TODO spiOnHead",
-      [ru]: "TODO spiOnHead",
+      [en]: "Turn on SPI",
+      [ru]: "Включение SPI",
     },
     [TK[SETTINGS_TRK].spiOnMsg]: {
       [en]: "TODO spiOnMsg",
-      [ru]: "TODO spiOnMsg",
+      [ru]: `Для корректной работы приложения необходимо включить интерфейс SPI в настройках операционной системы. Вы можете сделать это в настройках или в консоли выполнив команду raspi-config. После включение необходимо перезагрузить устройство. В этом приложении доступна возможность включить эту настройку, но я не рекомендую пользоваться этой функцией, т.к. она всё ещё находится в разработке. Если вы все же хотите воспользоваться ей, то нажмите кнопку "$t(${getTP(
+        COMMON_TRK,
+        TK[COMMON_TRK].turnOn,
+      )})" и введите пароль администратора.`,
     },
     [TK[SETTINGS_TRK].spiTipHead]: {
-      [en]: "TODO spiTipHead",
-      [ru]: "TODO spiTipHead",
+      [en]: "Turn on SPI",
+      [ru]: "Включение SPI",
     },
     [TK[SETTINGS_TRK].spiTipMsg]: {
       [en]: "TODO spiTipMsg",
-      [ru]: "TODO spiTipMsg",
+      [ru]: "Интерфейс SPI уже включен на этом устройстве. После включения требуется перезагрузка устройства для корретной работы.",
     },
     [TK[SETTINGS_TRK].spiAboutMsg]: {
       [en]: "TODO spiAboutMsg",
-      [ru]: "TODO spiAboutMsg",
+      [ru]: "Эта функция необходима для получения данных с потенциометра, если она не включена, то приложение не сможет работать. На данный момент программная эмуляция SPI не реализована.",
     },
   },
   [TIPS_TRK]: {
@@ -513,8 +516,8 @@ const resources = {
       [ru]: "TODO BOOT_CONFIG_INVALID_ARG",
     },
     [ERRORS.SUDO_NOT_GRANT_PERMISSION]: {
-      [en]: "TODO SUDO_NOT_GRANT_PERMISSION",
-      [ru]: "TODO SUDO_NOT_GRANT_PERMISSION",
+      [en]: "User did not grant permission.",
+      [ru]: "Пользователь не предоставил разрешение.",
     },
   },
 };
