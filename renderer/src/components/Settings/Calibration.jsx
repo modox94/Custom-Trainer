@@ -13,16 +13,11 @@ import {
 } from "../../constants/translationConst";
 import { getTranslationPath } from "../../utils/translationUtils";
 import { Container, Item } from "../SquareGrid/SquareGrid";
+import SettingLine from "./SettingLine";
 
-const { SETTINGS_TRK } = TRANSLATION_ROOT_KEYS;
-const {
-  toCalibrateBut,
-  toCalibrateHead,
-  toCalibrateMsg,
-  sleepRatioKey,
-  sleepRatioHead,
-  sleepRatioMsg,
-} = TRANSLATION_KEYS[SETTINGS_TRK];
+const { COMMON_TRK, SETTINGS_TRK } = TRANSLATION_ROOT_KEYS;
+const { start } = TRANSLATION_KEYS[COMMON_TRK];
+const { toCalibrateBut, sleepRatioKey } = TRANSLATION_KEYS[SETTINGS_TRK];
 const getTPath = (...args) => getTranslationPath(SETTINGS_TRK, ...args);
 
 const Calibration = () => {
@@ -51,26 +46,45 @@ const Calibration = () => {
 
   return (
     <>
-      <Container>
-        <Item
-          className={clsx({ [Classes.SKELETON]: loading })}
-          onClick={toCalibrateMotor}
-        >
-          <h1>{t(getTPath(toCalibrateBut))}</h1>
+      <Container fullHeight>
+        <Item className={clsx({ [Classes.SKELETON]: loading })}>
+          <SettingLine
+            title={t(getTPath(toCalibrateBut))}
+            buttonText={t(getTranslationPath(COMMON_TRK, start))}
+            onClick={toCalibrateMotor}
+          />
         </Item>
         <Item>
-          <h1>{t(getTPath(sleepRatioKey))}</h1>
-          <h1>{!isFinite(sleepRatio) ? DASH : String(sleepRatio)}</h1>
+          <SettingLine
+            title={t(getTPath(sleepRatioKey))}
+            value={!isFinite(sleepRatio) ? DASH : String(sleepRatio)}
+          />
+          <SettingLine title={String(error)} />
         </Item>
-      </Container>
-      <Container>
-        <Item>
-          <h1>{error && String(error)}</h1>
-        </Item>
-        <Item></Item>
       </Container>
     </>
   );
 };
+
+/*
+<Container>
+  <Item
+    className={clsx({ [Classes.SKELETON]: loading })}
+    onClick={toCalibrateMotor}
+  >
+    <h1>{t(getTPath(toCalibrateBut))}</h1>
+  </Item>
+  <Item>
+    <h1>{t(getTPath(sleepRatioKey))}</h1>
+    <h1>{!isFinite(sleepRatio) ? DASH : String(sleepRatio)}</h1>
+  </Item>
+</Container>
+<Container>
+  <Item>
+    <h1>{error && String(error)}</h1>
+  </Item>
+  <Item></Item>
+</Container>
+*/
 
 export default Calibration;

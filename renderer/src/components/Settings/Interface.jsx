@@ -58,7 +58,7 @@ const Interface = props => {
 
   return (
     <>
-      <Container className={styles.fullHeightContainer}>
+      <Container fullHeight>
         <Item className={styles.overflowItem}>
           <Switch
             large

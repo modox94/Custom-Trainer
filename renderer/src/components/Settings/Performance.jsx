@@ -22,7 +22,7 @@ import {
   TRANSLATION_ROOT_KEYS,
 } from "../../constants/translationConst";
 import { getTranslationPath } from "../../utils/translationUtils";
-import Error from "../Error/Error";
+import ErrorText from "../ErrorText/ErrorText";
 import { Container, Item } from "../SquareGrid/SquareGrid";
 import styles from "./Settings.module.css";
 
@@ -91,7 +91,7 @@ const Performance = props => {
         return (
           <>
             <p>
-              <Error error={dialogError} />
+              <ErrorText error={dialogError} />
             </p>
             <p>{t(getTranslationPath(SETTINGS_TRK, spiTipMsg))}</p>
             <p>{t(getTranslationPath(SETTINGS_TRK, spiAboutMsg))}</p>
@@ -102,7 +102,7 @@ const Performance = props => {
         return (
           <>
             <p>
-              <Error error={dialogError} />
+              <ErrorText error={dialogError} />
             </p>
             <p>{t(getTranslationPath(SETTINGS_TRK, spiOnMsg))}</p>
             <p>{t(getTranslationPath(SETTINGS_TRK, spiAboutMsg))}</p>
@@ -153,11 +153,7 @@ const Performance = props => {
 
   return (
     <>
-      <Container
-        className={clsx(styles.fullHeightContainer, {
-          [Classes.SKELETON]: loading,
-        })}
-      >
+      <Container className={clsx({ [Classes.SKELETON]: loading })} fullHeight>
         <Item className={styles.overflowItem}>
           <Switch
             large

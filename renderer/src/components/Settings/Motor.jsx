@@ -28,6 +28,7 @@ import {
   TRANSLATION_ROOT_KEYS,
 } from "../../constants/translationConst";
 import { getTranslationPath } from "../../utils/translationUtils";
+import ErrorText from "../ErrorText/ErrorText";
 import {
   DumbbellIcon,
   EngineMotorElectroIcon,
@@ -38,9 +39,8 @@ import { Container, Item } from "../SquareGrid/SquareGrid";
 import styles from "./Settings.module.css";
 
 const { COMMON_TRK, SETTINGS_TRK } = TRANSLATION_ROOT_KEYS;
-const { ok, back } = TRANSLATION_KEYS[COMMON_TRK];
-const { motorDisclaimerHead, motorDisclaimerMsg } =
-  TRANSLATION_KEYS[SETTINGS_TRK];
+const { ok, back, warning } = TRANSLATION_KEYS[COMMON_TRK];
+const { motorDisclaimerMsg } = TRANSLATION_KEYS[SETTINGS_TRK];
 
 const Motor = () => {
   const { t } = useTranslation();
@@ -265,7 +265,8 @@ const Motor = () => {
 
       <Dialog
         isOpen={disclaimer}
-        title={t(getTranslationPath(SETTINGS_TRK, motorDisclaimerHead))}
+        icon={IconNames.WARNING_SIGN}
+        title={t(getTranslationPath(COMMON_TRK, warning))}
         canEscapeKeyClose={false}
         canOutsideClickClose={false}
         isCloseButtonShown={false}
@@ -273,7 +274,9 @@ const Motor = () => {
       >
         <DialogBody>
           <p className={Classes.TEXT_LARGE}>
-            {t(getTranslationPath(SETTINGS_TRK, motorDisclaimerMsg))}
+            <ErrorText
+              text={t(getTranslationPath(SETTINGS_TRK, motorDisclaimerMsg))}
+            />
           </p>
         </DialogBody>
         <DialogFooter minimal>

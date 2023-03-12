@@ -6,13 +6,22 @@ import React from "react";
 import styles from "./SquareGrid.module.css";
 
 const Container = props => {
-  const { className, children } = props;
+  const { className, fullHeight, children } = props;
 
-  return <div className={clsx(className, styles.container)}>{children}</div>;
+  return (
+    <div
+      className={clsx(className, styles.container, {
+        [styles.fullHeight]: fullHeight,
+      })}
+    >
+      {children}
+    </div>
+  );
 };
 
 Container.propTypes = {
   className: PropTypes.string,
+  fullHeight: PropTypes.bool,
   children: PropTypes.oneOfType([
     PropTypes.element,
     PropTypes.arrayOf(PropTypes.element),
@@ -20,6 +29,7 @@ Container.propTypes = {
 };
 Container.defaultProps = {
   className: "",
+  fullHeight: false,
 };
 
 const Item = props => {

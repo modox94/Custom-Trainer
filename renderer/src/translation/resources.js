@@ -98,6 +98,14 @@ const resources = {
       [en]: "Turn off",
       [ru]: "Выключить",
     },
+    [TK[COMMON_TRK].warning]: {
+      [en]: "Warning",
+      [ru]: "Предупреждение",
+    },
+    [TK[COMMON_TRK].start]: {
+      [en]: "Start",
+      [ru]: "Начать",
+    },
   },
   [WORKOUT_TRK]: {
     [TK[WORKOUT_TRK].programMode]: {
@@ -108,11 +116,11 @@ const resources = {
       [en]: "Current",
       [ru]: "Текущее",
     },
-    [TK[WORKOUT_TRK].remaining]: {
+    [TK[WORKOUT_TRK].remaining_T]: {
       [en]: "Remaining",
       [ru]: "Оставшееся",
     },
-    [TK[WORKOUT_TRK].elapsed]: {
+    [TK[WORKOUT_TRK].elapsed_T]: {
       [en]: "Elapsed",
       [ru]: "Прошедшее",
     },
@@ -232,21 +240,13 @@ const resources = {
       [en]: "Show tips at the bottom of the page",
       [ru]: "Показывать подсказки внизу страницы",
     },
-    [TK[SETTINGS_TRK].motorDisclaimerHead]: {
-      [en]: "TODO motorDisclaimerHead",
-      [ru]: "TODO motorDisclaimerHead",
-    },
     [TK[SETTINGS_TRK].motorDisclaimerMsg]: {
       [en]: "TODO motorDisclaimerMsg",
-      [ru]: "TODO motorDisclaimerMsg",
+      [ru]: "Внимание, в этом разделе вы можете навредить своему оборудованию. Убедитесь, что понимаете что делаете.",
     },
     [TK[SETTINGS_TRK].toCalibrateBut]: {
       [en]: "TODO calibrationBut",
-      [ru]: "TODO calibrationBut",
-    },
-    [TK[SETTINGS_TRK].toCalibrateHead]: {
-      [en]: "TODO calibrationHead",
-      [ru]: "TODO calibrationHead",
+      [ru]: "Калибровка двигателя",
     },
     [TK[SETTINGS_TRK].toCalibrateMsg]: {
       [en]: "TODO calibrationMsg",
