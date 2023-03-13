@@ -54,7 +54,7 @@ const Calibration = () => {
             onClick={toCalibrateMotor}
           />
         </Item>
-        <Item>
+        <Item className={clsx({ [Classes.SKELETON]: loading })}>
           <SettingLine
             title={t(getTPath(sleepRatioKey))}
             value={!isFinite(sleepRatio) ? DASH : String(sleepRatio)}

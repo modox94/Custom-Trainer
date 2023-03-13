@@ -1,10 +1,4 @@
-import {
-  Button,
-  Classes,
-  Dialog,
-  DialogBody,
-  DialogFooter,
-} from "@blueprintjs/core";
+import { Button, Intent } from "@blueprintjs/core";
 import { IconNames } from "@blueprintjs/icons";
 import { get, round } from "lodash";
 import React, { useEffect, useMemo, useState } from "react";
@@ -30,6 +24,7 @@ import { getTranslationPath } from "../../utils/translationUtils";
 import BarChart from "../BarChart/BarChart";
 import CadenceGauge from "../CadenceGauge/CadenceGauge";
 import Clock from "../Clock/Clock";
+import DialogCustom from "../DialogCustom/DialogCustom";
 import { Container, Item } from "../SquareGrid/SquareGrid";
 import Timer from "../Timer/Timer";
 import styles from "./ProgramMode.module.css";
@@ -194,34 +189,6 @@ const ProgramMode = props => {
 
   return (
     <>
-      <Dialog
-        isOpen={isDone}
-        title={t(getTranslationPath(WORKOUT_TRK, trainingDone))}
-        canOutsideClickClose={false}
-        isCloseButtonShown={false}
-      >
-        <DialogBody>
-          <p className={Classes.TEXT_LARGE}>
-            {t(getTranslationPath(WORKOUT_TRK, trainingDoneMsg))}
-          </p>
-        </DialogBody>
-        <DialogFooter minimal>
-          <div className={Classes.DIALOG_FOOTER_ACTIONS}>
-            <Button
-              large
-              icon={IconNames.REPEAT}
-              text={t(getTPath(repeat))}
-              onClick={repeatProgram}
-            />
-            <Button
-              large
-              icon={IconNames.ARROW_LEFT}
-              text={t(getTPath(back))}
-              onClick={goBack}
-            />
-          </div>
-        </DialogFooter>
-      </Dialog>
       <Container>
         <Clock />
         <Item className={styles.paddingReduced}>
@@ -238,6 +205,33 @@ const ProgramMode = props => {
           isDone={isDone}
         />
       </Container>
+
+      <DialogCustom
+        isOpen={isDone}
+        icon={IconNames.TICK}
+        title={t(getTranslationPath(WORKOUT_TRK, trainingDone))}
+        canOutsideClickClose={false}
+        isCloseButtonShown={false}
+        body={t(getTranslationPath(WORKOUT_TRK, trainingDoneMsg))}
+        footerMinimal
+        footer={
+          <>
+            <Button
+              large
+              icon={IconNames.REPEAT}
+              text={t(getTPath(repeat))}
+              onClick={repeatProgram}
+            />
+            <Button
+              large
+              intent={Intent.SUCCESS}
+              icon={IconNames.ARROW_LEFT}
+              text={t(getTPath(back))}
+              onClick={goBack}
+            />
+          </>
+        }
+      />
     </>
   );
 };

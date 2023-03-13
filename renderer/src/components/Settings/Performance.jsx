@@ -1,13 +1,4 @@
-import {
-  Alignment,
-  Button,
-  Classes,
-  Dialog,
-  DialogBody,
-  DialogFooter,
-  Intent,
-  Switch,
-} from "@blueprintjs/core";
+import { Alignment, Button, Classes, Intent, Switch } from "@blueprintjs/core";
 import { IconNames } from "@blueprintjs/icons";
 import clsx from "clsx";
 import { get, isObject } from "lodash";
@@ -22,6 +13,7 @@ import {
   TRANSLATION_ROOT_KEYS,
 } from "../../constants/translationConst";
 import { getTranslationPath } from "../../utils/translationUtils";
+import DialogCustom from "../DialogCustom/DialogCustom";
 import ErrorText from "../ErrorText/ErrorText";
 import { Container, Item } from "../SquareGrid/SquareGrid";
 import styles from "./Settings.module.css";
@@ -166,22 +158,18 @@ const Performance = props => {
         <Item className={styles.overflowItem}></Item>
       </Container>
 
-      <Dialog
-        className={clsx({ [Classes.SKELETON]: loading })}
+      <DialogCustom
         isOpen={Boolean(dialogType)}
+        className={clsx({ [Classes.SKELETON]: loading })}
         title={dialogHead}
         canEscapeKeyClose
         canOutsideClickClose
         isCloseButtonShown
         onClose={closeDialog}
-      >
-        <DialogBody>
-          <p className={Classes.TEXT_LARGE}>{dialogBody}</p>
-        </DialogBody>
-        <DialogFooter minimal>
-          <div className={Classes.DIALOG_FOOTER_ACTIONS}>{dialogFooter}</div>
-        </DialogFooter>
-      </Dialog>
+        body={dialogBody}
+        footerMinimal
+        footer={dialogFooter}
+      />
     </>
   );
 };

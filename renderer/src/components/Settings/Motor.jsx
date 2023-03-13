@@ -1,12 +1,4 @@
-import {
-  Button,
-  Classes,
-  Dialog,
-  DialogBody,
-  DialogFooter,
-  Icon,
-  Intent,
-} from "@blueprintjs/core";
+import { Button, Classes, Icon, Intent } from "@blueprintjs/core";
 import { IconNames } from "@blueprintjs/icons";
 import clsx from "clsx";
 import { get, isFinite, round } from "lodash";
@@ -28,6 +20,7 @@ import {
   TRANSLATION_ROOT_KEYS,
 } from "../../constants/translationConst";
 import { getTranslationPath } from "../../utils/translationUtils";
+import DialogCustom from "../DialogCustom/DialogCustom";
 import ErrorText from "../ErrorText/ErrorText";
 import {
   DumbbellIcon,
@@ -263,7 +256,7 @@ const Motor = () => {
         </Item>
       </Container>
 
-      <Dialog
+      <DialogCustom
         isOpen={disclaimer}
         icon={IconNames.WARNING_SIGN}
         title={t(getTranslationPath(COMMON_TRK, warning))}
@@ -271,16 +264,14 @@ const Motor = () => {
         canOutsideClickClose={false}
         isCloseButtonShown={false}
         onClose={() => setDisclaimer(false)}
-      >
-        <DialogBody>
-          <p className={Classes.TEXT_LARGE}>
-            <ErrorText
-              text={t(getTranslationPath(SETTINGS_TRK, motorDisclaimerMsg))}
-            />
-          </p>
-        </DialogBody>
-        <DialogFooter minimal>
-          <div className={Classes.DIALOG_FOOTER_ACTIONS}>
+        body={
+          <ErrorText
+            text={t(getTranslationPath(SETTINGS_TRK, motorDisclaimerMsg))}
+          />
+        }
+        footerMinimal
+        footer={
+          <>
             <Button
               large
               icon={IconNames.ARROW_LEFT}
@@ -294,9 +285,9 @@ const Motor = () => {
               text={t(getTranslationPath(COMMON_TRK, ok))}
               onClick={() => setDisclaimer(false)}
             />
-          </div>
-        </DialogFooter>
-      </Dialog>
+          </>
+        }
+      />
     </>
   );
 };

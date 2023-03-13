@@ -1,13 +1,4 @@
-import {
-  Button,
-  ButtonGroup,
-  Classes,
-  Dialog,
-  DialogBody,
-  DialogFooter,
-  Icon,
-  Navbar,
-} from "@blueprintjs/core";
+import { Button, ButtonGroup, Icon, Navbar } from "@blueprintjs/core";
 import { IconNames } from "@blueprintjs/icons";
 import { get } from "lodash";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
@@ -23,6 +14,7 @@ import {
 import { getFooterStatus } from "../../selectors/environmentSelectors";
 import { hideFooter, showFooter } from "../../slices/environmentSlice";
 import { getTranslationPath } from "../../utils/translationUtils";
+import DialogCustom from "../DialogCustom/DialogCustom";
 import {
   CaliperPlainIcon,
   DashboardIcon,
@@ -542,27 +534,23 @@ DumbbellIcon
         })}
       </ButtonGroup>
 
-      <Dialog
+      <DialogCustom
         isOpen={Boolean(tip)}
         title={t(getTPath(tipTitle))}
         canOutsideClickClose
         isCloseButtonShown
         onClose={onTipClose}
-      >
-        <DialogBody>
-          <p className={Classes.TEXT_LARGE}>{get(tip, ["body"], "")}</p>
-        </DialogBody>
-        <DialogFooter minimal>
-          <div className={Classes.DIALOG_FOOTER_ACTIONS}>
-            <Button
-              large
-              icon={IconNames.TICK}
-              text={t(getTranslationPath(COMMON_TRK, ok))}
-              onClick={onTipClose}
-            />
-          </div>
-        </DialogFooter>
-      </Dialog>
+        body={get(tip, ["body"], "")}
+        footerMinimal
+        footer={
+          <Button
+            large
+            icon={IconNames.TICK}
+            text={t(getTranslationPath(COMMON_TRK, ok))}
+            onClick={onTipClose}
+          />
+        }
+      />
     </Navbar>
   );
 };
