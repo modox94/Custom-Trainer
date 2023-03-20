@@ -219,6 +219,10 @@ ipcMain.handle(EVENTS.MOTOR_CALIBRATION, async () => {
   return calibResult;
 });
 
+ipcMain.handle(EVENTS.GET_MOTOR_LEVEL, async () => {
+  return await motor.getMotorLevel();
+});
+
 ipcMain.on(EVENTS.SET_MOTOR_LEVEL, (event, motorLevel) => {
   motor.setLevel(motorLevel);
 });

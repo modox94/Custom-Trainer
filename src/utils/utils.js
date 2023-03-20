@@ -1,32 +1,18 @@
 const Promise = require("bluebird");
-const { isFunction, isString, isUndefined } = require("lodash");
+const { isString, isUndefined } = require("lodash");
 const {
-  LINE_FEED,
-  HASH_SIGN,
   BOOT_CONFIG_OPT,
   ERRORS,
+  HASH_SIGN,
+  LINE_FEED,
 } = require("../constants/constants");
 
 Promise.config({ cancellation: true });
 
 exports.Promise = Promise;
 
-// TODO add onCancel
-exports.sleepCb = (cb, delay = 1000) =>
-  new Promise(resolve => {
-    setTimeout(() => {
-      resolve();
-      cb();
-    }, delay);
-  });
-
-exports.getIsCancelledFn = localAction => () => {
-  if (isFunction(localAction?.isCancelled) && localAction.isCancelled()) {
-    console.log("canceled");
-    return true;
-  }
-
-  return false;
+exports.sleep = async (delay = 1000) => {
+  return await Promise.delay(delay);
 };
 
 exports.convertConfigToObj = configStr => {

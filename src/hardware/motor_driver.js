@@ -1,25 +1,25 @@
-const { round, noop, get, isFunction, isFinite } = require("lodash");
+const { get, isFinite, isFunction, noop, round } = require("lodash");
 const { Gpio } = require("onoff");
 const {
-  DIRECTION,
-  PHYSICAL_TO_GPIO,
-  MOVE_DIRECTION,
-  ERRORS,
-  MOTOR_FIELDS,
-  LOADING_TIMER,
-  LOADING_PAUSE,
-  TEST_IN_PROGRESS,
-  CALIBRATION_MIN_POINTS,
   CALIBRATION_MAX_MOVES,
+  CALIBRATION_MIN_POINTS,
   CALIBRATION_ST_CYCLES,
+  DIRECTION,
+  ERRORS,
+  LOADING_PAUSE,
+  LOADING_TIMER,
+  MOTOR_FIELDS,
+  MOVE_DIRECTION,
+  PHYSICAL_TO_GPIO,
+  TEST_IN_PROGRESS,
 } = require("../constants/constants");
-const { sleepCb, getIsCancelledFn, Promise } = require("../utils/utils");
+const { Promise, sleep } = require("../utils/utils");
 const { PotentiometerSensor } = require("./potentiometer_sensor");
 
 const MOVE_DIRECTION_ARRAY = Object.values(MOVE_DIRECTION);
 const DELAY = 100; // TODO transfer to settings
 const DELAY_FOR_READ = 25; // TODO transfer to settings
-const RESIST_LEVELS = 10; // TODO transfer to settings
+const MAX_RES_LEVEL = 10; // TODO transfer to settings
 
 const write = (value, cb = noop) => {
   console.log("write", value);
@@ -60,6 +60,7 @@ class MotorDriver {
       null,
     );
 
+    this.lastLevel = null;
     this.action = null;
     this.potentiometer = new PotentiometerSensor();
 
@@ -141,27 +142,27 @@ class MotorDriver {
   async DANGER_move(direction) {
     this.actionCancel();
 
-    if (!MOVE_DIRECTION_ARRAY.includes(direction)) {
-      console.log("DANGER_move wrong direction");
-      return { error: "wrong direction" };
-    }
+    this.action = new Promise((resolve, reject, onCancel) => {
+      onCancel(this.stop.bind(this));
+      (async () => {
+        if (!MOVE_DIRECTION_ARRAY.includes(direction)) {
+          console.log("DANGER_move wrong direction");
+          return resolve({ error: "wrong direction" });
+        }
 
-    const onCancelFn = () => this.stop();
+        try {
+          this.move(direction);
+          await sleep(DELAY);
+          this.stop();
+        } catch (error) {
+          return resolve({ error });
+        }
 
-    try {
-      this.move(direction);
-      const localAction = new Promise((resolve, reject, onCancel) => {
-        onCancel(onCancelFn);
-        sleepCb(resolve, DELAY);
-      });
-      this.action = localAction;
-      await localAction;
-      this.stop();
-    } catch (error) {
-      return { error };
-    }
+        return resolve({ error: false });
+      })();
+    });
 
-    return { error: false };
+    return await this.action;
   }
 
   get isReady() {
@@ -177,334 +178,288 @@ class MotorDriver {
     return this.swappedPotentiometerWires ? 100 - rawValue : rawValue;
   }
 
-  readPositionCb(rawCb) {
-    const cb = rawValue => {
-      const value = this.swappedPotentiometerWires ? 100 - rawValue : rawValue;
-      rawCb(value);
-    };
-    return this.potentiometer.readPositionCb(cb);
+  async getMotorLevel() {
+    if (isFinite(this.lastLevel)) {
+      return this.lastLevel;
+    }
+
+    if (
+      !isFinite(this[MOTOR_FIELDS.MAX_POS]) ||
+      !isFinite(this[MOTOR_FIELDS.MIN_POS])
+    ) {
+      return { error: ERRORS.CALIBRATION_NO_DATA };
+    }
+    const posCur = await this.readPosition();
+    const interval =
+      Math.abs(this[MOTOR_FIELDS.MAX_POS] - this[MOTOR_FIELDS.MIN_POS]) /
+      (MAX_RES_LEVEL - 1);
+
+    const posMin =
+      this[MOTOR_FIELDS.MAX_POS] > this[MOTOR_FIELDS.MIN_POS]
+        ? this[MOTOR_FIELDS.MIN_POS]
+        : this[MOTOR_FIELDS.MAX_POS];
+    return round((posCur - posMin) / interval) + 1;
   }
 
   async calibration() {
     this.actionCancel();
 
-    if (
-      !isFinite(this[MOTOR_FIELDS.MAX_POS]) ||
-      !isFinite(this[MOTOR_FIELDS.MIN_POS])
-    ) {
-      return { error: ERRORS.CALIBRATION_NO_DATA };
-    } else if (
-      Math.abs(this[MOTOR_FIELDS.MAX_POS] - this[MOTOR_FIELDS.MIN_POS]) <= 10
-    ) {
-      return { error: ERRORS.CALIBRATION_INVALID_EDGES };
-    }
-
-    const onCancelFn = () => this.stop();
-    let localAction;
-    const isCancelled = getIsCancelledFn(localAction);
-    let loadingTimer = LOADING_TIMER;
-    // TODO improve this part
-    while (!this.isReady && !this.isError) {
-      if (loadingTimer-- <= 0) {
-        return { error: ERRORS.LOADING_TIMER_EXPIRED };
-      }
-      if (isCancelled()) {
-        return { error: ERRORS.PROMISE_CANCELLED };
-      }
-
-      console.log("loading...");
-
-      localAction = new Promise((resolve, reject, onCancel) => {
-        onCancel(onCancelFn);
-        sleepCb(resolve, LOADING_PAUSE);
-      });
-      this.action = localAction;
-      await localAction;
-    }
-
-    if (this.isError) {
-      return { error: ERRORS.POTEN_ERROR };
-    }
-
-    localAction = new Promise((resolve, reject, onCancel) => {
-      onCancel(onCancelFn);
-      this.readPositionCb(resolve);
-    });
-    this.action = localAction;
-    let posCur = await localAction;
-
-    if (!isFinite(posCur)) {
-      return { error: ERRORS.POTEN_ERROR };
-    }
-
-    let directionCur;
-    let directionChanged = false;
-    const distanceToMin = Math.abs(this[MOTOR_FIELDS.MIN_POS] - posCur);
-    const distanceToMax = Math.abs(this[MOTOR_FIELDS.MAX_POS] - posCur);
-    if (distanceToMin > distanceToMax) {
-      directionCur = MOVE_DIRECTION.back;
-    } else {
-      directionCur = MOVE_DIRECTION.forward;
-    }
-
-    const posData = [posCur]; // 65, MOVE_DIRECTION, 66, MOVE_DIRECTION, 67,...
-    const checkPosData = () => {
-      let behaviorСounter = 0;
-
-      for (let index = 0; index < posData.length; index++) {
-        const posPrevEl = posData[index - 2];
-        const directionEl = posData[index - 1];
-        const posEl = posData[index];
-
+    this.action = new Promise((resolve, reject, onCancel) => {
+      onCancel(this.stop.bind(this));
+      (async () => {
         if (
-          isFinite(posPrevEl) &&
-          isFinite(posEl) &&
-          MOVE_DIRECTION_ARRAY.includes(directionEl)
+          !isFinite(this[MOTOR_FIELDS.MAX_POS]) ||
+          !isFinite(this[MOTOR_FIELDS.MIN_POS])
         ) {
-          switch (directionEl) {
-            case MOVE_DIRECTION.forward:
-              if (posEl > posPrevEl) {
-                behaviorСounter += 1;
-              } else if (posEl < posPrevEl) {
-                return { error: ERRORS.CALIBRATION_WRONG_DIRECTION };
-              }
-              break;
+          return resolve({ error: ERRORS.CALIBRATION_NO_DATA });
+        } else if (
+          Math.abs(this[MOTOR_FIELDS.MAX_POS] - this[MOTOR_FIELDS.MIN_POS]) <=
+          10
+        ) {
+          return resolve({ error: ERRORS.CALIBRATION_INVALID_EDGES });
+        }
 
-            case MOVE_DIRECTION.back:
-              if (posEl < posPrevEl) {
-                behaviorСounter += 1;
-              } else if (posEl > posPrevEl) {
-                return { error: ERRORS.CALIBRATION_WRONG_DIRECTION };
-              }
-              break;
-
-            default:
-              break;
+        let loadingTimer = LOADING_TIMER;
+        // TODO improve this part
+        while (!this.isReady && !this.isError) {
+          if (loadingTimer-- <= 0) {
+            return resolve({ error: ERRORS.LOADING_TIMER_EXPIRED });
           }
-        }
-      }
 
-      if (behaviorСounter >= CALIBRATION_MIN_POINTS) {
-        if (!directionChanged) {
-          directionCur =
-            directionCur === MOVE_DIRECTION.forward
-              ? MOVE_DIRECTION.back
-              : MOVE_DIRECTION.forward;
-          directionChanged = true;
-          behaviorСounter = 0;
+          console.log("loading...");
+
+          await sleep(LOADING_PAUSE);
+        }
+
+        if (this.isError) {
+          return resolve({ error: ERRORS.POTEN_ERROR });
+        }
+
+        let posCur = await this.readPosition();
+
+        if (!isFinite(posCur)) {
+          return resolve({ error: ERRORS.POTEN_ERROR });
+        }
+
+        let directionCur;
+        let directionChanged = false;
+        const distanceToMin = Math.abs(this[MOTOR_FIELDS.MIN_POS] - posCur);
+        const distanceToMax = Math.abs(this[MOTOR_FIELDS.MAX_POS] - posCur);
+        if (distanceToMin > distanceToMax) {
+          directionCur = MOVE_DIRECTION.back;
         } else {
-          return true;
+          directionCur = MOVE_DIRECTION.forward;
         }
-      }
 
-      if (posData.length > CALIBRATION_MAX_MOVES) {
-        return { error: ERRORS.CALIBRATION_TOO_LONG };
-      }
+        const posData = [posCur]; // 65, MOVE_DIRECTION, 66, MOVE_DIRECTION, 67,...
+        const checkPosData = () => {
+          let behaviorСounter = 0;
 
-      return TEST_IN_PROGRESS;
-    };
+          for (let index = 0; index < posData.length; index++) {
+            const posPrevEl = posData[index - 2];
+            const directionEl = posData[index - 1];
+            const posEl = posData[index];
 
-    while (checkPosData() === TEST_IN_PROGRESS) {
-      await this.DANGER_move(directionCur);
-      posData.push(directionCur);
+            if (
+              isFinite(posPrevEl) &&
+              isFinite(posEl) &&
+              MOVE_DIRECTION_ARRAY.includes(directionEl)
+            ) {
+              switch (directionEl) {
+                case MOVE_DIRECTION.forward:
+                  if (posEl > posPrevEl) {
+                    behaviorСounter += 1;
+                  } else if (posEl < posPrevEl) {
+                    return resolve({
+                      error: ERRORS.CALIBRATION_WRONG_DIRECTION,
+                    });
+                  }
+                  break;
 
-      localAction = new Promise((resolve, reject, onCancel) => {
-        onCancel(onCancelFn);
-        sleepCb(resolve, DELAY_FOR_READ);
-      });
-      this.action = localAction;
-      await localAction;
-      if (isCancelled()) {
-        return { error: ERRORS.PROMISE_CANCELLED };
-      }
+                case MOVE_DIRECTION.back:
+                  if (posEl < posPrevEl) {
+                    behaviorСounter += 1;
+                  } else if (posEl > posPrevEl) {
+                    return resolve({
+                      error: ERRORS.CALIBRATION_WRONG_DIRECTION,
+                    });
+                  }
+                  break;
 
-      localAction = new Promise((resolve, reject, onCancel) => {
-        onCancel(onCancelFn);
-        this.readPositionCb(resolve);
-      });
-      this.action = localAction;
-      posCur = await localAction;
-      if (isCancelled()) {
-        return { error: ERRORS.PROMISE_CANCELLED };
-      }
+                default:
+                  break;
+              }
+            }
+          }
 
-      posData.push(posCur);
-    }
+          if (behaviorСounter >= CALIBRATION_MIN_POINTS) {
+            if (!directionChanged) {
+              directionCur =
+                directionCur === MOVE_DIRECTION.forward
+                  ? MOVE_DIRECTION.back
+                  : MOVE_DIRECTION.forward;
+              directionChanged = true;
+              behaviorСounter = 0;
+            } else {
+              return resolve(true);
+            }
+          }
 
-    const testResult = checkPosData();
-    if (testResult !== true) {
-      return {
-        ...testResult,
-        error: testResult?.error || ERRORS.CALIBRATION_UNKNOWN,
-      };
-    }
-    await this.setLevel(1);
+          if (posData.length > CALIBRATION_MAX_MOVES) {
+            return resolve({ error: ERRORS.CALIBRATION_TOO_LONG });
+          }
 
-    if (isCancelled()) {
-      return { error: ERRORS.PROMISE_CANCELLED };
-    }
+          return resolve(TEST_IN_PROGRESS);
+        };
 
-    for (let idx = 0; idx < CALIBRATION_ST_CYCLES; idx++) {
-      const toMaxEdgeRes = await this.setLevel(RESIST_LEVELS);
-      const { error: errorToMax, driveTime: driveTimeToMax } = toMaxEdgeRes;
+        while (checkPosData() === TEST_IN_PROGRESS) {
+          await this.DANGER_move(directionCur);
+          posData.push(directionCur);
 
-      if (isCancelled()) {
-        return { error: ERRORS.PROMISE_CANCELLED };
-      } else if (errorToMax) {
-        return toMaxEdgeRes;
-      }
+          await sleep(DELAY_FOR_READ);
 
-      const toMinEdgeRes = await this.setLevel(1);
-      const { error: errorToMin, driveTime: driveTimeToMin } = toMinEdgeRes;
+          posCur = await this.readPosition();
 
-      if (isCancelled()) {
-        return { error: ERRORS.PROMISE_CANCELLED };
-      } else if (errorToMin) {
-        return toMinEdgeRes;
-      }
+          posData.push(posCur);
+        }
 
-      const driveTimeSum = driveTimeToMax + driveTimeToMin;
-      const sleepRatio = round((driveTimeSum / 2) * 0.95);
-      this.updateField(MOTOR_FIELDS.SLEEP_RATIO, sleepRatio);
-    }
+        const testResult = checkPosData();
+        if (testResult !== true) {
+          return resolve({
+            ...testResult,
+            error: testResult?.error || ERRORS.CALIBRATION_UNKNOWN,
+          });
+        }
+        await this.setLevel(1, true);
 
-    return this[MOTOR_FIELDS.SLEEP_RATIO];
+        for (let idx = 0; idx < CALIBRATION_ST_CYCLES; idx++) {
+          const toMaxEdgeRes = await this.setLevel(MAX_RES_LEVEL, true);
+          const { error: errorToMax, driveTime: driveTimeToMax } = toMaxEdgeRes;
+
+          if (errorToMax) {
+            return resolve(toMaxEdgeRes);
+          }
+
+          const toMinEdgeRes = await this.setLevel(1, true);
+          const { error: errorToMin, driveTime: driveTimeToMin } = toMinEdgeRes;
+
+          if (errorToMin) {
+            return resolve(toMinEdgeRes);
+          }
+
+          const driveTimeSum = driveTimeToMax + driveTimeToMin;
+          const sleepRatio = round((driveTimeSum / 2) * 0.95);
+          this.updateField(MOTOR_FIELDS.SLEEP_RATIO, sleepRatio);
+        }
+
+        return resolve(this[MOTOR_FIELDS.SLEEP_RATIO]);
+      })();
+    });
+
+    return await this.action;
   }
 
-  async setLevel(level) {
-    this.actionCancel();
-
-    if (level < 1 || level > RESIST_LEVELS) {
-      return { error: ERRORS.INVALID_RESIST_LEVEL };
+  async setLevel(level, isCalibration) {
+    if (!isCalibration) {
+      this.actionCancel();
     }
 
-    const onCancelFn = () => this.stop();
-    let localAction;
-    const isCancelled = getIsCancelledFn(localAction);
-    let driveTime = 0;
-    let loadingTimer = LOADING_TIMER;
-    // TODO improve this part
-    while (!this.isReady && !this.isError) {
-      if (loadingTimer-- <= 0) {
-        return { error: ERRORS.LOADING_TIMER_EXPIRED };
-      }
-      if (isCancelled()) {
-        return { driveTime };
-      }
+    const action = new Promise((resolve, reject, onCancel) => {
+      onCancel(this.stop.bind(this));
+      (async () => {
+        if (level < 1 || level > MAX_RES_LEVEL) {
+          return resolve({ error: ERRORS.INVALID_RESIST_LEVEL });
+        }
+        this.lastLevel = level;
 
-      console.log("loading...");
+        let driveTime = 0;
+        let loadingTimer = LOADING_TIMER;
+        // TODO improve this part
+        while (!this.isReady && !this.isError) {
+          if (loadingTimer-- <= 0) {
+            return resolve({ error: ERRORS.LOADING_TIMER_EXPIRED });
+          }
 
-      localAction = new Promise((resolve, reject, onCancel) => {
-        onCancel(onCancelFn);
-        sleepCb(resolve, LOADING_PAUSE);
-      });
-      this.action = localAction;
-      await localAction;
-    }
+          console.log("loading...");
 
-    if (this.isError) {
-      return { error: ERRORS.POTEN_ERROR };
-    }
+          await sleep(LOADING_PAUSE);
+        }
 
-    const interval =
-      Math.abs(this[MOTOR_FIELDS.MAX_POS] - this[MOTOR_FIELDS.MIN_POS]) /
-      (RESIST_LEVELS - 1);
-    let posTarget;
+        if (this.isError) {
+          return resolve({ error: ERRORS.POTEN_ERROR });
+        }
 
-    if (
-      !isFinite(this[MOTOR_FIELDS.MAX_POS]) ||
-      !isFinite(this[MOTOR_FIELDS.MIN_POS])
-    ) {
-      return { error: ERRORS.CALIBRATION_NO_DATA };
-    } else if (
-      Math.abs(this[MOTOR_FIELDS.MAX_POS] - this[MOTOR_FIELDS.MIN_POS]) <= 10
-    ) {
-      return { error: ERRORS.CALIBRATION_INVALID_EDGES };
-    } else if (this[MOTOR_FIELDS.MAX_POS] > this[MOTOR_FIELDS.MIN_POS]) {
-      posTarget = this[MOTOR_FIELDS.MIN_POS] + interval * (level - 1);
-    } else if (this[MOTOR_FIELDS.MAX_POS] < this[MOTOR_FIELDS.MIN_POS]) {
-      posTarget = this[MOTOR_FIELDS.MIN_POS] - interval * (level - 1);
-    } else {
-      return { error: ERRORS.CALIBRATION_INVALID_EDGES };
-    }
+        const interval =
+          Math.abs(this[MOTOR_FIELDS.MAX_POS] - this[MOTOR_FIELDS.MIN_POS]) /
+          (MAX_RES_LEVEL - 1);
+        let posTarget;
 
-    if (isCancelled()) {
-      return { driveTime };
-    }
-    localAction = new Promise((resolve, reject, onCancel) => {
-      onCancel(onCancelFn);
-      this.readPositionCb(resolve);
+        if (
+          !isFinite(this[MOTOR_FIELDS.MAX_POS]) ||
+          !isFinite(this[MOTOR_FIELDS.MIN_POS])
+        ) {
+          return resolve({ error: ERRORS.CALIBRATION_NO_DATA });
+        } else if (
+          Math.abs(this[MOTOR_FIELDS.MAX_POS] - this[MOTOR_FIELDS.MIN_POS]) <=
+          10
+        ) {
+          return resolve({ error: ERRORS.CALIBRATION_INVALID_EDGES });
+        } else if (this[MOTOR_FIELDS.MAX_POS] > this[MOTOR_FIELDS.MIN_POS]) {
+          posTarget = this[MOTOR_FIELDS.MIN_POS] + interval * (level - 1);
+        } else if (this[MOTOR_FIELDS.MAX_POS] < this[MOTOR_FIELDS.MIN_POS]) {
+          posTarget = this[MOTOR_FIELDS.MIN_POS] - interval * (level - 1);
+        } else {
+          return resolve({ error: ERRORS.CALIBRATION_INVALID_EDGES });
+        }
+
+        let posCur = await this.readPosition();
+        let firstTime = false;
+
+        if (this[MOTOR_FIELDS.SLEEP_RATIO]) {
+          firstTime =
+            (Math.abs(posCur - posTarget) / interval) *
+            (this[MOTOR_FIELDS.SLEEP_RATIO] / (MAX_RES_LEVEL - 1));
+        }
+
+        // TODO improve checking position
+        // TODO add max counter for stop cycle, i.e. 100 max moves
+        while (Math.abs(posCur - posTarget) > 1) {
+          if (posCur < posTarget) {
+            this.move(MOVE_DIRECTION.forward);
+          } else {
+            this.move(MOVE_DIRECTION.back);
+          }
+
+          if (firstTime) {
+            await sleep(firstTime);
+            driveTime =
+              posCur - posTarget
+                ? driveTime + firstTime
+                : driveTime - firstTime;
+
+            firstTime = false;
+          } else {
+            await sleep(DELAY);
+            driveTime =
+              posCur - posTarget ? driveTime + DELAY : driveTime - DELAY;
+          }
+
+          this.stop();
+
+          await sleep(DELAY_FOR_READ);
+
+          posCur = await this.readPosition();
+        }
+
+        return resolve({ driveTime });
+      })();
     });
-    this.action = localAction;
 
-    let posCur = await localAction;
-    let firstTime = false;
-
-    if (this[MOTOR_FIELDS.SLEEP_RATIO]) {
-      firstTime =
-        (Math.abs(posCur - posTarget) / interval) *
-        (this[MOTOR_FIELDS.SLEEP_RATIO] / (RESIST_LEVELS - 1));
+    if (!isCalibration) {
+      this.action = action;
     }
 
-    // TODO improve checking position
-    // TODO add max counter for stop cycle, i.e. 100 max moves
-    while (Math.abs(posCur - posTarget) > 1) {
-      if (isCancelled()) {
-        return { driveTime };
-      }
-
-      if (posCur < posTarget) {
-        this.move(MOVE_DIRECTION.forward);
-      } else {
-        this.move(MOVE_DIRECTION.back);
-      }
-
-      if (firstTime) {
-        localAction = new Promise((resolve, reject, onCancel) => {
-          onCancel(onCancelFn);
-          sleepCb(resolve, firstTime);
-        });
-        this.action = localAction;
-        driveTime =
-          posCur - posTarget ? driveTime + firstTime : driveTime - firstTime;
-
-        firstTime = false;
-      } else {
-        localAction = new Promise((resolve, reject, onCancel) => {
-          onCancel(onCancelFn);
-          sleepCb(resolve, DELAY);
-        });
-        this.action = localAction;
-        driveTime = posCur - posTarget ? driveTime + DELAY : driveTime - DELAY;
-      }
-
-      await localAction;
-
-      this.stop();
-
-      if (isCancelled()) {
-        return { driveTime };
-      }
-      localAction = new Promise((resolve, reject, onCancel) => {
-        onCancel(onCancelFn);
-        sleepCb(resolve, DELAY_FOR_READ);
-      });
-      this.action = localAction;
-      await localAction;
-
-      if (isCancelled()) {
-        return { driveTime };
-      }
-      localAction = new Promise((resolve, reject, onCancel) => {
-        onCancel(onCancelFn);
-        this.readPositionCb(resolve);
-      });
-      this.action = localAction;
-
-      posCur = await localAction;
-    }
-
-    return { driveTime };
+    return await action;
   }
 }
 

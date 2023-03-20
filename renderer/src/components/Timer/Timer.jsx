@@ -20,12 +20,12 @@ const { RUN } = RUNNINIG_STATUS;
 
 const getTPath = (...args) => getTranslationPath(WORKOUT_TRK, ...args);
 
-const TIMER_TYPES = { REMAIN: "REMAIN", ELAPSE: "ELAPSE" };
+export const TIMER_TYPES = { REMAIN: "REMAIN", ELAPSE: "ELAPSE" };
 
 const Timer = props => {
-  const { expiryTimestamp } = props;
+  const { type: propsType, disabled, expiryTimestamp } = props;
   const runningStatus = useSelector(getRunningStatus);
-  const [type, setType] = useState(TIMER_TYPES.REMAIN);
+  const [type, setType] = useState(propsType);
   const { t } = useTranslation();
   const {
     seconds: seconds_E,
@@ -81,6 +81,10 @@ const Timer = props => {
   ]);
 
   const onClick = () => {
+    if (disabled) {
+      return;
+    }
+
     switch (type) {
       case TIMER_TYPES.REMAIN:
         setType(TIMER_TYPES.ELAPSE);
@@ -96,7 +100,7 @@ const Timer = props => {
   };
 
   return (
-    <Item className={styles.timer} onClick={onClick}>
+    <Item className={styles.timer} onClick={!disabled && onClick}>
       <p>
         {t(getTPath(type === TIMER_TYPES.REMAIN ? remaining_T : elapsed_T))}
       </p>
@@ -112,6 +116,15 @@ const Timer = props => {
   );
 };
 
-Timer.propTypes = { expiryTimestamp: PropTypes.instanceOf(Date) };
+Timer.propTypes = {
+  type: PropTypes.oneOf(Object.values(TIMER_TYPES)),
+  disabled: PropTypes.bool,
+  expiryTimestamp: PropTypes.instanceOf(Date),
+};
+
+Timer.defaultProps = {
+  type: TIMER_TYPES.REMAIN,
+  disabled: false,
+};
 
 export default Timer;

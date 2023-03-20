@@ -51,6 +51,14 @@ const ipcApi = createApi({
         return { data };
       },
     }),
+    getMotorLevel: builder.query({
+      queryFn: async () => {
+        const data = await window.electron.ipcRenderer.invoke(
+          EVENTS.GET_MOTOR_LEVEL,
+        );
+        return { data };
+      },
+    }),
   }),
 });
 
@@ -123,5 +131,6 @@ export const {
   useGetSettingsQuery,
   useGetBootQuery,
   useGetPotentiometerQuery,
+  useGetMotorLevelQuery,
 } = ipcApi;
 export default ipcApi;

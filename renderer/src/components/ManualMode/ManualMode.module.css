@@ -1,4 +1,23 @@
-.timer {
+.paddingReduced {
+  position: relative;
+  padding: var(--small-gap);
+}
+
+.tinyPadding {
+  padding: var(--tiny-gap);
+}
+
+.icon {
+  width: 100%;
+  height: 100%;
+}
+
+.icon svg {
+  width: 100%;
+  height: 100%;
+}
+
+.currentLevel {
   display: flex;
   flex-direction: column;
   flex-wrap: nowrap;
@@ -8,11 +27,11 @@
   text-align: center;
 }
 
-.timer p {
+.currentLevel p {
   margin: 0;
 }
 
-.timer p b {
+.currentLevel p b {
   font-size: calc(var(--available-height) / 10);
   margin: 0;
 }

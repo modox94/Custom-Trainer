@@ -1,7 +1,8 @@
 const mcpadc = require("mcp-spi-adc");
+const { Promise } = require("../utils/utils");
 
 class PotentiometerSensor {
-  constructor(options) {
+  constructor() {
     this.condition = { isReady: false, error: false };
     this.sensor = mcpadc.open(5, err => {
       if (err) {
@@ -11,29 +12,24 @@ class PotentiometerSensor {
         this.condition.isReady = true;
       }
     });
+    this.read = Promise.promisify(this.sensor.read);
   }
 
   async readPosition() {
-    return await new Promise(resolve => {
-      if (this.condition.isReady) {
-        this.sensor.read((err, reading) => {
-          resolve(reading?.value * 100);
-        });
-      } else {
-        resolve(NaN);
-      }
-    });
-  }
+    if (!this.condition.isReady) {
+      return NaN;
+    }
 
-  readPositionCb(cb) {
-    if (this.condition.isReady) {
-      this.sensor.read((err, reading) => {
-        cb(reading?.value * 100);
-      });
-    } else {
-      cb(NaN);
+    try {
+      const { value } = (await this.read()) || {};
+      return (value || 0) * 100;
+    } catch (error) {
+      console.log("poten error", error);
+      return NaN;
     }
   }
+
+  // TODO создать обсервер с интервалом 15-50 мс на рекурсивном таймауте, промифицировать чтение
 
   off() {
     try {
