@@ -1,5 +1,4 @@
 const mcpadc = require("mcp-spi-adc");
-const { Promise } = require("../utils/utils");
 
 class PotentiometerSensor {
   constructor() {
@@ -12,20 +11,27 @@ class PotentiometerSensor {
         this.condition.isReady = true;
       }
     });
-    this.read = Promise.promisify(this.sensor.read);
   }
 
   async readPosition() {
-    if (!this.condition.isReady) {
-      return NaN;
-    }
+    return await new Promise(resolve => {
+      if (this.condition.isReady) {
+        this.sensor.read((err, reading) => {
+          resolve(reading?.value * 100);
+        });
+      } else {
+        resolve(NaN);
+      }
+    });
+  }
 
-    try {
-      const { value } = (await this.read()) || {};
-      return (value || 0) * 100;
-    } catch (error) {
-      console.log("poten error", error);
-      return NaN;
+  readPositionCb(cb) {
+    if (this.condition.isReady) {
+      this.sensor.read((err, reading) => {
+        cb(reading?.value * 100);
+      });
+    } else {
+      cb(NaN);
     }
   }
 
