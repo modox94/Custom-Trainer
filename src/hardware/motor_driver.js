@@ -60,7 +60,6 @@ class MotorDriver {
       null,
     );
 
-    this.lastLevel = null;
     this.action = null;
     this.potentiometer = new PotentiometerSensor();
 
@@ -134,15 +133,16 @@ class MotorDriver {
   }
 
   stop() {
-    this.actionCancel();
     this.in1.writeSync(0);
     this.in2.writeSync(0);
   }
 
-  async DANGER_move(direction) {
-    this.actionCancel();
+  async DANGER_move(direction, isCalibration) {
+    if (!isCalibration) {
+      this.actionCancel();
+    }
 
-    this.action = new Promise((resolve, reject, onCancel) => {
+    const action = new Promise((resolve, reject, onCancel) => {
       onCancel(this.stop.bind(this));
       (async () => {
         if (!MOVE_DIRECTION_ARRAY.includes(direction)) {
@@ -162,7 +162,11 @@ class MotorDriver {
       })();
     });
 
-    return await this.action;
+    if (!isCalibration) {
+      this.action = action;
+    }
+
+    return await action;
   }
 
   get isReady() {
@@ -179,10 +183,6 @@ class MotorDriver {
   }
 
   async getMotorLevel() {
-    if (isFinite(this.lastLevel)) {
-      return this.lastLevel;
-    }
-
     if (
       !isFinite(this[MOTOR_FIELDS.MAX_POS]) ||
       !isFinite(this[MOTOR_FIELDS.MIN_POS])
@@ -313,7 +313,7 @@ class MotorDriver {
         };
 
         while (checkPosData() === TEST_IN_PROGRESS) {
-          await this.DANGER_move(directionCur);
+          await this.DANGER_move(directionCur, true);
           posData.push(directionCur);
 
           await sleep(DELAY_FOR_READ);
@@ -370,7 +370,6 @@ class MotorDriver {
         if (level < 1 || level > MAX_RES_LEVEL) {
           return resolve({ error: ERRORS.INVALID_RESIST_LEVEL });
         }
-        this.lastLevel = level;
 
         let driveTime = 0;
         let loadingTimer = LOADING_TIMER;
@@ -388,6 +387,8 @@ class MotorDriver {
         if (this.isError) {
           return resolve({ error: ERRORS.POTEN_ERROR });
         }
+
+        this.stop();
 
         const interval =
           Math.abs(this[MOTOR_FIELDS.MAX_POS] - this[MOTOR_FIELDS.MIN_POS]) /
