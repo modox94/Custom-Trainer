@@ -100,7 +100,7 @@ const Timer = props => {
   };
 
   return (
-    <Item className={styles.timer} onClick={!disabled && onClick}>
+    <Item className={styles.timer} onClick={disabled ? undefined : onClick}>
       <p>
         {t(getTPath(type === TIMER_TYPES.REMAIN ? remaining_T : elapsed_T))}
       </p>
@@ -125,7 +125,7 @@ Timer.propTypes = {
 Timer.defaultProps = {
   type: TIMER_TYPES.REMAIN,
   disabled: false,
-  expiryTimestamp: Date.now(),
+  expiryTimestamp: new Date(),
 };
 
 export default Timer;
