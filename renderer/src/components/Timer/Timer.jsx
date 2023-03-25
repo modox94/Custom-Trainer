@@ -125,6 +125,7 @@ Timer.propTypes = {
 Timer.defaultProps = {
   type: TIMER_TYPES.REMAIN,
   disabled: false,
+  expiryTimestamp: Date.now(),
 };
 
 export default Timer;

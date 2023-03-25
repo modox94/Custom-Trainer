@@ -17,6 +17,10 @@
   height: 100%;
 }
 
+.icon.inActive svg {
+  color: var(--gray3);
+}
+
 .currentLevel {
   display: flex;
   flex-direction: column;

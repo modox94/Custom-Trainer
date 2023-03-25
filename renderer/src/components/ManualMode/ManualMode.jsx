@@ -28,7 +28,9 @@ const { resistanceBut } = TRANSLATION_KEYS[TIPS_TRK];
 
 const ManualMode = props => {
   const { t } = useTranslation();
-  const { data: initialLevel } = useGetMotorLevelQuery();
+  const { data: initialLevel } = useGetMotorLevelQuery(undefined, {
+    refetchOnMountOrArgChange: true,
+  });
   const [currentLevel, setCurrentLevel] = useState();
 
   useEffect(() => {
@@ -48,16 +50,16 @@ const ManualMode = props => {
   }, [initialLevel]);
 
   const increaseMotorLevel = () => {
-    if (currentLevel > 1) {
-      const newLevel = currentLevel - 1;
+    if (currentLevel < MAX_RES_LEVEL) {
+      const newLevel = currentLevel + 1;
       setCurrentLevel(newLevel);
       setMotorLevel(newLevel);
     }
   };
 
   const decreaseMotorLevel = () => {
-    if (currentLevel < MAX_RES_LEVEL) {
-      const newLevel = currentLevel + 1;
+    if (currentLevel > 1) {
+      const newLevel = currentLevel - 1;
       setCurrentLevel(newLevel);
       setMotorLevel(newLevel);
     }
@@ -78,10 +80,14 @@ const ManualMode = props => {
           className={clsx(styles.tinyPadding, {
             [Classes.SKELETON]: !isFinite(currentLevel),
           })}
-          onClick={decreaseMotorLevel}
-          interactive={currentLevel > 1}
+          onClick={currentLevel > 1 ? decreaseMotorLevel : undefined}
         >
-          <Icon className={styles.icon} icon={IconNames.CARET_DOWN} />
+          <Icon
+            className={clsx(styles.icon, {
+              [styles.inActive]: !(currentLevel > 1),
+            })}
+            icon={IconNames.CARET_DOWN}
+          />
         </Item>
         <Item className={styles.currentLevel}>
           <p>{t(getTranslationPath(TIPS_TRK, resistanceBut))}</p>
@@ -93,10 +99,16 @@ const ManualMode = props => {
           className={clsx(styles.tinyPadding, {
             [Classes.SKELETON]: !isFinite(currentLevel),
           })}
-          onClick={increaseMotorLevel}
-          interactive={currentLevel < MAX_RES_LEVEL}
+          onClick={
+            currentLevel < MAX_RES_LEVEL ? increaseMotorLevel : undefined
+          }
         >
-          <Icon className={styles.icon} icon={IconNames.CARET_UP} />
+          <Icon
+            className={clsx(styles.icon, {
+              [styles.inActive]: !(currentLevel < MAX_RES_LEVEL),
+            })}
+            icon={IconNames.CARET_UP}
+          />
         </Item>
       </Container>
     </>
