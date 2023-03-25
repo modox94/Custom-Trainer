@@ -49,13 +49,17 @@ const ManualMode = props => {
 
   const increaseMotorLevel = () => {
     if (currentLevel > 1) {
-      setMotorLevel(currentLevel - 1);
+      const newLevel = currentLevel - 1;
+      setCurrentLevel(newLevel);
+      setMotorLevel(newLevel);
     }
   };
 
   const decreaseMotorLevel = () => {
     if (currentLevel < MAX_RES_LEVEL) {
-      setMotorLevel(currentLevel + 1);
+      const newLevel = currentLevel + 1;
+      setCurrentLevel(newLevel);
+      setMotorLevel(newLevel);
     }
   };
 
