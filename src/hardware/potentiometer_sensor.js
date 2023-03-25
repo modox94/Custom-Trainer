@@ -21,16 +21,6 @@ class PotentiometerSensor {
     return value * 100;
   }
 
-  readPositionCb(cb) {
-    if (this.condition.isReady) {
-      this.sensor.read((err, reading) => {
-        cb(reading?.value * 100);
-      });
-    } else {
-      cb(NaN);
-    }
-  }
-
   // TODO создать обсервер с интервалом 15-50 мс на рекурсивном таймауте, промифицировать чтение
 
   off() {
