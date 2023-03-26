@@ -1,4 +1,10 @@
-const { app, BrowserWindow, ipcMain, powerSaveBlocker } = require("electron");
+const {
+  app,
+  BrowserWindow,
+  ipcMain,
+  Menu,
+  powerSaveBlocker,
+} = require("electron");
 const { isFunction, get, noop } = require("lodash");
 const path = require("node:path");
 const sudo = require("sudo-prompt");
@@ -21,6 +27,36 @@ const {
   commentConfigOpt,
   convertConfigToObj,
 } = require("./src/utils/utils");
+
+const template = [
+  {
+    role: "fileMenu",
+  },
+  {
+    label: "View",
+    submenu: [
+      { role: "reload" },
+      { type: "separator" },
+      { role: "resetZoom" },
+      { type: "separator" },
+      { role: "togglefullscreen" },
+    ],
+  },
+  {
+    role: "help",
+    submenu: [
+      {
+        label: "GitHub",
+        click: async () => {
+          const { shell } = require("electron");
+          await shell.openExternal("https://github.com/modox94/Custom-Trainer");
+        },
+      },
+    ],
+  },
+];
+const menu = Menu.buildFromTemplate(template);
+Menu.setApplicationMenu(menu);
 
 const store = new Store();
 const motor = new MotorDriver(
