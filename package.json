@@ -45,9 +45,12 @@
           "name": "@electron-forge/maker-deb",
           "config": {
             "options": {
+              "categories": "Utility",
+              "description": "Application for using elliptical or bike trainer with RPI.",
+              "productName": "Custom Trainer",
+              "homepage": "https://github.com/modox94/Custom-Trainer",
               "maintainer": "Nikita Novoselov",
-              "homepage": "https://github.com/modox94",
-              "icon":"./other/icon.png"
+              "icon": "./other/icon.png"
             }
           }
         }
