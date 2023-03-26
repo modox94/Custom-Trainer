@@ -46,7 +46,8 @@
           "config": {
             "options": {
               "maintainer": "Nikita Novoselov",
-              "homepage": "https://github.com/modox94"
+              "homepage": "https://github.com/modox94",
+              "icon":"./other/icon.png"
             }
           }
         }
