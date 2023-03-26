@@ -80,8 +80,10 @@ export const motorCalibration = async () => {
   return await window.electron.ipcRenderer.invoke(EVENTS.MOTOR_CALIBRATION);
 };
 
-export const setMotorLevel = motorLevel =>
+export const setMotorLevel = motorLevel => {
+  console.log("setMotorLevel", motorLevel); // TODO remove
   window.electron.ipcRenderer.send(EVENTS.SET_MOTOR_LEVEL, motorLevel);
+};
 
 export const stopMotor = () =>
   window.electron.ipcRenderer.send(EVENTS.STOP_MOTOR);

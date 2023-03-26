@@ -184,6 +184,8 @@ ipcMain.handle(EVENTS.CHECK_PROGRAM_TITLE, (event, value) => {
 ipcMain.on(EVENTS.SET_FULLSCREEN, () => {
   const isFullScreen = win.isFullScreen();
   win.setFullScreen(!isFullScreen);
+
+  win.webContents.toggleDevTools(); // TODO remove
 });
 
 ipcMain.handle(EVENTS.GET_POTENTIOMETER, async () => {
