@@ -1,5 +1,5 @@
 const Promise = require("bluebird");
-const { isString, isUndefined } = require("lodash");
+const { isString, isUndefined, round } = require("lodash");
 const {
   BOOT_CONFIG_OPT,
   ERRORS,
@@ -90,3 +90,5 @@ exports.commentConfigOpt = (configStr, optKey) => {
 
   return newConfStr;
 };
+
+exports.log = (...args) => console.log(round(Date.now() / 1000), ...args);

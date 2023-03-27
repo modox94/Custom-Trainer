@@ -26,6 +26,7 @@ const {
   Promise,
   commentConfigOpt,
   convertConfigToObj,
+  log,
 } = require("./src/utils/utils");
 
 const template = [
@@ -263,13 +264,16 @@ ipcMain.handle(EVENTS.GET_MOTOR_LEVEL, async () => {
 });
 
 ipcMain.on(EVENTS.SET_MOTOR_LEVEL, async (event, motorLevel) => {
-  win.webContents.send(EVENTS.CONSOLE_LOG, "back setMotorLevel", motorLevel);
+  // win.webContents.send(EVENTS.CONSOLE_LOG, "back setMotorLevel", motorLevel);
+  log("main setlevel start");
 
   try {
     const res = await motor.setLevel(motorLevel);
-    win.webContents.send(EVENTS.CONSOLE_LOG, "back setMotorLevel res", res);
+    // win.webContents.send(EVENTS.CONSOLE_LOG, "back setMotorLevel res", res);
+    log("main setlevel res", res);
   } catch (error) {
-    win.webContents.send(EVENTS.CONSOLE_LOG, "back setMotorLevel error", error);
+    // win.webContents.send(EVENTS.CONSOLE_LOG, "back setMotorLevel error", error);
+    log("main setlevel error", error);
   }
 });
 

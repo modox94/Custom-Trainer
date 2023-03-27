@@ -13,7 +13,7 @@ const {
   PHYSICAL_TO_GPIO,
   TEST_IN_PROGRESS,
 } = require("../constants/constants");
-const { Promise, sleep } = require("../utils/utils");
+const { Promise, sleep, log } = require("../utils/utils");
 const { PotentiometerSensor } = require("./potentiometer_sensor");
 
 const MOVE_DIRECTION_ARRAY = Object.values(MOVE_DIRECTION);
@@ -360,13 +360,13 @@ class MotorDriver {
   }
 
   async setLevel(level, isCalibration) {
-    console.log("setLevel start", level, isCalibration);
+    log("setLevel start", level, isCalibration);
     if (!isCalibration) {
       this.actionCancel();
     }
 
     const action = new Promise((resolve, reject, onCancel) => {
-      console.log("setLevel start promise");
+      log("setLevel start promise");
       onCancel(this.stop.bind(this));
       (async () => {
         if (level < 1 || level > MAX_RES_LEVEL) {
@@ -377,12 +377,12 @@ class MotorDriver {
         let loadingTimer = LOADING_TIMER;
         // TODO improve this part
         while (!this.isReady && !this.isError) {
-          console.log("setLevel await cycle");
+          log("setLevel await cycle");
           if (loadingTimer-- <= 0) {
             return resolve({ error: ERRORS.LOADING_TIMER_EXPIRED });
           }
 
-          console.log("loading...");
+          log("loading...");
 
           await sleep(LOADING_PAUSE);
         }
@@ -391,9 +391,9 @@ class MotorDriver {
           return resolve({ error: ERRORS.POTEN_ERROR });
         }
 
-        console.log("setLevel before stop", Date.now());
+        log("setLevel before stop");
         this.stop();
-        console.log("setLevel after stop", Date.now());
+        log("setLevel after stop");
 
         const interval =
           Math.abs(this[MOTOR_FIELDS.MAX_POS] - this[MOTOR_FIELDS.MIN_POS]) /
@@ -418,9 +418,9 @@ class MotorDriver {
           return resolve({ error: ERRORS.CALIBRATION_INVALID_EDGES });
         }
 
-        console.log("setLevel read pos bef", Date.now());
+        log("setLevel read pos bef");
         let posCur = await this.readPosition();
-        console.log("setLevel read pos aft", Date.now());
+        log("setLevel read pos aft");
         let firstTime = false;
 
         if (this[MOTOR_FIELDS.SLEEP_RATIO]) {
@@ -432,7 +432,7 @@ class MotorDriver {
         // TODO improve checking position
         // TODO add max counter for stop cycle, i.e. 100 max moves
         while (Math.abs(posCur - posTarget) > 1) {
-          console.log("setLevel move cycle");
+          log("setLevel move cycle st");
           if (posCur < posTarget) {
             this.move(MOVE_DIRECTION.forward);
           } else {
@@ -453,12 +453,12 @@ class MotorDriver {
               posCur - posTarget ? driveTime + DELAY : driveTime - DELAY;
           }
 
-          console.log("setLevel stop again + delay + read");
           this.stop();
 
           await sleep(DELAY_FOR_READ);
 
           posCur = await this.readPosition();
+          log("setLevel move cycle fi");
         }
 
         return resolve({ driveTime });
