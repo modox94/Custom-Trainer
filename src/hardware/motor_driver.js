@@ -1,4 +1,4 @@
-const { get, isFinite, isFunction, noop, round } = require("lodash");
+const { get, isFinite, isFunction, noop, round, uniqueId } = require("lodash");
 const { Gpio } = require("onoff");
 const {
   CALIBRATION_MAX_MOVES,
@@ -13,7 +13,7 @@ const {
   PHYSICAL_TO_GPIO,
   TEST_IN_PROGRESS,
 } = require("../constants/constants");
-const { Promise, sleep, log } = require("../utils/utils");
+const { Promise, sleep, log: logOrig } = require("../utils/utils");
 const { PotentiometerSensor } = require("./potentiometer_sensor");
 
 const MOVE_DIRECTION_ARRAY = Object.values(MOVE_DIRECTION);
@@ -360,6 +360,8 @@ class MotorDriver {
   }
 
   async setLevel(level, isCalibration) {
+    const id = uniqueId();
+    const log = logOrig.bind(this, id);
     log("setLevel start", level, isCalibration);
     if (!isCalibration) {
       this.actionCancel();
@@ -367,7 +369,11 @@ class MotorDriver {
 
     const action = new Promise((resolve, reject, onCancel) => {
       log("setLevel start promise");
-      onCancel(this.stop.bind(this));
+      onCancel(() => {
+        log("cancel prom");
+
+        this.stop();
+      });
       (async () => {
         if (level < 1 || level > MAX_RES_LEVEL) {
           return resolve({ error: ERRORS.INVALID_RESIST_LEVEL });
