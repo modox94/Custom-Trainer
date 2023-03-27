@@ -451,6 +451,7 @@ class MotorDriver {
         this.move(MOVE_DIRECTION.back);
       }
 
+      log("setLevel move cycle 1");
       if (firstTime) {
         await sleep(firstTime);
         driveTime =
@@ -462,9 +463,15 @@ class MotorDriver {
         driveTime = posCur - posTarget ? driveTime + DELAY : driveTime - DELAY;
       }
 
+      log("setLevel move cycle 2");
+
       this.stop();
 
+      log("setLevel move cycle 3");
+
       await sleep(DELAY_FOR_READ);
+
+      log("setLevel move cycle 4");
 
       posCur = await this.readPosition();
       log("setLevel move cycle fi");
