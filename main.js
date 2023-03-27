@@ -88,11 +88,11 @@ const createWindow = () => {
     },
   });
 
-  if (process.env.ELECTRON_START_URL) {
-    win.loadURL(process.env.ELECTRON_START_URL);
-  } else {
-    win.loadFile("./renderer/build/index.html");
-  }
+  // if (process.env.ELECTRON_START_URL) {
+  // win.loadURL(process.env.ELECTRON_START_URL);
+  // } else {
+  win.loadFile("./renderer/build/index.html");
+  // }
 };
 
 app.whenReady().then(() => {
