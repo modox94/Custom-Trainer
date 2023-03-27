@@ -1,3 +1,4 @@
+const { noop } = require("lodash");
 const mcpadc = require("mcp-spi-adc");
 const { Promise } = require("../utils/utils");
 
@@ -25,7 +26,7 @@ class PotentiometerSensor {
 
   off() {
     try {
-      this.sensor.close();
+      this.sensor.close(noop);
     } catch (error) {
       console.log("sensor.close error", error);
     }

@@ -105,6 +105,8 @@ app.whenReady().then(() => {
 });
 
 const onQuit = () => {
+  console.log("!!!onQuit!!!");
+
   try {
     motor.off();
   } catch (error) {
