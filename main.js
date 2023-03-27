@@ -262,8 +262,15 @@ ipcMain.handle(EVENTS.GET_MOTOR_LEVEL, async () => {
   return await motor.getMotorLevel();
 });
 
-ipcMain.on(EVENTS.SET_MOTOR_LEVEL, (event, motorLevel) => {
-  motor.setLevel(motorLevel);
+ipcMain.on(EVENTS.SET_MOTOR_LEVEL, async (event, motorLevel) => {
+  win.webContents.send(EVENTS.CONSOLE_LOG, "back setMotorLevel", motorLevel);
+
+  try {
+    const res = await motor.setLevel(motorLevel);
+    win.webContents.send(EVENTS.CONSOLE_LOG, "back setMotorLevel res", res);
+  } catch (error) {
+    win.webContents.send(EVENTS.CONSOLE_LOG, "back setMotorLevel error", error);
+  }
 });
 
 ipcMain.on(EVENTS.STOP_MOTOR, () => {
@@ -311,3 +318,5 @@ ipcMain.on(EVENTS.DELETE_PROGRAM, async (event, filename) =>
 );
 
 ipcMain.on(EVENTS.APP_QUIT, onQuit);
+
+exports.win = win;

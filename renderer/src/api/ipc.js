@@ -136,3 +136,7 @@ export const {
   useGetMotorLevelQuery,
 } = ipcApi;
 export default ipcApi;
+
+window.electron.ipcRenderer.on(EVENTS.CONSOLE_LOG, (...args) =>
+  console.log(...args),
+);
