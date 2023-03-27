@@ -78,14 +78,18 @@ class MotorDriver {
   }
 
   actionCancel() {
-    if (
-      isFunction(this.action?.isFulfilled) &&
-      !this.action.isFulfilled() &&
-      isFunction(this.action?.cancel)
-    ) {
-      this.action.cancel();
-      this.action = null;
+    if (!this.action?.signal?.aborted && isFunction(this.action?.abort)) {
+      this.action.abort();
     }
+
+    // if (
+    //   isFunction(this.action?.isFulfilled) &&
+    //   !this.action.isFulfilled() &&
+    //   isFunction(this.action?.cancel)
+    // ) {
+    //   this.action.cancel();
+    //   this.action = null;
+    // }
   }
 
   async off() {
@@ -362,120 +366,111 @@ class MotorDriver {
   async setLevel(level, isCalibration) {
     const id = uniqueId();
     const log = logOrig.bind(this, id);
+
     log("setLevel start", level, isCalibration);
+
+    const ac = new AbortController();
+
     if (!isCalibration) {
       this.actionCancel();
+      this.action = ac;
     }
 
-    const action = new Promise((resolve, reject, onCancel) => {
-      log("setLevel start promise");
-      onCancel(() => {
-        log("cancel prom");
+    ac.signal.onabort = () => {
+      log("cancel prom");
 
-        this.stop();
-      });
-      (async () => {
-        if (level < 1 || level > MAX_RES_LEVEL) {
-          return resolve({ error: ERRORS.INVALID_RESIST_LEVEL });
-        }
+      this.stop();
+    };
 
-        let driveTime = 0;
-        let loadingTimer = LOADING_TIMER;
-        // TODO improve this part
-        while (!this.isReady && !this.isError) {
-          log("setLevel await cycle");
-          if (loadingTimer-- <= 0) {
-            return resolve({ error: ERRORS.LOADING_TIMER_EXPIRED });
-          }
-
-          log("loading...");
-
-          await sleep(LOADING_PAUSE);
-        }
-
-        if (this.isError) {
-          return resolve({ error: ERRORS.POTEN_ERROR });
-        }
-
-        log("setLevel before stop");
-        this.stop();
-        log("setLevel after stop");
-
-        const interval =
-          Math.abs(this[MOTOR_FIELDS.MAX_POS] - this[MOTOR_FIELDS.MIN_POS]) /
-          (MAX_RES_LEVEL - 1);
-        let posTarget;
-
-        if (
-          !isFinite(this[MOTOR_FIELDS.MAX_POS]) ||
-          !isFinite(this[MOTOR_FIELDS.MIN_POS])
-        ) {
-          return resolve({ error: ERRORS.CALIBRATION_NO_DATA });
-        } else if (
-          Math.abs(this[MOTOR_FIELDS.MAX_POS] - this[MOTOR_FIELDS.MIN_POS]) <=
-          10
-        ) {
-          return resolve({ error: ERRORS.CALIBRATION_INVALID_EDGES });
-        } else if (this[MOTOR_FIELDS.MAX_POS] > this[MOTOR_FIELDS.MIN_POS]) {
-          posTarget = this[MOTOR_FIELDS.MIN_POS] + interval * (level - 1);
-        } else if (this[MOTOR_FIELDS.MAX_POS] < this[MOTOR_FIELDS.MIN_POS]) {
-          posTarget = this[MOTOR_FIELDS.MIN_POS] - interval * (level - 1);
-        } else {
-          return resolve({ error: ERRORS.CALIBRATION_INVALID_EDGES });
-        }
-
-        log("setLevel read pos bef");
-        let posCur = await this.readPosition();
-        log("setLevel read pos aft");
-        let firstTime = false;
-
-        if (this[MOTOR_FIELDS.SLEEP_RATIO]) {
-          firstTime =
-            (Math.abs(posCur - posTarget) / interval) *
-            (this[MOTOR_FIELDS.SLEEP_RATIO] / (MAX_RES_LEVEL - 1));
-        }
-
-        // TODO improve checking position
-        // TODO add max counter for stop cycle, i.e. 100 max moves
-        while (Math.abs(posCur - posTarget) > 1) {
-          log("setLevel move cycle st");
-          if (posCur < posTarget) {
-            this.move(MOVE_DIRECTION.forward);
-          } else {
-            this.move(MOVE_DIRECTION.back);
-          }
-
-          if (firstTime) {
-            await sleep(firstTime);
-            driveTime =
-              posCur - posTarget
-                ? driveTime + firstTime
-                : driveTime - firstTime;
-
-            firstTime = false;
-          } else {
-            await sleep(DELAY);
-            driveTime =
-              posCur - posTarget ? driveTime + DELAY : driveTime - DELAY;
-          }
-
-          this.stop();
-
-          await sleep(DELAY_FOR_READ);
-
-          posCur = await this.readPosition();
-          log("setLevel move cycle fi");
-        }
-
-        return resolve({ driveTime });
-      })();
-    });
-
-    if (!isCalibration) {
-      this.action = action;
+    if (level < 1 || level > MAX_RES_LEVEL) {
+      return { error: ERRORS.INVALID_RESIST_LEVEL };
     }
 
-    return await action;
+    let driveTime = 0;
+    let loadingTimer = LOADING_TIMER;
+    // TODO improve this part
+    while (!this.isReady && !this.isError) {
+      log("setLevel await cycle");
+      if (loadingTimer-- <= 0) {
+        return { error: ERRORS.LOADING_TIMER_EXPIRED };
+      }
+
+      log("loading...");
+
+      await sleep(LOADING_PAUSE);
+    }
+
+    if (this.isError) {
+      return { error: ERRORS.POTEN_ERROR };
+    }
+
+    log("setLevel before stop");
+    this.stop();
+    log("setLevel after stop");
+
+    const interval =
+      Math.abs(this[MOTOR_FIELDS.MAX_POS] - this[MOTOR_FIELDS.MIN_POS]) /
+      (MAX_RES_LEVEL - 1);
+    let posTarget;
+
+    if (
+      !isFinite(this[MOTOR_FIELDS.MAX_POS]) ||
+      !isFinite(this[MOTOR_FIELDS.MIN_POS])
+    ) {
+      return { error: ERRORS.CALIBRATION_NO_DATA };
+    } else if (
+      Math.abs(this[MOTOR_FIELDS.MAX_POS] - this[MOTOR_FIELDS.MIN_POS]) <= 10
+    ) {
+      return { error: ERRORS.CALIBRATION_INVALID_EDGES };
+    } else if (this[MOTOR_FIELDS.MAX_POS] > this[MOTOR_FIELDS.MIN_POS]) {
+      posTarget = this[MOTOR_FIELDS.MIN_POS] + interval * (level - 1);
+    } else if (this[MOTOR_FIELDS.MAX_POS] < this[MOTOR_FIELDS.MIN_POS]) {
+      posTarget = this[MOTOR_FIELDS.MIN_POS] - interval * (level - 1);
+    } else {
+      return { error: ERRORS.CALIBRATION_INVALID_EDGES };
+    }
+
+    log("setLevel read pos bef");
+    let posCur = await this.readPosition();
+    log("setLevel read pos aft");
+    let firstTime = false;
+
+    if (this[MOTOR_FIELDS.SLEEP_RATIO]) {
+      firstTime =
+        (Math.abs(posCur - posTarget) / interval) *
+        (this[MOTOR_FIELDS.SLEEP_RATIO] / (MAX_RES_LEVEL - 1));
+    }
+
+    // TODO improve checking position
+    // TODO add max counter for stop cycle, i.e. 100 max moves
+    while (!ac.signal?.aborted && Math.abs(posCur - posTarget) > 1) {
+      log("setLevel move cycle st");
+      if (posCur < posTarget) {
+        this.move(MOVE_DIRECTION.forward);
+      } else {
+        this.move(MOVE_DIRECTION.back);
+      }
+
+      if (firstTime) {
+        await sleep(firstTime);
+        driveTime =
+          posCur - posTarget ? driveTime + firstTime : driveTime - firstTime;
+
+        firstTime = false;
+      } else {
+        await sleep(DELAY);
+        driveTime = posCur - posTarget ? driveTime + DELAY : driveTime - DELAY;
+      }
+
+      this.stop();
+
+      await sleep(DELAY_FOR_READ);
+
+      posCur = await this.readPosition();
+      log("setLevel move cycle fi");
+    }
+
+    return { driveTime };
   }
 }
 

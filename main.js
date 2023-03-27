@@ -278,6 +278,7 @@ ipcMain.on(EVENTS.SET_MOTOR_LEVEL, async (event, motorLevel) => {
 });
 
 ipcMain.on(EVENTS.STOP_MOTOR, () => {
+  motor.actionCancel();
   motor.stop();
 });
 
