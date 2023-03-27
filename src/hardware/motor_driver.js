@@ -360,11 +360,13 @@ class MotorDriver {
   }
 
   async setLevel(level, isCalibration) {
+    console.log("setLevel start", level, isCalibration);
     if (!isCalibration) {
       this.actionCancel();
     }
 
     const action = new Promise((resolve, reject, onCancel) => {
+      console.log("setLevel start promise");
       onCancel(this.stop.bind(this));
       (async () => {
         if (level < 1 || level > MAX_RES_LEVEL) {
@@ -375,6 +377,7 @@ class MotorDriver {
         let loadingTimer = LOADING_TIMER;
         // TODO improve this part
         while (!this.isReady && !this.isError) {
+          console.log("setLevel await cycle");
           if (loadingTimer-- <= 0) {
             return resolve({ error: ERRORS.LOADING_TIMER_EXPIRED });
           }
@@ -388,7 +391,9 @@ class MotorDriver {
           return resolve({ error: ERRORS.POTEN_ERROR });
         }
 
+        console.log("setLevel before stop", Date.now());
         this.stop();
+        console.log("setLevel after stop", Date.now());
 
         const interval =
           Math.abs(this[MOTOR_FIELDS.MAX_POS] - this[MOTOR_FIELDS.MIN_POS]) /
@@ -413,7 +418,9 @@ class MotorDriver {
           return resolve({ error: ERRORS.CALIBRATION_INVALID_EDGES });
         }
 
+        console.log("setLevel read pos bef", Date.now());
         let posCur = await this.readPosition();
+        console.log("setLevel read pos aft", Date.now());
         let firstTime = false;
 
         if (this[MOTOR_FIELDS.SLEEP_RATIO]) {
@@ -425,6 +432,7 @@ class MotorDriver {
         // TODO improve checking position
         // TODO add max counter for stop cycle, i.e. 100 max moves
         while (Math.abs(posCur - posTarget) > 1) {
+          console.log("setLevel move cycle");
           if (posCur < posTarget) {
             this.move(MOVE_DIRECTION.forward);
           } else {
@@ -445,6 +453,7 @@ class MotorDriver {
               posCur - posTarget ? driveTime + DELAY : driveTime - DELAY;
           }
 
+          console.log("setLevel stop again + delay + read");
           this.stop();
 
           await sleep(DELAY_FOR_READ);
