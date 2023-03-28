@@ -9,7 +9,7 @@ import {
 import { getTranslationPath } from "../../utils/translationUtils";
 import { Container, Item } from "../SquareGrid/SquareGrid";
 
-const { PROGRAM_EDITOR: PE_TRK } = TRANSLATION_ROOT_KEYS;
+const { PROGRAM_EDITOR_TRK } = TRANSLATION_ROOT_KEYS;
 const {
   newProgram,
   editProgram,
@@ -17,10 +17,10 @@ const {
   deleteProgram,
   saveToFile,
   loadFromFile,
-} = TRANSLATION_KEYS[PE_TRK];
+} = TRANSLATION_KEYS[PROGRAM_EDITOR_TRK];
 const { PROGRAM_EDITOR } = PAGES;
 
-const getTPath = (...args) => getTranslationPath(PE_TRK, ...args);
+const getTPath = (...args) => getTranslationPath(PROGRAM_EDITOR_TRK, ...args);
 
 const EditorMenu = props => {
   const { t } = useTranslation();

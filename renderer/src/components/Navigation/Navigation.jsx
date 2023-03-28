@@ -14,13 +14,13 @@ import { getTranslationPath } from "../../utils/translationUtils";
 import styles from "./Navigation.module.css";
 
 const { MAIN, MANUAL_MODE, SETTINGS, SELECT_PROGRAM, PROGRAM_EDITOR } = PAGES;
-const { COMMON, WORKOUT } = TRANSLATION_ROOT_KEYS;
-const { back, fullscreen } = TRANSLATION_KEYS[COMMON];
+const { COMMON_TRK, WORKOUT_TRK, PROGRAM_EDITOR_TRK } = TRANSLATION_ROOT_KEYS;
+const { back, fullscreen } = TRANSLATION_KEYS[COMMON_TRK];
 const { newProgram, editProgram, copyProgram, deleteProgram } =
-  TRANSLATION_KEYS[PROGRAM_EDITOR];
-const { programMode } = TRANSLATION_KEYS[WORKOUT];
+  TRANSLATION_KEYS[PROGRAM_EDITOR_TRK];
+const { programMode } = TRANSLATION_KEYS[WORKOUT_TRK];
 
-const getTPath = (...args) => getTranslationPath(COMMON, ...args);
+const getTPath = (...args) => getTranslationPath(COMMON_TRK, ...args);
 
 const Navigation = () => {
   const { t } = useTranslation();
@@ -68,25 +68,25 @@ const Navigation = () => {
         break;
 
       case `${PAGES_PATHS[PROGRAM_EDITOR]}/${SUB_PATHS[PROGRAM_EDITOR].NEW}`:
-        setTitle(t(getTranslationPath(PROGRAM_EDITOR, newProgram)));
+        setTitle(t(getTranslationPath(PROGRAM_EDITOR_TRK, newProgram)));
         break;
 
       case `${PAGES_PATHS[PROGRAM_EDITOR]}/${SUB_PATHS[PROGRAM_EDITOR].EDIT}`:
-        setTitle(t(getTranslationPath(PROGRAM_EDITOR, editProgram)));
+        setTitle(t(getTranslationPath(PROGRAM_EDITOR_TRK, editProgram)));
         break;
 
       case `${PAGES_PATHS[PROGRAM_EDITOR]}/${SUB_PATHS[PROGRAM_EDITOR].COPY}`:
-        setTitle(t(getTranslationPath(PROGRAM_EDITOR, copyProgram)));
+        setTitle(t(getTranslationPath(PROGRAM_EDITOR_TRK, copyProgram)));
         break;
 
       case `${PAGES_PATHS[PROGRAM_EDITOR]}/${SUB_PATHS[PROGRAM_EDITOR].DELETE}`:
-        setTitle(t(getTranslationPath(PROGRAM_EDITOR, deleteProgram)));
+        setTitle(t(getTranslationPath(PROGRAM_EDITOR_TRK, deleteProgram)));
         break;
 
       default: {
         if (filenameMatch) {
           const newTitle = `${t(
-            getTranslationPath(WORKOUT, programMode),
+            getTranslationPath(WORKOUT_TRK, programMode),
           )}: ${programTitle}`;
           setTitle(newTitle);
         }

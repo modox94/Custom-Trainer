@@ -1,4 +1,4 @@
-import { Button, Classes, Dialog, Intent } from "@blueprintjs/core";
+import { Button, Intent } from "@blueprintjs/core";
 import { IconNames } from "@blueprintjs/icons";
 import { chunk, get } from "lodash";
 import PropTypes from "prop-types";
@@ -13,13 +13,14 @@ import {
   TRANSLATION_ROOT_KEYS,
 } from "../../constants/translationConst";
 import { getTranslationPath } from "../../utils/translationUtils";
+import DialogCustom from "../DialogCustom/DialogCustom";
 import { Container, Item } from "../SquareGrid/SquareGrid";
 
 const { SELECT_PROGRAM, PROGRAM_EDITOR } = PAGES;
-const { COMMON, PROGRAM_EDITOR: PE_TRK } = TRANSLATION_ROOT_KEYS;
-const { deleteTKey, cancelTKey, copyTKey } = TRANSLATION_KEYS[COMMON];
+const { COMMON_TRK, PROGRAM_EDITOR_TRK } = TRANSLATION_ROOT_KEYS;
+const { deleteTKey, cancelTKey, copyTKey } = TRANSLATION_KEYS[COMMON_TRK];
 const { deleteProgHead, deleteProgMsg, copyProgHead, copyProgMsg } =
-  TRANSLATION_KEYS[PE_TRK];
+  TRANSLATION_KEYS[PROGRAM_EDITOR_TRK];
 
 const TARGET_DEFAULT = null;
 
@@ -87,23 +88,23 @@ const SelectProgram = props => {
 
     switch (mode) {
       case SP_MODE.COPY:
-        header = getTranslationPath(PE_TRK, copyProgHead);
-        message = getTranslationPath(PE_TRK, copyProgMsg);
+        header = getTranslationPath(PROGRAM_EDITOR_TRK, copyProgHead);
+        message = getTranslationPath(PROGRAM_EDITOR_TRK, copyProgMsg);
 
-        btn1Text = getTranslationPath(COMMON, copyTKey);
+        btn1Text = getTranslationPath(COMMON_TRK, copyTKey);
         btn1Icon = IconNames.DUPLICATE;
         btn1Intent = Intent.PRIMARY;
-        btn2Text = getTranslationPath(COMMON, cancelTKey);
+        btn2Text = getTranslationPath(COMMON_TRK, cancelTKey);
         break;
 
       case SP_MODE.DELETE:
-        header = getTranslationPath(PE_TRK, deleteProgHead);
-        message = getTranslationPath(PE_TRK, deleteProgMsg);
+        header = getTranslationPath(PROGRAM_EDITOR_TRK, deleteProgHead);
+        message = getTranslationPath(PROGRAM_EDITOR_TRK, deleteProgMsg);
 
-        btn1Text = getTranslationPath(COMMON, deleteTKey);
+        btn1Text = getTranslationPath(COMMON_TRK, deleteTKey);
         btn1Icon = IconNames.TRASH;
         btn1Intent = Intent.DANGER;
-        btn2Text = getTranslationPath(COMMON, cancelTKey);
+        btn2Text = getTranslationPath(COMMON_TRK, cancelTKey);
         break;
 
       default:
@@ -160,23 +161,31 @@ const SelectProgram = props => {
 
   return (
     <>
-      <Dialog
+      {items.map(row => (
+        <Container key={row.reduce((acc, item) => acc + item.key, "")}>
+          {row.map(item => {
+            const { key, onClick, children } = item;
+            return (
+              <Item key={key} onClick={onClick}>
+                {children}
+              </Item>
+            );
+          })}
+        </Container>
+      ))}
+
+      <DialogCustom
         isOpen={Boolean(target)}
-        className={Classes.TEXT_LARGE}
         title={t(dialogProps.header)}
         canOutsideClickClose
         isCloseButtonShown
         onClose={onDialogClose}
-      >
-        <div className={Classes.DIALOG_BODY}>
-          <p className={Classes.TEXT_LARGE}>
-            {t(dialogProps.message, {
-              programTitle: get(programs, [target, "title"], ""),
-            })}
-          </p>
-        </div>
-        <div className={Classes.DIALOG_FOOTER}>
-          <div className={Classes.DIALOG_FOOTER_ACTIONS}>
+        body={t(dialogProps.message, {
+          programTitle: get(programs, [target, "title"], ""),
+        })}
+        footerMinimal
+        footer={
+          <>
             <Button
               large
               icon={dialogProps.btn1Icon}
@@ -191,21 +200,9 @@ const SelectProgram = props => {
               text={t(dialogProps.btn2Text)}
               onClick={onDialogBtn2}
             />
-          </div>
-        </div>
-      </Dialog>
-      {items.map(row => (
-        <Container key={row.reduce((acc, item) => acc + item.key, "")}>
-          {row.map(item => {
-            const { key, onClick, children } = item;
-            return (
-              <Item key={key} onClick={onClick}>
-                {children}
-              </Item>
-            );
-          })}
-        </Container>
-      ))}
+          </>
+        }
+      />
     </>
   );
 };

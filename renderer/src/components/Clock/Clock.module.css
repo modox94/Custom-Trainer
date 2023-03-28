@@ -2,7 +2,6 @@
   display: flex;
   flex-direction: column;
   flex-wrap: nowrap;
-  align-content: center;
   justify-content: space-between;
   align-items: center;
   font-size: calc(var(--available-height) / 14);

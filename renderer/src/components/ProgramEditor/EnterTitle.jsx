@@ -25,11 +25,12 @@ import { Container, Item } from "../SquareGrid/SquareGrid";
 import styles from "./EnterTitle.module.css";
 
 const { PROGRAM_EDITOR } = PAGES;
-const { COMMON, PROGRAM_EDITOR: PE_TRK } = TRANSLATION_ROOT_KEYS;
-const { next } = TRANSLATION_KEYS[COMMON];
-const { programTitleError, typeProgramTitle } = TRANSLATION_KEYS[PE_TRK];
+const { COMMON_TRK, PROGRAM_EDITOR_TRK } = TRANSLATION_ROOT_KEYS;
+const { next } = TRANSLATION_KEYS[COMMON_TRK];
+const { programTitleError, typeProgramTitle } =
+  TRANSLATION_KEYS[PROGRAM_EDITOR_TRK];
 
-const getTPath = (...args) => getTranslationPath(PE_TRK, ...args);
+const getTPath = (...args) => getTranslationPath(PROGRAM_EDITOR_TRK, ...args);
 
 const DISPLAY = {
   "{numbers}": "123",
@@ -200,7 +201,7 @@ const EnterTitle = props => {
                   (error && Intent.DANGER) ||
                   (input.trim().length > 0 ? Intent.SUCCESS : Intent.NONE)
                 }
-                text={t(getTranslationPath(COMMON, next))}
+                text={t(getTranslationPath(COMMON_TRK, next))}
                 disabled={error || input.trim().length === 0}
                 onClick={onNextStep}
               />

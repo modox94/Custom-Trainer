@@ -1,28 +1,25 @@
-const Promise = require("bluebird");
-const { round, noop, get, isFunction, isFinite } = require("lodash");
+const { get, isFinite, isFunction, noop, round } = require("lodash");
 const { Gpio } = require("onoff");
 const {
-  DIRECTION,
-  PHYSICAL_TO_GPIO,
-  MOVE_DIRECTION,
-  ERRORS,
-  MOTOR_FIELDS,
-  LOADING_TIMER,
-  LOADING_PAUSE,
-  TEST_IN_PROGRESS,
-  CALIBRATION_MIN_POINTS,
   CALIBRATION_MAX_MOVES,
+  CALIBRATION_MIN_POINTS,
   CALIBRATION_ST_CYCLES,
+  DIRECTION,
+  ERRORS,
+  LOADING_PAUSE,
+  LOADING_TIMER,
+  MOTOR_FIELDS,
+  MOVE_DIRECTION,
+  PHYSICAL_TO_GPIO,
+  TEST_IN_PROGRESS,
 } = require("../constants/constants");
-const { sleepCb, getIsCancelledFn } = require("../utils/utils");
+const { sleep } = require("../utils/utils");
 const { PotentiometerSensor } = require("./potentiometer_sensor");
-
-Promise.config({ cancellation: true });
 
 const MOVE_DIRECTION_ARRAY = Object.values(MOVE_DIRECTION);
 const DELAY = 100; // TODO transfer to settings
 const DELAY_FOR_READ = 25; // TODO transfer to settings
-const RESIST_LEVELS = 10; // TODO transfer to settings
+const MAX_RES_LEVEL = 10; // TODO transfer to settings
 
 const write = (value, cb = noop) => {
   console.log("write", value);
@@ -81,13 +78,8 @@ class MotorDriver {
   }
 
   actionCancel() {
-    if (
-      isFunction(this.action?.isFulfilled) &&
-      !this.action.isFulfilled() &&
-      isFunction(this.action?.cancel)
-    ) {
-      this.action.cancel();
-      this.action = null;
+    if (!this.action?.signal?.aborted && isFunction(this.action?.abort)) {
+      this.action.abort();
     }
   }
 
@@ -136,29 +128,36 @@ class MotorDriver {
   }
 
   stop() {
-    this.actionCancel();
     this.in1.writeSync(0);
     this.in2.writeSync(0);
   }
 
-  async DANGER_move(direction) {
-    this.actionCancel();
+  async DANGER_move(direction, outerAc) {
+    const ac = outerAc || new AbortController();
+
+    if (!outerAc) {
+      this.actionCancel();
+      this.action = ac;
+      ac.signal.onabort = this.stop.bind(this);
+    }
 
     if (!MOVE_DIRECTION_ARRAY.includes(direction)) {
       console.log("DANGER_move wrong direction");
       return { error: "wrong direction" };
     }
 
-    const onCancelFn = () => this.stop();
+    if (ac.signal?.aborted) {
+      return { error: ERRORS.PROMISE_CANCELLED };
+    }
 
     try {
       this.move(direction);
-      const localAction = new Promise((resolve, reject, onCancel) => {
-        onCancel(onCancelFn);
-        sleepCb(resolve, DELAY);
-      });
-      this.action = localAction;
-      await localAction;
+      await sleep(DELAY);
+
+      if (ac.signal?.aborted) {
+        return { error: ERRORS.PROMISE_CANCELLED };
+      }
+
       this.stop();
     } catch (error) {
       return { error };
@@ -180,16 +179,30 @@ class MotorDriver {
     return this.swappedPotentiometerWires ? 100 - rawValue : rawValue;
   }
 
-  readPositionCb(rawCb) {
-    const cb = rawValue => {
-      const value = this.swappedPotentiometerWires ? 100 - rawValue : rawValue;
-      rawCb(value);
-    };
-    return this.potentiometer.readPositionCb(cb);
+  async getMotorLevel() {
+    if (
+      !isFinite(this[MOTOR_FIELDS.MAX_POS]) ||
+      !isFinite(this[MOTOR_FIELDS.MIN_POS])
+    ) {
+      return { error: ERRORS.CALIBRATION_NO_DATA };
+    }
+    const posCur = await this.readPosition();
+    const interval =
+      Math.abs(this[MOTOR_FIELDS.MAX_POS] - this[MOTOR_FIELDS.MIN_POS]) /
+      (MAX_RES_LEVEL - 1);
+
+    const posMin =
+      this[MOTOR_FIELDS.MAX_POS] > this[MOTOR_FIELDS.MIN_POS]
+        ? this[MOTOR_FIELDS.MIN_POS]
+        : this[MOTOR_FIELDS.MAX_POS];
+    return round((posCur - posMin) / interval) + 1;
   }
 
   async calibration() {
+    const ac = new AbortController();
     this.actionCancel();
+    this.action = ac;
+    ac.signal.onabort = this.stop.bind(this);
 
     if (
       !isFinite(this[MOTOR_FIELDS.MAX_POS]) ||
@@ -202,39 +215,23 @@ class MotorDriver {
       return { error: ERRORS.CALIBRATION_INVALID_EDGES };
     }
 
-    const onCancelFn = () => this.stop();
-    let localAction;
-    const isCancelled = getIsCancelledFn(localAction);
     let loadingTimer = LOADING_TIMER;
     // TODO improve this part
     while (!this.isReady && !this.isError) {
       if (loadingTimer-- <= 0) {
         return { error: ERRORS.LOADING_TIMER_EXPIRED };
       }
-      if (isCancelled()) {
-        return { error: ERRORS.PROMISE_CANCELLED };
-      }
 
       console.log("loading...");
 
-      localAction = new Promise((resolve, reject, onCancel) => {
-        onCancel(onCancelFn);
-        sleepCb(resolve, LOADING_PAUSE);
-      });
-      this.action = localAction;
-      await localAction;
+      await sleep(LOADING_PAUSE);
     }
 
     if (this.isError) {
       return { error: ERRORS.POTEN_ERROR };
     }
 
-    localAction = new Promise((resolve, reject, onCancel) => {
-      onCancel(onCancelFn);
-      this.readPositionCb(resolve);
-    });
-    this.action = localAction;
-    let posCur = await localAction;
+    let posCur = await this.readPosition();
 
     if (!isFinite(posCur)) {
       return { error: ERRORS.POTEN_ERROR };
@@ -269,7 +266,9 @@ class MotorDriver {
               if (posEl > posPrevEl) {
                 behaviorСounter += 1;
               } else if (posEl < posPrevEl) {
-                return { error: ERRORS.CALIBRATION_WRONG_DIRECTION };
+                return {
+                  error: ERRORS.CALIBRATION_WRONG_DIRECTION,
+                };
               }
               break;
 
@@ -277,7 +276,9 @@ class MotorDriver {
               if (posEl < posPrevEl) {
                 behaviorСounter += 1;
               } else if (posEl > posPrevEl) {
-                return { error: ERRORS.CALIBRATION_WRONG_DIRECTION };
+                return {
+                  error: ERRORS.CALIBRATION_WRONG_DIRECTION,
+                };
               }
               break;
 
@@ -307,29 +308,13 @@ class MotorDriver {
       return TEST_IN_PROGRESS;
     };
 
-    while (checkPosData() === TEST_IN_PROGRESS) {
-      await this.DANGER_move(directionCur);
+    while (checkPosData() === TEST_IN_PROGRESS && !ac.signal?.aborted) {
+      await this.DANGER_move(directionCur, ac);
       posData.push(directionCur);
 
-      localAction = new Promise((resolve, reject, onCancel) => {
-        onCancel(onCancelFn);
-        sleepCb(resolve, DELAY_FOR_READ);
-      });
-      this.action = localAction;
-      await localAction;
-      if (isCancelled()) {
-        return { error: ERRORS.PROMISE_CANCELLED };
-      }
+      await sleep(DELAY_FOR_READ);
 
-      localAction = new Promise((resolve, reject, onCancel) => {
-        onCancel(onCancelFn);
-        this.readPositionCb(resolve);
-      });
-      this.action = localAction;
-      posCur = await localAction;
-      if (isCancelled()) {
-        return { error: ERRORS.PROMISE_CANCELLED };
-      }
+      posCur = await this.readPosition();
 
       posData.push(posCur);
     }
@@ -341,28 +326,29 @@ class MotorDriver {
         error: testResult?.error || ERRORS.CALIBRATION_UNKNOWN,
       };
     }
-    await this.setLevel(1);
-
-    if (isCancelled()) {
+    if (ac.signal?.aborted) {
       return { error: ERRORS.PROMISE_CANCELLED };
     }
+    await this.setLevel(1, ac);
 
     for (let idx = 0; idx < CALIBRATION_ST_CYCLES; idx++) {
-      const toMaxEdgeRes = await this.setLevel(RESIST_LEVELS);
+      if (ac.signal?.aborted) {
+        return { error: ERRORS.PROMISE_CANCELLED };
+      }
+      const toMaxEdgeRes = await this.setLevel(MAX_RES_LEVEL, ac);
       const { error: errorToMax, driveTime: driveTimeToMax } = toMaxEdgeRes;
 
-      if (isCancelled()) {
-        return { error: ERRORS.PROMISE_CANCELLED };
-      } else if (errorToMax) {
+      if (errorToMax) {
         return toMaxEdgeRes;
       }
 
-      const toMinEdgeRes = await this.setLevel(1);
+      if (ac.signal?.aborted) {
+        return { error: ERRORS.PROMISE_CANCELLED };
+      }
+      const toMinEdgeRes = await this.setLevel(1, ac);
       const { error: errorToMin, driveTime: driveTimeToMin } = toMinEdgeRes;
 
-      if (isCancelled()) {
-        return { error: ERRORS.PROMISE_CANCELLED };
-      } else if (errorToMin) {
+      if (errorToMin) {
         return toMinEdgeRes;
       }
 
@@ -374,44 +360,42 @@ class MotorDriver {
     return this[MOTOR_FIELDS.SLEEP_RATIO];
   }
 
-  async setLevel(level) {
-    this.actionCancel();
+  async setLevel(level, outerAc) {
+    const ac = outerAc || new AbortController();
 
-    if (level < 1 || level > RESIST_LEVELS) {
+    if (!outerAc) {
+      this.actionCancel();
+      this.action = ac;
+      ac.signal.onabort = this.stop.bind(this);
+    }
+
+    if (level < 1 || level > MAX_RES_LEVEL) {
       return { error: ERRORS.INVALID_RESIST_LEVEL };
     }
 
-    const onCancelFn = () => this.stop();
-    let localAction;
-    const isCancelled = getIsCancelledFn(localAction);
     let driveTime = 0;
     let loadingTimer = LOADING_TIMER;
     // TODO improve this part
-    while (!this.isReady && !this.isError) {
+    while (!this.isReady && !this.isError && !ac.signal?.aborted) {
       if (loadingTimer-- <= 0) {
         return { error: ERRORS.LOADING_TIMER_EXPIRED };
       }
-      if (isCancelled()) {
-        return { driveTime };
-      }
-
       console.log("loading...");
-
-      localAction = new Promise((resolve, reject, onCancel) => {
-        onCancel(onCancelFn);
-        sleepCb(resolve, LOADING_PAUSE);
-      });
-      this.action = localAction;
-      await localAction;
+      await sleep(LOADING_PAUSE);
     }
 
     if (this.isError) {
       return { error: ERRORS.POTEN_ERROR };
     }
+    if (ac.signal?.aborted) {
+      return { error: ERRORS.PROMISE_CANCELLED };
+    }
+
+    this.stop();
 
     const interval =
       Math.abs(this[MOTOR_FIELDS.MAX_POS] - this[MOTOR_FIELDS.MIN_POS]) /
-      (RESIST_LEVELS - 1);
+      (MAX_RES_LEVEL - 1);
     let posTarget;
 
     if (
@@ -431,29 +415,21 @@ class MotorDriver {
       return { error: ERRORS.CALIBRATION_INVALID_EDGES };
     }
 
-    if (isCancelled()) {
-      return { driveTime };
-    }
-    localAction = new Promise((resolve, reject, onCancel) => {
-      onCancel(onCancelFn);
-      this.readPositionCb(resolve);
-    });
-    this.action = localAction;
+    let posCur = await this.readPosition();
 
-    let posCur = await localAction;
     let firstTime = false;
 
     if (this[MOTOR_FIELDS.SLEEP_RATIO]) {
       firstTime =
         (Math.abs(posCur - posTarget) / interval) *
-        (this[MOTOR_FIELDS.SLEEP_RATIO] / (RESIST_LEVELS - 1));
+        (this[MOTOR_FIELDS.SLEEP_RATIO] / (MAX_RES_LEVEL - 1));
     }
 
     // TODO improve checking position
     // TODO add max counter for stop cycle, i.e. 100 max moves
-    while (Math.abs(posCur - posTarget) > 1) {
-      if (isCancelled()) {
-        return { driveTime };
+    while (!ac.signal?.aborted && Math.abs(posCur - posTarget) > 1) {
+      if (ac.signal?.aborted) {
+        return { error: ERRORS.PROMISE_CANCELLED };
       }
 
       if (posCur < posTarget) {
@@ -463,48 +439,27 @@ class MotorDriver {
       }
 
       if (firstTime) {
-        localAction = new Promise((resolve, reject, onCancel) => {
-          onCancel(onCancelFn);
-          sleepCb(resolve, firstTime);
-        });
-        this.action = localAction;
+        await sleep(firstTime);
         driveTime =
           posCur - posTarget ? driveTime + firstTime : driveTime - firstTime;
-
         firstTime = false;
       } else {
-        localAction = new Promise((resolve, reject, onCancel) => {
-          onCancel(onCancelFn);
-          sleepCb(resolve, DELAY);
-        });
-        this.action = localAction;
+        await sleep(DELAY);
         driveTime = posCur - posTarget ? driveTime + DELAY : driveTime - DELAY;
       }
 
-      await localAction;
+      if (ac.signal?.aborted) {
+        return { error: ERRORS.PROMISE_CANCELLED };
+      }
 
       this.stop();
+      await sleep(DELAY_FOR_READ);
 
-      if (isCancelled()) {
-        return { driveTime };
+      if (ac.signal?.aborted) {
+        return { error: ERRORS.PROMISE_CANCELLED };
       }
-      localAction = new Promise((resolve, reject, onCancel) => {
-        onCancel(onCancelFn);
-        sleepCb(resolve, DELAY_FOR_READ);
-      });
-      this.action = localAction;
-      await localAction;
 
-      if (isCancelled()) {
-        return { driveTime };
-      }
-      localAction = new Promise((resolve, reject, onCancel) => {
-        onCancel(onCancelFn);
-        this.readPositionCb(resolve);
-      });
-      this.action = localAction;
-
-      posCur = await localAction;
+      posCur = await this.readPosition();
     }
 
     return { driveTime };

@@ -1,4 +1,4 @@
-import { Button, Classes, Dialog, Icon, Intent } from "@blueprintjs/core";
+import { Button, Classes, Icon, Intent } from "@blueprintjs/core";
 import { IconNames } from "@blueprintjs/icons";
 import clsx from "clsx";
 import { get, isFinite, round } from "lodash";
@@ -20,6 +20,8 @@ import {
   TRANSLATION_ROOT_KEYS,
 } from "../../constants/translationConst";
 import { getTranslationPath } from "../../utils/translationUtils";
+import DialogCustom from "../DialogCustom/DialogCustom";
+import ErrorText from "../ErrorText/ErrorText";
 import {
   DumbbellIcon,
   EngineMotorElectroIcon,
@@ -29,9 +31,9 @@ import {
 import { Container, Item } from "../SquareGrid/SquareGrid";
 import styles from "./Settings.module.css";
 
-const { COMMON, SETTINGS } = TRANSLATION_ROOT_KEYS;
-const { ok, back } = TRANSLATION_KEYS[COMMON];
-const { motorDisclaimerHead, motorDisclaimerMsg } = TRANSLATION_KEYS[SETTINGS];
+const { COMMON_TRK, SETTINGS_TRK } = TRANSLATION_ROOT_KEYS;
+const { ok, back, warning } = TRANSLATION_KEYS[COMMON_TRK];
+const { motorDisclaimerMsg } = TRANSLATION_KEYS[SETTINGS_TRK];
 
 const Motor = () => {
   const { t } = useTranslation();
@@ -254,37 +256,38 @@ const Motor = () => {
         </Item>
       </Container>
 
-      <Dialog
+      <DialogCustom
         isOpen={disclaimer}
-        title={t(getTranslationPath(SETTINGS, motorDisclaimerHead))}
+        icon={IconNames.WARNING_SIGN}
+        title={t(getTranslationPath(COMMON_TRK, warning))}
         canEscapeKeyClose={false}
         canOutsideClickClose={false}
         isCloseButtonShown={false}
         onClose={() => setDisclaimer(false)}
-      >
-        <div className={Classes.DIALOG_BODY}>
-          <p className={Classes.TEXT_LARGE}>
-            {t(getTranslationPath(SETTINGS, motorDisclaimerMsg))}
-          </p>
-        </div>
-        <div className={Classes.DIALOG_FOOTER}>
-          <div className={Classes.DIALOG_FOOTER_ACTIONS}>
+        body={
+          <ErrorText
+            text={t(getTranslationPath(SETTINGS_TRK, motorDisclaimerMsg))}
+          />
+        }
+        footerMinimal
+        footer={
+          <>
             <Button
               large
               icon={IconNames.ARROW_LEFT}
-              text={t(getTranslationPath(COMMON, back))}
+              text={t(getTranslationPath(COMMON_TRK, back))}
               onClick={goBack}
             />
             <Button
               large
               intent={Intent.DANGER}
               icon={IconNames.TICK}
-              text={t(getTranslationPath(COMMON, ok))}
+              text={t(getTranslationPath(COMMON_TRK, ok))}
               onClick={() => setDisclaimer(false)}
             />
-          </div>
-        </div>
-      </Dialog>
+          </>
+        }
+      />
     </>
   );
 };

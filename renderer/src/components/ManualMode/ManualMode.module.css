@@ -1,0 +1,41 @@
+.paddingReduced {
+  position: relative;
+  padding: var(--small-gap);
+}
+
+.tinyPadding {
+  padding: var(--tiny-gap);
+}
+
+.icon {
+  width: 100%;
+  height: 100%;
+}
+
+.icon svg {
+  width: 100%;
+  height: 100%;
+}
+
+.icon.inActive svg {
+  color: var(--gray3);
+}
+
+.currentLevel {
+  display: flex;
+  flex-direction: column;
+  flex-wrap: nowrap;
+  justify-content: space-between;
+  align-items: center;
+  font-size: calc(var(--available-height) / 14);
+  text-align: center;
+}
+
+.currentLevel p {
+  margin: 0;
+}
+
+.currentLevel p b {
+  font-size: calc(var(--available-height) / 10);
+  margin: 0;
+}

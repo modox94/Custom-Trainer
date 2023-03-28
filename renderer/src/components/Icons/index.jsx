@@ -23,6 +23,8 @@ import { ReactComponent as MicrochipSvg } from "./microchip-solid.svg";
 import { ReactComponent as PotentiometerRegularSvg } from "./potentiometer-regular.svg";
 import { ReactComponent as PotentiometerSolidSvg } from "./potentiometer-solid.svg";
 import { ReactComponent as RankingStarSvg } from "./ranking-star-solid.svg";
+import { ReactComponent as RaspberryPi1Svg } from "./raspberry-pi-1.svg";
+import { ReactComponent as RaspberryPi2Svg } from "./raspberry-pi-2.svg";
 import { ReactComponent as RuSvg } from "./ru.svg";
 import { ReactComponent as Speedometer1Svg } from "./speedometer-1.svg";
 import { ReactComponent as Speedometer2Svg } from "./speedometer-2.svg";
@@ -231,6 +233,26 @@ export const RankingStarIcon = props => {
   return (
     <IconWrapper {...otherProps}>
       <RankingStarSvg />
+    </IconWrapper>
+  );
+};
+
+export const RaspberryPi1Icon = props => {
+  const { children, ...otherProps } = props;
+
+  return (
+    <IconWrapper {...otherProps}>
+      <RaspberryPi1Svg />
+    </IconWrapper>
+  );
+};
+
+export const RaspberryPi2Icon = props => {
+  const { children, ...otherProps } = props;
+
+  return (
+    <IconWrapper {...otherProps}>
+      <RaspberryPi2Svg />
     </IconWrapper>
   );
 };

@@ -1,57 +1,89 @@
-const { isFunction } = require("lodash");
-const fs = require("node:fs");
-const { DEV_CONSTS } = require("../constants/constants");
+const { isString, isUndefined } = require("lodash");
+const {
+  BOOT_CONFIG_OPT,
+  ERRORS,
+  HASH_SIGN,
+  LINE_FEED,
+} = require("../constants/constants");
 
-const { dataFile, LF, PL, FRQ_R, FRQ } = DEV_CONSTS;
-
-const stringSlice = (fullString, forCut) =>
-  fullString.slice(fullString.indexOf(forCut) + forCut.length);
-
-exports.getTimecodes = () => {
-  const data = fs.readFileSync(dataFile, "utf-8");
-  const resultObject = {
-    frqR: [],
-    frq: [],
-    sensorSignals: [],
-  };
-
-  const rowsArray = data.split(LF);
-
-  for (const rowEl of rowsArray) {
-    if (rowEl.includes(FRQ_R)) {
-      resultObject.frqR.push(stringSlice(rowEl, FRQ_R));
-      continue;
-    }
-
-    if (rowEl.includes(FRQ)) {
-      resultObject.frq.push(stringSlice(rowEl, FRQ));
-      continue;
-    }
-
-    if (rowEl.includes(PL)) {
-      resultObject.pl = new Date(Number(stringSlice(rowEl, PL)));
-      continue;
-    }
-
-    resultObject.sensorSignals.push(new Date(Number(rowEl)));
-  }
-
-  return resultObject;
+exports.sleep = async (delay = 1000) => {
+  return await new Promise(resolve => {
+    setTimeout(resolve, delay);
+  });
 };
 
-exports.sleepCb = (cb, delay = 1000) =>
-  new Promise(resolve => {
-    setTimeout(() => {
-      resolve();
-      cb();
-    }, delay);
-  });
+exports.convertConfigToObj = configStr => {
+  const configObj = {};
 
-exports.getIsCancelledFn = localAction => () => {
-  if (isFunction(localAction?.isCancelled) && localAction.isCancelled()) {
-    console.log("canceled");
-    return true;
+  if (isString(configStr)) {
+    const configAr = configStr.split(LINE_FEED);
+
+    for (const strRaw of configAr) {
+      if (!strRaw) {
+        continue;
+      }
+
+      const str = strRaw.trim();
+
+      if (!str || str.startsWith(HASH_SIGN)) {
+        continue;
+      }
+
+      const key = [BOOT_CONFIG_OPT.SPI, BOOT_CONFIG_OPT.LCD_ROTATE].find(el =>
+        str.includes(el),
+      );
+
+      if (!isUndefined(key)) {
+        configObj[key] = str;
+      }
+    }
+
+    for (const key in configObj) {
+      if (Object.hasOwnProperty.call(configObj, key)) {
+        let valueRaw = configObj[key];
+
+        switch (key) {
+          case BOOT_CONFIG_OPT.LCD_ROTATE:
+          case BOOT_CONFIG_OPT.SPI: {
+            const re = RegExp(`(${BOOT_CONFIG_OPT.DTPARAM}=)?${key}=(.+)`);
+
+            const res = valueRaw.match(re);
+            const [, , value] = res || [];
+            configObj[key] = isUndefined(value)
+              ? ERRORS.BOOT_CONFIG_INVALID_ARG
+              : value;
+
+            break;
+          }
+
+          default:
+            break;
+        }
+      }
+    }
   }
 
-  return false;
+  return configObj;
+};
+
+exports.commentConfigOpt = (configStr, optKey) => {
+  let newConfStr = "";
+
+  if (isString(configStr)) {
+    const configAr = configStr.split(LINE_FEED);
+
+    for (let idx = 0; idx < configAr.length; idx++) {
+      const str = (configAr[idx] || "").trim();
+      if (!str || str.startsWith(HASH_SIGN)) {
+        continue;
+      }
+      if (str.includes(optKey)) {
+        configAr[idx] = `${HASH_SIGN}${configAr[idx]}`;
+      }
+    }
+
+    newConfStr = configAr.join(LINE_FEED);
+  }
+
+  return newConfStr;
 };

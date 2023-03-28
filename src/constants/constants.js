@@ -1,3 +1,15 @@
+exports.BOOT_CONFIG_OPT = require("../../renderer/src/constants/BOOT_CONFIG_OPT.json");
+
+exports.ERRORS = require("../../renderer/src/constants/ERRORS.json");
+
+exports.EVENTS = require("../../renderer/src/constants/EVENTS.json");
+
+exports.FILE_CONST = require("../../renderer/src/constants/FILE_CONST.json");
+
+exports.LANGS_CODES = require("../../renderer/src/constants/LANGS_CODES.json");
+
+exports.MOTOR_FIELDS = require("../../renderer/src/constants/MOTOR_FIELDS.json");
+
 exports.EDGE = {
   rising: "rising",
   falling: "falling",
@@ -39,19 +51,15 @@ exports.PHYSICAL_TO_GPIO = {
   40: 21,
 };
 
-exports.DEV_CONSTS = {
-  dataFile: "data.txt",
-  LF: "\n",
-  PL: "Program launched: ",
-  FRQ_R: "frequencyRaw: ",
-  FRQ: "frequency: ",
-};
+exports.LINE_FEED = "\n"; // TODO transfer to json
+
+exports.HASH_SIGN = "#"; // TODO transfer to json
 
 exports.DEFAULT_WINDOW = 60;
 
 exports.DEFAULT_M_C = 1;
 
-exports.PAUSE_DELAY = 2500;
+exports.PAUSE_DELAY = 2500; // TODO transfer to json
 
 exports.LOADING_TIMER = 5000;
 
@@ -67,29 +75,11 @@ exports.CALIBRATION_MIN_POINTS = CALIBRATION_MIN_POINTS;
 
 exports.CALIBRATION_MAX_MOVES = 1 + CALIBRATION_MIN_POINTS * 4 + 2;
 
-exports.EVENTS = {
-  WATCH_CADENCE: "WATCH_CADENCE",
-  WATCH_PROGRAMS: "WATCH_PROGRAMS",
-  GET_PROGRAMS: "GET_PROGRAMS",
-  WATCH_SETTINGS: "WATCH_SETTINGS",
-  GET_SETTINGS: "GET_SETTINGS",
-  CHECK_PROGRAM_TITLE: "CHECK_PROGRAM_TITLE",
-  SET_FULLSCREEN: "SET_FULLSCREEN",
-  GET_POTENTIOMETER: "GET_POTENTIOMETER",
-  DANGER_MOVE_FORWARD: "DANGER_MOVE_FORWARD",
-  DANGER_MOVE_BACK: "DANGER_MOVE_BACK",
-  MOTOR_CALIBRATION: "MOTOR_CALIBRATION",
-  SET_MOTOR_LEVEL: "SET_MOTOR_LEVEL",
-  STOP_MOTOR: "STOP_MOTOR",
-  PREVENT_DISPLAY_SLEEP: "PREVENT_DISPLAY_SLEEP",
-  EDIT_PROGRAM: "EDIT_PROGRAM",
-  EDIT_SETTINGS: "EDIT_SETTINGS",
-  SAVE_NEW_PROGRAM: "SAVE_NEW_PROGRAM",
-  DELETE_PROGRAM: "DELETE_PROGRAM",
-  APP_QUIT: "APP_QUIT",
-};
+exports.DOT_JSON = ".json";
 
-exports.LANGS_CODES = { en: "en", ru: "ru" };
+exports.ABSOLUTE_DIR_CONST = {
+  BOOT: "/boot",
+};
 
 exports.DIR_CONST = {
   SETTINGS: "settings",
@@ -97,31 +87,4 @@ exports.DIR_CONST = {
   PROGRAMS: "programs",
 };
 
-exports.FILE_CONST = {
-  INTERFACE: "interface.json",
-  PERIPHERAL: "peripheral.json",
-};
-
-exports.MOTOR_FIELDS = {
-  MIN_POS: "minPosition",
-  MAX_POS: "maxPosition",
-  SLEEP_RATIO: "sleepRatio",
-  SWAP_MOTOR_WIRES: "swappedMotorWires",
-  SWAP_POTEN_WIRES: "swappedPotentiometerWires",
-};
-
 exports.MOVE_DIRECTION = { forward: "forward", back: "back" };
-
-exports.ERRORS = {
-  GPIO_EPERM: "GPIO_EPERM",
-  POTEN_ERROR: "POTEN_ERROR",
-  INVALID_RESIST_LEVEL: "INVALID_RESIST_LEVEL",
-  LOADING_TIMER_EXPIRED: "LOADING_TIMER_EXPIRED",
-  CALIBRATION_NO_DATA: "CALIBRATION_NO_DATA",
-  CALIBRATION_INVALID_EDGES: "CALIBRATION_INVALID_EDGES",
-  CALIBRATION_WRONG_DIRECTION: "CALIBRATION_WRONG_DIRECTION",
-  CALIBRATION_HINDRANCE: "CALIBRATION_HINDRANCE",
-  CALIBRATION_TOO_LONG: "CALIBRATION_TOO_LONG",
-  CALIBRATION_UNKNOWN: "CALIBRATION_UNKNOWN",
-  PROMISE_CANCELLED: "PROMISE_CANCELLED",
-};

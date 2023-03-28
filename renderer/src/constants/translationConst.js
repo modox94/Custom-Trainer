@@ -1,28 +1,27 @@
+import { ERRORS } from "./commonConst";
 import { PAGES } from "./pathConst";
+import LANGS_CODES from "./LANGS_CODES.json";
 
-export const LANGS_CODES = { en: "en", ru: "ru" };
+export { LANGS_CODES };
 
 export const i18nNamespace = "translation";
 
 export const i18nKeySeparator = ".";
 
 export const TRANSLATION_ROOT_KEYS = {
-  COMMON: "COMMON",
-  WORKOUT: "WORKOUT",
-  PROGRAM_EDITOR: "PROGRAM_EDITOR",
-  SETTINGS: "SETTINGS",
-  TIPS: "TIPS",
+  COMMON_TRK: "COMMON_TRK",
+  WORKOUT_TRK: "WORKOUT_TRK",
+  PROGRAM_EDITOR_TRK: "PROGRAM_EDITOR_TRK",
+  SETTINGS_TRK: "SETTINGS_TRK",
+  TIPS_TRK: "TIPS_TRK",
+  ERRORS_TRK: "ERRORS_TRK",
 };
 
 export const TRANSLATION_KEYS = {
-  [TRANSLATION_ROOT_KEYS.COMMON]: {
+  [TRANSLATION_ROOT_KEYS.COMMON_TRK]: {
+    ...PAGES,
     back: "back",
     fullscreen: "fullscreen",
-    [PAGES.MAIN]: PAGES.MAIN,
-    [PAGES.MANUAL_MODE]: PAGES.MANUAL_MODE,
-    [PAGES.SETTINGS]: PAGES.SETTINGS,
-    [PAGES.SELECT_PROGRAM]: PAGES.SELECT_PROGRAM,
-    [PAGES.PROGRAM_EDITOR]: PAGES.PROGRAM_EDITOR,
     next: "next",
     add: "add",
     deleteTKey: "deleteTKey",
@@ -32,17 +31,21 @@ export const TRANSLATION_KEYS = {
     copyTKey: "copyTKey",
     ok: "ok",
     yes: "yes",
+    turnOn: "turnOn",
+    turnOff: "turnOff",
+    warning: "warning",
+    start: "start",
   },
-  [TRANSLATION_ROOT_KEYS.WORKOUT]: {
+  [TRANSLATION_ROOT_KEYS.WORKOUT_TRK]: {
     programMode: "programMode",
-    current: "current",
-    remaining: "remaining",
-    elapsed: "elapsed",
-    time: "time",
+    current_T: "current_T",
+    remaining_T: "remaining_T",
+    elapsed_T: "elapsed_T",
+    time_T: "time_T",
     trainingDone: "trainingDone",
     trainingDoneMsg: "trainingDoneMsg",
   },
-  [TRANSLATION_ROOT_KEYS.PROGRAM_EDITOR]: {
+  [TRANSLATION_ROOT_KEYS.PROGRAM_EDITOR_TRK]: {
     newProgram: "newProgram",
     editProgram: "editProgram",
     copyProgram: "copyProgram",
@@ -56,9 +59,8 @@ export const TRANSLATION_KEYS = {
     copyProgHead: "copyProgHead",
     copyProgMsg: "copyProgMsg",
   },
-  [TRANSLATION_ROOT_KEYS.SETTINGS]: {
-    [LANGS_CODES.en]: LANGS_CODES.en,
-    [LANGS_CODES.ru]: LANGS_CODES.ru,
+  [TRANSLATION_ROOT_KEYS.SETTINGS_TRK]: {
+    ...LANGS_CODES,
     languageTKey: "languageTKey",
     interfaceTKey: "interfaceTKey",
     peripheral: "peripheral",
@@ -67,16 +69,20 @@ export const TRANSLATION_KEYS = {
     cursorNoneTitle: "cursorNoneTitle",
     cursorNoneMsg: "cursorNoneMsg",
     showTipsTKey: "showTipsTKey",
-    motorDisclaimerHead: "motorDisclaimerHead",
     motorDisclaimerMsg: "motorDisclaimerMsg",
     toCalibrateBut: "toCalibrateBut",
-    toCalibrateHead: "toCalibrateHead",
     toCalibrateMsg: "toCalibrateMsg",
     sleepRatioKey: "sleepRatioKey",
     sleepRatioHead: "sleepRatioHead",
     sleepRatioMsg: "sleepRatioMsg",
+    spiTitle: "spiTitle",
+    spiOnHead: "spiOnHead",
+    spiOnMsg: "spiOnMsg",
+    spiTipHead: "spiTipHead",
+    spiTipMsg: "spiTipMsg",
+    spiAboutMsg: "spiAboutMsg",
   },
-  [TRANSLATION_ROOT_KEYS.TIPS]: {
+  [TRANSLATION_ROOT_KEYS.TIPS_TRK]: {
     tipBut: "tipBut",
     tipDescrip: "tipDescrip",
     tipTitle: "tipTitle",
@@ -117,5 +123,8 @@ export const TRANSLATION_KEYS = {
     motorSwapMotorWiresTip: "motorSwapMotorWiresTip",
     motorSwapPotenWiresBut: "motorSwapPotenWiresBut",
     motorSwapPotenWiresTip: "motorSwapPotenWiresTip",
+  },
+  [TRANSLATION_ROOT_KEYS.ERRORS_TRK]: {
+    ...ERRORS,
   },
 };

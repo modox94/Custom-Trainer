@@ -79,10 +79,6 @@
   border: var(--tiny-gap) solid var(--black);
 }
 
-.fullHeightContainer {
-  height: var(--available-height);
-}
-
 .overflowItem {
   overflow-x: auto;
 }
@@ -98,4 +94,22 @@
 
 .overflowItem::-webkit-scrollbar-thumb {
   background-color: var(--blue3);
+}
+
+.settingButtonContainer {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  justify-content: space-between;
+  align-items: center;
+  align-content: stretch;
+  margin-bottom: var(--medium-gap);
+}
+
+.maxWidth75 {
+  max-width: 75%;
+}
+
+.settingButtonMargin {
+  margin-left: var(--medium-gap);
 }

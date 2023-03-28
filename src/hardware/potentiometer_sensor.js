@@ -1,7 +1,8 @@
+const { noop } = require("lodash");
 const mcpadc = require("mcp-spi-adc");
 
 class PotentiometerSensor {
-  constructor(options) {
+  constructor() {
     this.condition = { isReady: false, error: false };
     this.sensor = mcpadc.open(5, err => {
       if (err) {
@@ -25,19 +26,11 @@ class PotentiometerSensor {
     });
   }
 
-  readPositionCb(cb) {
-    if (this.condition.isReady) {
-      this.sensor.read((err, reading) => {
-        cb(reading?.value * 100);
-      });
-    } else {
-      cb(NaN);
-    }
-  }
+  // TODO создать обсервер с интервалом 15-50 мс на рекурсивном таймауте, промифицировать чтение
 
   off() {
     try {
-      this.sensor.close();
+      this.sensor.close(noop);
     } catch (error) {
       console.log("sensor.close error", error);
     }

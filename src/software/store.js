@@ -18,6 +18,9 @@ const {
   FILE_CONST,
   LANGS_CODES,
   MOTOR_FIELDS,
+  ABSOLUTE_DIR_CONST,
+  ERRORS,
+  DOT_JSON,
 } = require("../constants/constants");
 
 const ajv = new Ajv();
@@ -95,27 +98,30 @@ const validateInterface = ajv.compile(interfaceSchema);
 const validatePeripheral = ajv.compile(peripheralSchema);
 
 const DIR_CONST_ARRAY = Object.values(DIR_CONST);
+const ABSOLUTE_DIR_CONST_ARRAY = Object.values(ABSOLUTE_DIR_CONST);
 
 class Store {
   constructor() {
-    this.userDataPath =
-      app?.getPath("userData") || "/home/pi/.config/custom-trainer";
+    this.constants = {
+      userDataPath:
+        app?.getPath("userData") ||
+        `${process?.env?.HOME || ""}/.config/custom-trainer`,
+    };
 
     this.callbacks = DIR_CONST_ARRAY.reduce((callbacksObj, dir) => {
       callbacksObj[dir] = [];
       return callbacksObj;
     }, {});
     this.watchers = DIR_CONST_ARRAY.reduce((watchersObj, dir) => {
-      const fullPath = path.join(this.userDataPath, dir);
-      const isExist = fs.existsSync(fullPath);
-      if (!isExist) {
+      const fullPath = path.join(this.constants.userDataPath, dir);
+      if (!fs.existsSync(fullPath)) {
         fs.mkdirSync(fullPath, { recursive: true });
       }
       if (watchersObj[dir]) {
         console.log("error watcher already created");
       }
 
-      watchersObj[dir] = chokidar.watch(fullPath);
+      watchersObj[dir] = chokidar.watch(fullPath, { ignoreInitial: true });
       watchersObj[dir].on("add", this.onAddOrChange.bind(this, dir));
       watchersObj[dir].on("change", this.onAddOrChange.bind(this, dir));
       watchersObj[dir].on("unlink", this.onUnlink.bind(this, dir));
@@ -127,6 +133,47 @@ class Store {
       return storeObj;
     }, {});
 
+    if (fs.existsSync(ABSOLUTE_DIR_CONST.BOOT)) {
+      const relativePath = path.relative(
+        this.constants.userDataPath,
+        ABSOLUTE_DIR_CONST.BOOT,
+      );
+      this.constants[ABSOLUTE_DIR_CONST.BOOT] = relativePath;
+      try {
+        this.watchers[relativePath] = chokidar.watch(relativePath, {
+          ignored: path =>
+            path.includes(".img") ||
+            path.includes(".bin") ||
+            path.includes(".elf"),
+          ignorePermissionErrors: true,
+          depth: 0,
+        });
+
+        this.watchers[relativePath].on(
+          "add",
+          this.onAddOrChange.bind(this, relativePath),
+        );
+        this.watchers[relativePath].on(
+          "change",
+          this.onAddOrChange.bind(this, relativePath),
+        );
+        this.watchers[relativePath].on(
+          "unlink",
+          this.onUnlink.bind(this, relativePath),
+        );
+      } catch (error) {
+        console.log("watch err", error);
+      }
+      this.callbacks[relativePath] = [];
+    } else {
+      this.constants[ABSOLUTE_DIR_CONST.BOOT] = ABSOLUTE_DIR_CONST.BOOT;
+      this.store[ABSOLUTE_DIR_CONST.BOOT] = {
+        [FILE_CONST.CONFIG]: ERRORS.BOOT_CONFIG_NOT_EXIST,
+      };
+      this.watchers[ABSOLUTE_DIR_CONST.BOOT] = ERRORS.BOOT_CONFIG_NOT_EXIST;
+      this.callbacks[ABSOLUTE_DIR_CONST.BOOT] = [];
+    }
+
     this.initialize();
   }
 
@@ -134,7 +181,10 @@ class Store {
     const tempStore = {};
 
     // Programs
-    const programsFullPath = path.join(this.userDataPath, DIR_CONST.PROGRAMS);
+    const programsFullPath = path.join(
+      this.constants.userDataPath,
+      DIR_CONST.PROGRAMS,
+    );
     const programsDir = fs.readdirSync(programsFullPath, {
       withFileTypes: true,
     });
@@ -144,7 +194,9 @@ class Store {
         return console.log("error unexpected folder");
       } else if (programFile.isFile()) {
         const pathEl = path.join(programsFullPath, programFile.name);
-        const programObj = JSON.parse(fs.readFileSync(pathEl));
+        const programObj = JSON.parse(
+          fs.readFileSync(pathEl, { encoding: "utf-8" }),
+        );
         if (validateProgram(programObj)) {
           set(tempStore, [DIR_CONST.PROGRAMS, programFile.name], programObj);
         }
@@ -172,11 +224,13 @@ class Store {
         }
       }
 
-      let filename = `${camelCase(defaultProgram.title)}.json`;
+      let filename = `${camelCase(defaultProgram.title)}${DOT_JSON}`;
       let iterator = 0;
       while (get(tempStore, [DIR_CONST.PROGRAMS, filename]) && iterator < 100) {
         iterator += 1;
-        filename = `${camelCase(defaultProgram.title)}_(${iterator}).json`;
+        filename = `${camelCase(
+          defaultProgram.title,
+        )}_(${iterator})${DOT_JSON}`;
       }
 
       if (get(tempStore, [DIR_CONST.PROGRAMS, filename])) {
@@ -188,7 +242,10 @@ class Store {
     });
 
     // Settings
-    const settingsFullPath = path.join(this.userDataPath, DIR_CONST.SETTINGS);
+    const settingsFullPath = path.join(
+      this.constants.userDataPath,
+      DIR_CONST.SETTINGS,
+    );
     const settingsDir = fs.readdirSync(settingsFullPath, {
       withFileTypes: true,
     });
@@ -198,7 +255,9 @@ class Store {
         return console.log("error unexpected folder");
       } else if (settingsFile.isFile()) {
         const pathEl = path.join(settingsFullPath, settingsFile.name);
-        const settingObj = JSON.parse(fs.readFileSync(pathEl));
+        const settingObj = JSON.parse(
+          fs.readFileSync(pathEl, { encoding: "utf-8" }),
+        );
         set(tempStore, [DIR_CONST.SETTINGS, settingsFile.name], settingObj);
       }
     });
@@ -247,11 +306,14 @@ class Store {
   }
 
   onAddOrChange(dir, pathValue) {
-    const { base } = path.parse(pathValue) || {};
+    const { base, ext } = path.parse(pathValue) || {};
 
     try {
-      const programObj = JSON.parse(fs.readFileSync(pathValue));
-      set(this.store, [dir, base], programObj);
+      let fileData = fs.readFileSync(pathValue, { encoding: "utf-8" });
+      if (ext.toLowerCase() === DOT_JSON) {
+        fileData = JSON.parse(fileData);
+      }
+      set(this.store, [dir, base], fileData);
       this.callbacks[dir].forEach(cb => {
         if (isFunction(cb)) {
           cb(this.store[dir]);
@@ -260,7 +322,7 @@ class Store {
         }
       });
     } catch (error) {
-      console.log(error);
+      console.log("onAddOrChange", error);
     }
   }
 
@@ -280,7 +342,9 @@ class Store {
   }
 
   watch(dir, cb) {
-    if (!DIR_CONST_ARRAY.includes(dir)) {
+    const allConsts = [...DIR_CONST_ARRAY];
+    ABSOLUTE_DIR_CONST_ARRAY.map(el => allConsts.push(this.constants[el]));
+    if (!allConsts.includes(dir)) {
       console.log("error wrong dir");
       return;
     }
@@ -315,7 +379,7 @@ class Store {
   }
 
   isExist(dir, filename) {
-    const fullPath = path.join(this.userDataPath, dir, filename);
+    const fullPath = path.join(this.constants.userDataPath, dir, filename);
     const isExist = fs.existsSync(fullPath);
 
     return isExist;
@@ -346,16 +410,16 @@ class Store {
       return;
     }
 
-    const fullPath = path.join(this.userDataPath, dir, filename);
+    const fullPath = path.join(this.constants.userDataPath, dir, filename);
     fs.writeFileSync(fullPath, JSON.stringify(data));
   }
 
   createProgram(data) {
-    let filename = `${camelCase(data.title)}.json`;
+    let filename = `${camelCase(data.title)}${DOT_JSON}`;
     let iterator = 0;
     while (get(this.store, [DIR_CONST.PROGRAMS, filename]) && iterator < 100) {
       iterator += 1;
-      filename = `${camelCase(data.title)}_(${iterator}).json`;
+      filename = `${camelCase(data.title)}_(${iterator})${DOT_JSON}`;
     }
 
     if (get(this.store, [DIR_CONST.PROGRAMS, filename])) {
@@ -378,7 +442,7 @@ class Store {
       return;
     }
 
-    const fullPath = path.join(this.userDataPath, dir, filename);
+    const fullPath = path.join(this.constants.userDataPath, dir, filename);
     fs.writeFileSync(fullPath, JSON.stringify(data));
   }
 
@@ -413,7 +477,7 @@ class Store {
       return;
     }
 
-    const fullPath = path.join(this.userDataPath, dir, filename);
+    const fullPath = path.join(this.constants.userDataPath, dir, filename);
     fs.unlinkSync(fullPath);
   }
 }

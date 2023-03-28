@@ -9,7 +9,7 @@ import { useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { useSelector } from "react-redux";
 import { MemoryRouter, Outlet, Route, Routes } from "react-router-dom";
-import { useGetSettingsQuery } from "./api/ipc";
+import { useGetBootQuery, useGetSettingsQuery } from "./api/ipc";
 import "./App.css";
 import Footer from "./components/Footer/Footer";
 import MainPage from "./components/MainPage/MainPage";
@@ -50,6 +50,7 @@ const App = () => {
   const lang = get(settings, [FILE_CONST.INTERFACE, "lang"], "");
   const cursorNone = get(settings, [FILE_CONST.INTERFACE, "cursorNone"], false);
   const showTips = get(settings, [FILE_CONST.INTERFACE, "showTips"], false);
+  useGetBootQuery(undefined, { refetchOnMountOrArgChange: true });
 
   useEffect(() => {
     if (lang && LANGS_CODES[lang] && i18n.language !== lang) {

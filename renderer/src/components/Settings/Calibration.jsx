@@ -1,9 +1,13 @@
 import { Classes } from "@blueprintjs/core";
 import clsx from "clsx";
 import { get, isFinite } from "lodash";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { motorCalibration, useGetSettingsQuery } from "../../api/ipc";
+import {
+  motorCalibration,
+  stopMotor,
+  useGetSettingsQuery,
+} from "../../api/ipc";
 import { DASH } from "../../constants/commonConst";
 import { FILE_CONST } from "../../constants/reduxConst";
 import { MOTOR_FIELDS } from "../../constants/settingsConst";
@@ -13,17 +17,12 @@ import {
 } from "../../constants/translationConst";
 import { getTranslationPath } from "../../utils/translationUtils";
 import { Container, Item } from "../SquareGrid/SquareGrid";
+import SettingLine from "./SettingLine";
 
-const { SETTINGS } = TRANSLATION_ROOT_KEYS;
-const {
-  toCalibrateBut,
-  toCalibrateHead,
-  toCalibrateMsg,
-  sleepRatioKey,
-  sleepRatioHead,
-  sleepRatioMsg,
-} = TRANSLATION_KEYS[SETTINGS];
-const getTPath = (...args) => getTranslationPath(SETTINGS, ...args);
+const { COMMON_TRK, SETTINGS_TRK } = TRANSLATION_ROOT_KEYS;
+const { start } = TRANSLATION_KEYS[COMMON_TRK];
+const { toCalibrateBut, sleepRatioKey } = TRANSLATION_KEYS[SETTINGS_TRK];
+const getTPath = (...args) => getTranslationPath(SETTINGS_TRK, ...args);
 
 const Calibration = () => {
   const { t } = useTranslation();
@@ -36,6 +35,12 @@ const Calibration = () => {
     [FILE_CONST.PERIPHERAL, MOTOR_FIELDS.SLEEP_RATIO],
     null,
   );
+
+  useEffect(() => {
+    return () => {
+      stopMotor();
+    };
+  }, []);
 
   const toCalibrateMotor = async () => {
     if (loading) {
@@ -51,23 +56,21 @@ const Calibration = () => {
 
   return (
     <>
-      <Container>
-        <Item
-          className={clsx({ [Classes.SKELETON]: loading })}
-          onClick={toCalibrateMotor}
-        >
-          <h1>{t(getTPath(toCalibrateBut))}</h1>
+      <Container fullHeight>
+        <Item className={clsx({ [Classes.SKELETON]: loading })}>
+          <SettingLine
+            title={t(getTPath(toCalibrateBut))}
+            buttonText={t(getTranslationPath(COMMON_TRK, start))}
+            onClick={toCalibrateMotor}
+          />
         </Item>
-        <Item>
-          <h1>{t(getTPath(sleepRatioKey))}</h1>
-          <h1>{!isFinite(sleepRatio) ? DASH : String(sleepRatio)}</h1>
+        <Item className={clsx({ [Classes.SKELETON]: loading })}>
+          <SettingLine
+            title={t(getTPath(sleepRatioKey))}
+            value={!isFinite(sleepRatio) ? DASH : String(sleepRatio)}
+          />
+          <SettingLine title={String(error)} />
         </Item>
-      </Container>
-      <Container>
-        <Item>
-          <h1>{error && String(error)}</h1>
-        </Item>
-        <Item></Item>
       </Container>
     </>
   );

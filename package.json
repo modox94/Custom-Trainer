@@ -1,6 +1,6 @@
 {
   "name": "custom-trainer",
-  "version": "0.1.13",
+  "version": "0.1.14",
   "main": "main.js",
   "scripts": {
     "start": "electron-forge start",
@@ -23,30 +23,35 @@
   "description": "Сustom app for control the trainers",
   "dependencies": {
     "ajv": "^8.12.0",
-    "bluebird": "^3.7.2",
     "chokidar": "^3.5.3",
     "lodash": "^4.17.21",
     "mcp-spi-adc": "^3.2.0",
     "node-ble": "^1.9.0",
-    "onoff": "^6.0.3"
+    "onoff": "^6.0.3",
+    "sudo-prompt": "^9.2.1"
   },
   "devDependencies": {
     "@electron-forge/cli": "^6.0.5",
     "@electron-forge/maker-deb": "^6.0.5",
-    "electron": "^23.1.1",
-    "eslint": "^8.34.0",
-    "prettier": "^2.8.4"
+    "electron": "^23.2.0",
+    "eslint": "^8.36.0",
+    "prettier": "^2.8.7"
   },
   "config": {
     "forge": {
-      "packagerConfig": {},
       "makers": [
         {
           "name": "@electron-forge/maker-deb",
           "config": {
             "options": {
+              "categories": [
+                "Utility"
+              ],
+              "description": "Application for using elliptical or bike trainer with RPI.",
+              "productName": "Custom Trainer",
+              "homepage": "https://github.com/modox94/Custom-Trainer",
               "maintainer": "Nikita Novoselov",
-              "homepage": "https://github.com/modox94"
+              "icon": "./other/icon.png"
             }
           }
         }
