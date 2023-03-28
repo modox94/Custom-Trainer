@@ -320,6 +320,6 @@ ipcMain.on(EVENTS.DELETE_PROGRAM, async (event, filename) =>
   store.delete(DIR_CONST.PROGRAMS, filename),
 );
 
-ipcMain.on(EVENTS.APP_QUIT, onQuit);
+ipcMain.on(EVENTS.APP_QUIT, app.quit.bind(app));
 
 exports.win = win;
