@@ -128,7 +128,7 @@ const onQuit = () => {
   preventDisplaySleepFn();
 };
 
-app.on("window-all-closed", onQuit);
+app.on("window-all-closed", app.quit.bind(app));
 
 app.on("will-quit", onQuit);
 
