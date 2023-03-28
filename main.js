@@ -22,12 +22,7 @@ const {
 const { rate } = require("./src/hardware/cadence_sensor");
 const MotorDriver = require("./src/hardware/motor_driver");
 const Store = require("./src/software/store");
-const {
-  Promise,
-  commentConfigOpt,
-  convertConfigToObj,
-  log,
-} = require("./src/utils/utils");
+const { commentConfigOpt, convertConfigToObj } = require("./src/utils/utils");
 
 const template = [
   {
@@ -89,11 +84,11 @@ const createWindow = () => {
     },
   });
 
-  // if (process.env.ELECTRON_START_URL) {
-  // win.loadURL(process.env.ELECTRON_START_URL);
-  // } else {
-  win.loadFile("./renderer/build/index.html");
-  // }
+  if (process.env.ELECTRON_START_URL) {
+    win.loadURL(process.env.ELECTRON_START_URL);
+  } else {
+    win.loadFile("./renderer/build/index.html");
+  }
 };
 
 app.whenReady().then(() => {
@@ -183,8 +178,6 @@ ipcMain.handle(EVENTS.CHECK_PROGRAM_TITLE, (event, value) => {
 ipcMain.on(EVENTS.SET_FULLSCREEN, () => {
   const isFullScreen = win.isFullScreen();
   win.setFullScreen(!isFullScreen);
-
-  win.webContents.toggleDevTools(); // TODO remove
 });
 
 ipcMain.handle(EVENTS.GET_POTENTIOMETER, async () => {
@@ -215,14 +208,11 @@ ipcMain.handle(EVENTS.EDIT_BOOT_CONFIG, async (event, opt, value) => {
         );
         const sudoCommand = `echo "${newConfigData}" > ${fullConfigPath}`;
         const options = { name: "Custom Trainer" };
-        const [error, stdout, stderr] = (await new Promise(
-          (resolve, reject, onCancel) => {
-            onCancel(noop);
-            sudo.exec(sudoCommand, options, function (...args) {
-              resolve(args);
-            });
-          },
-        )) || [ERRORS.BOOT_CONFIG_WRONG_ARGS];
+        const [error, stdout, stderr] = (await new Promise(resolve => {
+          sudo.exec(sudoCommand, options, function (...args) {
+            resolve(args);
+          });
+        })) || [ERRORS.BOOT_CONFIG_WRONG_ARGS];
 
         if (get(error, ["message"], "") === "User did not grant permission.") {
           return [ERRORS.SUDO_NOT_GRANT_PERMISSION, stdout, stderr];
@@ -261,18 +251,8 @@ ipcMain.handle(EVENTS.GET_MOTOR_LEVEL, async () => {
   return await motor.getMotorLevel();
 });
 
-ipcMain.on(EVENTS.SET_MOTOR_LEVEL, async (event, motorLevel) => {
-  // win.webContents.send(EVENTS.CONSOLE_LOG, "back setMotorLevel", motorLevel);
-  log("main setlevel start");
-
-  try {
-    const res = await motor.setLevel(motorLevel);
-    // win.webContents.send(EVENTS.CONSOLE_LOG, "back setMotorLevel res", res);
-    log("main setlevel res", res);
-  } catch (error) {
-    // win.webContents.send(EVENTS.CONSOLE_LOG, "back setMotorLevel error", error);
-    log("main setlevel error", error);
-  }
+ipcMain.on(EVENTS.SET_MOTOR_LEVEL, (event, motorLevel) => {
+  motor.setLevel(motorLevel);
 });
 
 ipcMain.on(EVENTS.STOP_MOTOR, () => {
@@ -320,6 +300,4 @@ ipcMain.on(EVENTS.DELETE_PROGRAM, async (event, filename) =>
   store.delete(DIR_CONST.PROGRAMS, filename),
 );
 
-ipcMain.on(EVENTS.APP_QUIT, app.quit.bind(app));
-
-exports.win = win;
+ipcMain.on(EVENTS.APP_QUIT, onQuit);

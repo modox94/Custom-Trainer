@@ -1,6 +1,5 @@
 const { noop } = require("lodash");
 const mcpadc = require("mcp-spi-adc");
-const { Promise } = require("../utils/utils");
 
 class PotentiometerSensor {
   constructor() {
@@ -13,13 +12,18 @@ class PotentiometerSensor {
         this.condition.isReady = true;
       }
     });
-
-    this.read = Promise.promisify(this.sensor.read.bind(this.sensor));
   }
 
   async readPosition() {
-    const { value = NaN } = (await this.read()) || {};
-    return value * 100;
+    return await new Promise(resolve => {
+      if (this.condition.isReady) {
+        this.sensor.read((err, reading) => {
+          resolve(reading?.value * 100);
+        });
+      } else {
+        resolve(NaN);
+      }
+    });
   }
 
   // TODO создать обсервер с интервалом 15-50 мс на рекурсивном таймауте, промифицировать чтение

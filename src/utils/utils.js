@@ -1,5 +1,4 @@
-const Promise = require("bluebird");
-const { isString, isUndefined, round } = require("lodash");
+const { isString, isUndefined } = require("lodash");
 const {
   BOOT_CONFIG_OPT,
   ERRORS,
@@ -7,12 +6,10 @@ const {
   LINE_FEED,
 } = require("../constants/constants");
 
-Promise.config({ cancellation: true });
-
-exports.Promise = Promise;
-
 exports.sleep = async (delay = 1000) => {
-  return await Promise.delay(delay);
+  return await new Promise(resolve => {
+    setTimeout(resolve, delay);
+  });
 };
 
 exports.convertConfigToObj = configStr => {
@@ -90,5 +87,3 @@ exports.commentConfigOpt = (configStr, optKey) => {
 
   return newConfStr;
 };
-
-exports.log = (...args) => console.log(round(Date.now() / 1000), ...args);
