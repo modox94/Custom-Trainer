@@ -5,7 +5,7 @@ const {
   Menu,
   powerSaveBlocker,
 } = require("electron");
-const { isFunction, get, noop } = require("lodash");
+const { isFunction, get } = require("lodash");
 const path = require("node:path");
 const sudo = require("sudo-prompt");
 const {
@@ -300,4 +300,4 @@ ipcMain.on(EVENTS.DELETE_PROGRAM, async (event, filename) =>
   store.delete(DIR_CONST.PROGRAMS, filename),
 );
 
-ipcMain.on(EVENTS.APP_QUIT, onQuit);
+ipcMain.on(EVENTS.APP_QUIT, app.quit.bind(app));

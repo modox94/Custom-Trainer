@@ -1,9 +1,13 @@
 import { Classes } from "@blueprintjs/core";
 import clsx from "clsx";
 import { get, isFinite } from "lodash";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { motorCalibration, useGetSettingsQuery } from "../../api/ipc";
+import {
+  motorCalibration,
+  stopMotor,
+  useGetSettingsQuery,
+} from "../../api/ipc";
 import { DASH } from "../../constants/commonConst";
 import { FILE_CONST } from "../../constants/reduxConst";
 import { MOTOR_FIELDS } from "../../constants/settingsConst";
@@ -31,6 +35,12 @@ const Calibration = () => {
     [FILE_CONST.PERIPHERAL, MOTOR_FIELDS.SLEEP_RATIO],
     null,
   );
+
+  useEffect(() => {
+    return () => {
+      stopMotor();
+    };
+  }, []);
 
   const toCalibrateMotor = async () => {
     if (loading) {
@@ -65,26 +75,5 @@ const Calibration = () => {
     </>
   );
 };
-
-/*
-<Container>
-  <Item
-    className={clsx({ [Classes.SKELETON]: loading })}
-    onClick={toCalibrateMotor}
-  >
-    <h1>{t(getTPath(toCalibrateBut))}</h1>
-  </Item>
-  <Item>
-    <h1>{t(getTPath(sleepRatioKey))}</h1>
-    <h1>{!isFinite(sleepRatio) ? DASH : String(sleepRatio)}</h1>
-  </Item>
-</Container>
-<Container>
-  <Item>
-    <h1>{error && String(error)}</h1>
-  </Item>
-  <Item></Item>
-</Container>
-*/
 
 export default Calibration;

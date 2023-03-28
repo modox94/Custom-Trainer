@@ -81,15 +81,6 @@ class MotorDriver {
     if (!this.action?.signal?.aborted && isFunction(this.action?.abort)) {
       this.action.abort();
     }
-
-    // if (
-    //   isFunction(this.action?.isFulfilled) &&
-    //   !this.action.isFulfilled() &&
-    //   isFunction(this.action?.cancel)
-    // ) {
-    //   this.action.cancel();
-    //   this.action = null;
-    // }
   }
 
   async off() {
