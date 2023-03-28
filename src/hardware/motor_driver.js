@@ -444,6 +444,10 @@ class MotorDriver {
     // TODO improve checking position
     // TODO add max counter for stop cycle, i.e. 100 max moves
     while (!ac.signal?.aborted && Math.abs(posCur - posTarget) > 1) {
+      if (ac.signal?.aborted) {
+        return { error: ERRORS.PROMISE_CANCELLED };
+      }
+
       log("setLevel move cycle st");
       if (posCur < posTarget) {
         this.move(MOVE_DIRECTION.forward);
@@ -463,6 +467,10 @@ class MotorDriver {
         driveTime = posCur - posTarget ? driveTime + DELAY : driveTime - DELAY;
       }
 
+      if (ac.signal?.aborted) {
+        return { error: ERRORS.PROMISE_CANCELLED };
+      }
+
       log("setLevel move cycle 2");
 
       this.stop();
@@ -470,6 +478,10 @@ class MotorDriver {
       log("setLevel move cycle 3");
 
       await sleep(DELAY_FOR_READ);
+
+      if (ac.signal?.aborted) {
+        return { error: ERRORS.PROMISE_CANCELLED };
+      }
 
       log("setLevel move cycle 4");
 
