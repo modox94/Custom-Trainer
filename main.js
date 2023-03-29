@@ -21,39 +21,11 @@ const {
 } = require("./src/constants/constants");
 const { rate } = require("./src/hardware/cadence_sensor");
 const MotorDriver = require("./src/hardware/motor_driver");
+const { aplicationMenu } = require("./src/software/aplication_menu");
 const Store = require("./src/software/store");
 const { commentConfigOpt, convertConfigToObj } = require("./src/utils/utils");
 
-const template = [
-  {
-    role: "fileMenu",
-  },
-  {
-    label: "View",
-    submenu: [
-      { role: "reload" },
-      { role: "toggleDevTools" },
-      { type: "separator" },
-      { role: "resetZoom" },
-      { type: "separator" },
-      { role: "togglefullscreen" },
-    ],
-  },
-  {
-    role: "help",
-    submenu: [
-      {
-        label: "GitHub",
-        click: async () => {
-          const { shell } = require("electron");
-          await shell.openExternal("https://github.com/modox94/Custom-Trainer");
-        },
-      },
-    ],
-  },
-];
-const menu = Menu.buildFromTemplate(template);
-Menu.setApplicationMenu(menu);
+Menu.setApplicationMenu(aplicationMenu);
 
 const store = new Store();
 const motor = new MotorDriver(
