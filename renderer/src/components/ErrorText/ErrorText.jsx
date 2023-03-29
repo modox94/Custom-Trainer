@@ -40,7 +40,6 @@ ErrorText.propTypes = {
 };
 ErrorText.defaultProps = {
   className: "",
-  error: "",
   text: "",
   br: false,
 };
