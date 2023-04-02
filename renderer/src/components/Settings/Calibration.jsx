@@ -1,4 +1,5 @@
 import { Classes } from "@blueprintjs/core";
+import { IconNames } from "@blueprintjs/icons";
 import clsx from "clsx";
 import { get, isFinite } from "lodash";
 import React, { useEffect, useState } from "react";
@@ -16,12 +17,14 @@ import {
   TRANSLATION_ROOT_KEYS,
 } from "../../constants/translationConst";
 import { getTranslationPath } from "../../utils/translationUtils";
+import MultistepDialogCustom from "../MultistepDialogCustom/MultistepDialogCustom";
 import { Container, Item } from "../SquareGrid/SquareGrid";
 import SettingLine from "./SettingLine";
 
 const { COMMON_TRK, SETTINGS_TRK } = TRANSLATION_ROOT_KEYS;
-const { start } = TRANSLATION_KEYS[COMMON_TRK];
-const { toCalibrateBut, sleepRatioKey } = TRANSLATION_KEYS[SETTINGS_TRK];
+const { start, back, warning } = TRANSLATION_KEYS[COMMON_TRK];
+const { toCalibrateMotorBut, toCalibrateCadenceBut, sleepRatioKey } =
+  TRANSLATION_KEYS[SETTINGS_TRK];
 const getTPath = (...args) => getTranslationPath(SETTINGS_TRK, ...args);
 
 const Calibration = () => {
@@ -54,14 +57,23 @@ const Calibration = () => {
     setLoading(false);
   };
 
+  const toCalibrateCadence = async => {
+    //
+  };
+
   return (
     <>
       <Container fullHeight>
         <Item className={clsx({ [Classes.SKELETON]: loading })}>
           <SettingLine
-            title={t(getTPath(toCalibrateBut))}
+            title={t(getTPath(toCalibrateMotorBut))}
             buttonText={t(getTranslationPath(COMMON_TRK, start))}
             onClick={toCalibrateMotor}
+          />
+          <SettingLine
+            title={t(getTPath(toCalibrateCadenceBut))}
+            buttonText={t(getTranslationPath(COMMON_TRK, start))}
+            onClick={toCalibrateCadence}
           />
         </Item>
         <Item className={clsx({ [Classes.SKELETON]: loading })}>
@@ -72,6 +84,38 @@ const Calibration = () => {
           <SettingLine title={String(error)} />
         </Item>
       </Container>
+
+      <MultistepDialogCustom
+        isOpen={true}
+        icon={IconNames.WARNING_SIGN}
+        title={t(getTranslationPath(COMMON_TRK, warning))}
+        canEscapeKeyClose={false}
+        canOutsideClickClose={false}
+        isCloseButtonShown={false}
+        style={{ backgroundColor: "blue", minWidth: "unset" }}
+        dialogSteps={[
+          {
+            // backButtonProps: buttonPropShape,
+            // className: PropTypes.string,
+            key: "step1",
+            id: "step1",
+            // nextButtonProps: buttonPropShape,
+            panel: <>Step step step 1</>,
+            // panelClassName: PropTypes.string,
+            title: "Step 1",
+          },
+          {
+            // backButtonProps: buttonPropShape,
+            // className: PropTypes.string,
+            key: "step2",
+            id: "step2",
+            // nextButtonProps: buttonPropShape,
+            panel: <>Step step step 2</>,
+            // panelClassName: PropTypes.string,
+            title: "Step 2",
+          },
+        ]}
+      />
     </>
   );
 };

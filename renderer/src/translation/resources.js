@@ -244,13 +244,21 @@ const resources = {
       [en]: "TODO motorDisclaimerMsg",
       [ru]: "Внимание, в этом разделе вы можете навредить своему оборудованию. Убедитесь, что понимаете что делаете.",
     },
-    [TK[SETTINGS_TRK].toCalibrateBut]: {
+    [TK[SETTINGS_TRK].toCalibrateMotorBut]: {
       [en]: "TODO calibrationBut",
       [ru]: "Калибровка двигателя",
     },
-    [TK[SETTINGS_TRK].toCalibrateMsg]: {
+    [TK[SETTINGS_TRK].toCalibrateMotorMsg]: {
       [en]: "TODO calibrationMsg",
       [ru]: "TODO calibrationMsg",
+    },
+    [TK[SETTINGS_TRK].toCalibrateCadenceBut]: {
+      [en]: "TODO toCalibrateCadenceBut",
+      [ru]: "Калибровка датчика скорости",
+    },
+    [TK[SETTINGS_TRK].toCalibrateCadenceMsg]: {
+      [en]: "TODO toCalibrateCadenceMsg",
+      [ru]: "TODO toCalibrateCadenceMsg",
     },
     [TK[SETTINGS_TRK].sleepRatioKey]: {
       [en]: "TODO sleepRatioKey",
