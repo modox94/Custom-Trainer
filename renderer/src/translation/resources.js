@@ -106,6 +106,10 @@ const resources = {
       [en]: "Start",
       [ru]: "Начать",
     },
+    [TK[COMMON_TRK].finish]: {
+      [en]: "Finish",
+      [ru]: "Завершить",
+    },
   },
   [WORKOUT_TRK]: {
     [TK[WORKOUT_TRK].programMode]: {

@@ -35,6 +35,7 @@ export const TRANSLATION_KEYS = {
     turnOff: "turnOff",
     warning: "warning",
     start: "start",
+    finish: "finish",
   },
   [TRANSLATION_ROOT_KEYS.WORKOUT_TRK]: {
     programMode: "programMode",

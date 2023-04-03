@@ -1,5 +1,5 @@
 import { Classes, Dialog, DialogBody, DialogFooter } from "@blueprintjs/core";
-import { noop } from "lodash";
+import { isString, noop } from "lodash";
 import PropTypes from "prop-types";
 import React from "react";
 
@@ -13,10 +13,12 @@ const DialogCustom = props => {
     canOutsideClickClose,
     isCloseButtonShown,
     onClose,
-    body,
+    body: propsBody,
     footerMinimal,
     footer,
   } = props;
+
+  const body = isString(propsBody) ? <p>{propsBody}</p> : propsBody;
 
   return (
     <Dialog
@@ -29,9 +31,7 @@ const DialogCustom = props => {
       isCloseButtonShown={Boolean(isCloseButtonShown)}
       onClose={onClose}
     >
-      <DialogBody>
-        <p className={Classes.TEXT_LARGE}>{body}</p>
-      </DialogBody>
+      <DialogBody className={Classes.TEXT_LARGE}>{body}</DialogBody>
       <DialogFooter minimal={Boolean(footerMinimal)}>
         <div className={Classes.DIALOG_FOOTER_ACTIONS}>{footer}</div>
       </DialogFooter>
