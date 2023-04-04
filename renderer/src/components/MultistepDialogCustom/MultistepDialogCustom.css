@@ -1,0 +1,13 @@
+.bp4-multistep-dialog-nav-top
+  .bp4-multistep-dialog-panels
+  .bp4-multistep-dialog-left-panel {
+  overflow-x: auto;
+}
+
+.bp4-multistep-dialog-nav-top
+  .bp4-multistep-dialog-panels
+  .bp4-multistep-dialog-left-panel
+  .bp4-dialog-step-container
+  .bp4-dialog-step {
+  height: calc(100% - 8px);
+}

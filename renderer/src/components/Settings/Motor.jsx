@@ -173,7 +173,7 @@ const Motor = () => {
             className={clsx(styles.icon50, styles.blueIcon)}
             position={potentiometerValue}
           />
-          <div className={styles.text}>
+          <div className={clsx(styles.textAlignCenter, styles.text)}>
             <p>
               <b>{String(potentiometerValue)}</b>
             </p>
@@ -235,7 +235,7 @@ const Motor = () => {
           onClick={onSelectMin}
         >
           <FeatherIcon className={styles.icon50} />
-          <div className={styles.text}>
+          <div className={clsx(styles.textAlignCenter, styles.text)}>
             <p>
               <b>{!isFinite(minPosition) ? DASH : minPosition}</b>
             </p>
@@ -248,7 +248,7 @@ const Motor = () => {
           onClick={onSelectMax}
         >
           <DumbbellIcon className={styles.icon50} />
-          <div className={styles.text}>
+          <div className={clsx(styles.textAlignCenter, styles.text)}>
             <p>
               <b>{!isFinite(maxPosition) ? DASH : maxPosition}</b>
             </p>

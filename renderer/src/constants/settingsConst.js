@@ -1,3 +1,5 @@
+export * as CADENCE_FIELDS from "./CADENCE_FIELDS.json";
+
 export * as MOTOR_FIELDS from "./MOTOR_FIELDS.json";
 
 export const MAX_RES_LEVEL = 10;

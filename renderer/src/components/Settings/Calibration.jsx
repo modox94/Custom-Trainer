@@ -6,7 +6,7 @@ import { useTranslation } from "react-i18next";
 import { stopMotor, useGetSettingsQuery } from "../../api/ipc";
 import { DASH } from "../../constants/commonConst";
 import { FILE_CONST } from "../../constants/reduxConst";
-import { MOTOR_FIELDS } from "../../constants/settingsConst";
+import { CADENCE_FIELDS, MOTOR_FIELDS } from "../../constants/settingsConst";
 import {
   TRANSLATION_KEYS,
   TRANSLATION_ROOT_KEYS,
@@ -39,6 +39,11 @@ const Calibration = () => {
   const sleepRatio = get(
     settings,
     [FILE_CONST.PERIPHERAL, MOTOR_FIELDS.SLEEP_RATIO],
+    null,
+  );
+  const gearRatio = get(
+    settings,
+    [FILE_CONST.PERIPHERAL, CADENCE_FIELDS.GEAR_RATIO],
     null,
   );
 
@@ -83,7 +88,8 @@ const Calibration = () => {
             title={t(getTPath(sleepRatioKey))}
             value={!isFinite(sleepRatio) ? DASH : String(sleepRatio)}
           />
-          <SettingLine title={String(error)} />
+          <SettingLine title="TODO gearRatio" value={String(gearRatio)} />
+          <SettingLine title="TODO error" value={String(error)} />
         </Item>
       </Container>
 

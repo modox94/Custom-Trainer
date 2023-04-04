@@ -1,8 +1,7 @@
 const { Gpio } = require("onoff");
-const { random, noop, get } = require("lodash");
+const { get, noop, random, round } = require("lodash");
 const {
-  DEFAULT_M_C,
-  DEFAULT_WINDOW,
+  CADENCE_FIELDS,
   DIRECTION,
   EDGE,
   PAUSE_DELAY,
@@ -15,9 +14,11 @@ class Frequency {
   constructor(options) {
     // TODO rewrite logic of gear ratio and add calibration fn
     this.timecodes = get(options, ["timecodes"], []);
-    this.window = get(options, ["window"], DEFAULT_WINDOW);
-    this.magnetsCount = get(options, ["magnetsCount"], DEFAULT_M_C);
-    this.gearRatio = get(options, ["gearRatio"], 1);
+    this[CADENCE_FIELDS.GEAR_RATIO] = get(
+      options,
+      [CADENCE_FIELDS.GEAR_RATIO],
+      2,
+    );
 
     try {
       this.cadenceSensor = new Gpio(
@@ -61,6 +62,19 @@ class Frequency {
     this.cadenceSensor.watch(this.inc.bind(this));
   }
 
+  updateField(field, value) {
+    switch (field) {
+      case CADENCE_FIELDS.GEAR_RATIO:
+        if (isFinite(value)) {
+          this[field] = round(value, 2);
+        }
+        break;
+
+      default:
+        break;
+    }
+  }
+
   off() {
     clearTimeout(this.lastTimeout);
     this.lastTimeout = undefined;
@@ -86,8 +100,8 @@ class Frequency {
       const prevMills = this.timecodes[lastIndex - 1];
       const currMills = this.timecodes[lastIndex];
 
-      const duration = (currMills - prevMills) / (1000 * this.window);
-      const distance = (1 / this.magnetsCount) * this.gearRatio;
+      const duration = (currMills - prevMills) / 60000;
+      const distance = 1 / this[CADENCE_FIELDS.GEAR_RATIO];
       const result = distance / duration;
 
       return { lastTimecode: this.timecodes[lastIndex], result };
@@ -97,6 +111,4 @@ class Frequency {
   }
 }
 
-const rate = new Frequency({ magnetsCount: 2 });
-
-exports.rate = rate;
+module.exports = Frequency;

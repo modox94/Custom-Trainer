@@ -18,6 +18,7 @@ import {
   TRANSLATION_ROOT_KEYS,
 } from "../../constants/translationConst";
 import { getTranslationPath } from "../../utils/translationUtils";
+import "./MultistepDialogCustom.css";
 import styles from "./MultistepDialogCustom.module.css";
 
 const { COMMON_TRK } = TRANSLATION_ROOT_KEYS;

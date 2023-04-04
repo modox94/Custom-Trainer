@@ -18,19 +18,24 @@ const {
   LINE_FEED,
   MOTOR_FIELDS,
   MOVE_DIRECTION,
+  CADENCE_FIELDS,
 } = require("./src/constants/constants");
-const { rate } = require("./src/hardware/cadence_sensor");
 const MotorDriver = require("./src/hardware/motor_driver");
 const { aplicationMenu } = require("./src/software/aplication_menu");
 const Store = require("./src/software/store");
 const { commentConfigOpt, convertConfigToObj } = require("./src/utils/utils");
+const Frequency = require("./src/hardware/cadence_sensor");
 
 Menu.setApplicationMenu(aplicationMenu);
 
 const store = new Store();
-const motor = new MotorDriver(
-  get(store.store, [DIR_CONST.SETTINGS, FILE_CONST.PERIPHERAL], {}),
+const settingsPeripheral = get(
+  store.store,
+  [DIR_CONST.SETTINGS, FILE_CONST.PERIPHERAL],
+  {},
 );
+const rate = new Frequency(settingsPeripheral);
+const motor = new MotorDriver(settingsPeripheral);
 
 let win = null;
 let preventDisplaySleepID = false;
@@ -252,6 +257,10 @@ ipcMain.on(EVENTS.EDIT_SETTINGS, async (event, filename, field, value) => {
         case MOTOR_FIELDS.SWAP_MOTOR_WIRES:
         case MOTOR_FIELDS.SWAP_POTEN_WIRES:
           motor.updateField(field, value);
+          break;
+
+        case CADENCE_FIELDS.GEAR_RATIO:
+          rate.updateField(field, value);
           break;
 
         default:
