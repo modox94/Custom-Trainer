@@ -23,9 +23,20 @@ import styles from "./Settings.module.css";
 
 const { COMMON_TRK, SETTINGS_TRK } = TRANSLATION_ROOT_KEYS;
 const { warning } = TRANSLATION_KEYS[COMMON_TRK];
-const { toCalibrateCadenceBut } = TRANSLATION_KEYS[SETTINGS_TRK];
+const {
+  calibCadenCollectDataMsg,
+  calibCadenCollectDataTitle,
+  calibCadenFinishMsg,
+  calibCadenFinishTitle,
+  calibCadenUserDataMsg,
+  calibCadenUserDataTitle,
+  calibCadenWarningMsg,
+  startCalibration,
+  stopCalibration,
+  toCalibrateCadenceBut,
+} = TRANSLATION_KEYS[SETTINGS_TRK];
 
-const getTPath = (...args) => getTranslationPath(COMMON_TRK, ...args);
+const getTPath = (...args) => getTranslationPath(SETTINGS_TRK, ...args);
 
 const DIALOG_STEPS = {
   WARNING: "WARNING",
@@ -50,7 +61,6 @@ const CalibrationCadenceDialog = props => {
   const cadenceObject = useGetCadenceQuery(undefined, {
     skip: !collectingInProgress,
   });
-  const currentCadence = get(cadenceObject, ["data", "result"], 0);
   const lastTimecode = get(cadenceObject, ["data", "lastTimecode"]);
 
   useEffect(() => {
@@ -120,7 +130,7 @@ const CalibrationCadenceDialog = props => {
   }, [onClose]);
 
   const finalButtonProps = useMemo(() => {
-    const disabled = !userData || !gearRatio;
+    const disabled = !(userData > 0) || !(gearRatio > 0);
 
     return {
       disabled,
@@ -131,21 +141,21 @@ const CalibrationCadenceDialog = props => {
   const nextButtonProps = useMemo(() => {
     switch (currentStep) {
       case DIALOG_STEPS.WARNING:
-        return {};
+        return emptyObj;
 
       case DIALOG_STEPS.COLLECT_DATA:
-        return { disabled: !collectedData };
+        return { disabled: !(collectedData > 0) || collectingInProgress };
 
       case DIALOG_STEPS.USER_DATA:
-        return {};
+        return { disabled: !(userData > 0) };
 
       case DIALOG_STEPS.FINISH:
-        return {};
+        return emptyObj;
 
       default:
-        return {};
+        return emptyObj;
     }
-  }, [collectedData, currentStep]);
+  }, [collectedData, collectingInProgress, currentStep, userData]);
 
   const dialogSteps = useMemo(() => {
     const toCollectData = () => {
@@ -160,53 +170,33 @@ const CalibrationCadenceDialog = props => {
 
     let icon, intent, text, disabled;
 
-    if (!collectedData && !collectingInProgress) {
+    if (!collectingInProgress) {
       icon = IconNames.PLAY;
       intent = Intent.PRIMARY;
-      text = "TODO Начать калибровку";
+      text = t(getTPath(startCalibration));
+      disabled = collectedData > 0;
     }
 
     if (collectingInProgress) {
       icon = IconNames.STOP;
       intent = Intent.SUCCESS;
-      text = "TODO Закончить калибровку";
-    }
-
-    if (collectedData && !collectingInProgress) {
-      icon = IconNames.PLAY;
-      intent = Intent.PRIMARY;
-      text = "TODO Начать калибровку";
-      disabled = true;
+      text = t(getTPath(stopCalibration));
     }
 
     return [
       {
         key: DIALOG_STEPS.WARNING,
         id: DIALOG_STEPS.WARNING,
-        title: t(getTPath(warning)),
-        panel:
-          "TODO Калибровка датчика скорости будет проходить в несколько этапов. Нажмите Дальше, чтобы продолжить.",
+        title: t(getTranslationPath(COMMON_TRK, warning)),
+        panel: t(getTPath(calibCadenWarningMsg)),
       },
       {
         key: DIALOG_STEPS.COLLECT_DATA,
         id: DIALOG_STEPS.COLLECT_DATA,
-        title: "TODO Сбор данных",
+        title: t(getTPath(calibCadenCollectDataTitle)),
         panel: (
           <>
-            <p>
-              TODO Для калибровки датчика перед началом процедуры необходимо
-              установить педали в положение, которое вам будет легко
-              воспроизвести (например левый шатун в крайнем нижнем положении).
-              Педали должны быть неподвижны. Затем вам следует нажать кнопку
-              "Начать калибровку" ниже и совершить несколько (от 10 и больше)
-              полных оборотов педалями с равномерной скоростью, вращая только
-              вперед и остановить педали в том же положении, что при начале
-              калибровки. Вы должны запомнить сколько именно полных оборотов вы
-              сделали (от этого зависит точность расчетов). Затем вам следует
-              нажать кнопку ниже "Закончить калибровку" и перейти к следующему
-              шагу. collectedData:{collectedData} currentCadence:
-              {currentCadence} lastTimecode:{lastTimecode}
-            </p>
+            <p>{t(getTPath(calibCadenCollectDataMsg))}</p>
             <Button
               alignText={Alignment.CENTER}
               icon={icon}
@@ -223,13 +213,10 @@ const CalibrationCadenceDialog = props => {
       {
         key: DIALOG_STEPS.USER_DATA,
         id: DIALOG_STEPS.USER_DATA,
-        title: "TODO Ввод данных",
+        title: t(getTPath(calibCadenUserDataTitle)),
         panel: (
           <>
-            <p>
-              TODO Ниже вы должны ввести количество полных оборотов, которые вы
-              произвели на предыдущем этапе
-            </p>
+            <p>{t(getTPath(calibCadenUserDataMsg))}</p>
             <ControlGroup fill>
               <Button
                 large
@@ -256,14 +243,10 @@ const CalibrationCadenceDialog = props => {
       {
         key: DIALOG_STEPS.FINISH,
         id: DIALOG_STEPS.FINISH,
-        title: "TODO Сохранение",
+        title: t(getTPath(calibCadenFinishTitle)),
         panel: (
           <>
-            <p>
-              TODO Ниже вы можете изменить рассчитанное передаточное число, если
-              понимаете что делаете. В противном случае просто нажмите кнопку
-              "Завергить".
-            </p>
+            <p>{t(getTPath(calibCadenFinishMsg))}</p>
             <ControlGroup fill>
               <Button
                 large
@@ -291,9 +274,7 @@ const CalibrationCadenceDialog = props => {
   }, [
     collectedData,
     collectingInProgress,
-    currentCadence,
     gearRatio,
-    lastTimecode,
     onDecreaseGearRatio,
     onDecreaseUserData,
     onIncreaseGearRatio,
@@ -305,7 +286,7 @@ const CalibrationCadenceDialog = props => {
   return (
     <MultistepDialogCustom
       isOpen
-      title={t(getTranslationPath(SETTINGS_TRK, toCalibrateCadenceBut))}
+      title={t(getTPath(toCalibrateCadenceBut))}
       backButtonProps={emptyObj}
       closeButtonProps={closeButtonProps}
       finalButtonProps={finalButtonProps}

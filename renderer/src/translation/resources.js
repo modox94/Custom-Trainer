@@ -249,7 +249,7 @@ const resources = {
       [ru]: "Внимание, в этом разделе вы можете навредить своему оборудованию. Убедитесь, что понимаете что делаете.",
     },
     [TK[SETTINGS_TRK].toCalibrateMotorBut]: {
-      [en]: "TODO calibrationBut",
+      [en]: "TODO toCalibrateMotorBut",
       [ru]: "Калибровка двигателя",
     },
     [TK[SETTINGS_TRK].toCalibrateMotorMsg]: {
@@ -302,6 +302,58 @@ const resources = {
     [TK[SETTINGS_TRK].spiAboutMsg]: {
       [en]: "TODO spiAboutMsg",
       [ru]: "Эта функция необходима для получения данных с потенциометра, если она не включена, то приложение не сможет работать. На данный момент программная эмуляция SPI не реализована.",
+    },
+    [TK[SETTINGS_TRK].gearRatioKey]: {
+      [en]: "Gear ratio of speedometer",
+      [ru]: "Передаточное число датчика скорости",
+    },
+    [TK[SETTINGS_TRK].startCalibration]: {
+      [en]: "Start calibration",
+      [ru]: "Начать калибровку",
+    },
+    [TK[SETTINGS_TRK].stopCalibration]: {
+      [en]: "Stop calibration",
+      [ru]: "Закончить калибровку",
+    },
+    [TK[SETTINGS_TRK].calibCadenWarningMsg]: {
+      [en]: "TODO calibCadenWarningMsg",
+      [ru]: `Калибровка датчика скорости будет проходить в несколько этапов. Нажмите кнопку "$t(${getTP(
+        COMMON_TRK,
+        TK[COMMON_TRK].next,
+      )})", чтобы продолжить.`,
+    },
+    [TK[SETTINGS_TRK].calibCadenCollectDataTitle]: {
+      [en]: "Collect data",
+      [ru]: "Сбор данных",
+    },
+    [TK[SETTINGS_TRK].calibCadenCollectDataMsg]: {
+      [en]: "TODO calibCadenCollectDataMsg",
+      [ru]: `Для калибровки датчика перед началом процедуры необходимо установить педали в положение, которое вам будет легко воспроизвести (например левый шатун в крайнем нижнем положении). Педали должны быть неподвижны. Затем вам следует нажать кнопку "$t(${getTP(
+        SETTINGS_TRK,
+        TK[SETTINGS_TRK].startCalibration,
+      )})" ниже и совершить несколько (~10) полных оборотов педалями с равномерной скоростью, вращая только вперед и остановить педали в том же положении, что при начале калибровки. Вы должны запомнить сколько именно полных оборотов вы сделали (от этого зависит точность расчетов). Затем вам следует нажать кнопку ниже "$t(${getTP(
+        SETTINGS_TRK,
+        TK[SETTINGS_TRK].stopCalibration,
+      )})" и перейти к следующему шагу.`,
+    },
+    [TK[SETTINGS_TRK].calibCadenUserDataTitle]: {
+      [en]: "Data input",
+      [ru]: "Ввод данных",
+    },
+    [TK[SETTINGS_TRK].calibCadenUserDataMsg]: {
+      [en]: "TODO calibCadenUserDataMsg",
+      [ru]: "Ниже вы должны ввести количество полных оборотов, которые вы совершили на предыдущем шаге.",
+    },
+    [TK[SETTINGS_TRK].calibCadenFinishTitle]: {
+      [en]: "Saving",
+      [ru]: "Сохранение",
+    },
+    [TK[SETTINGS_TRK].calibCadenFinishMsg]: {
+      [en]: "TODO calibCadenFinishMsg",
+      [ru]: `Ниже вы можете изменить рассчитанное передаточное число, если понимаете что делаете. В противном случае просто нажмите кнопку "$t(${getTP(
+        COMMON_TRK,
+        TK[COMMON_TRK].finish,
+      )})".`,
     },
   },
   [TIPS_TRK]: {
