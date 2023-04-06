@@ -94,6 +94,13 @@ export const TRANSLATION_KEYS = {
     calibCadenUserDataMsg: "calibCadenUserDataMsg",
     calibCadenFinishTitle: "calibCadenFinishTitle",
     calibCadenFinishMsg: "calibCadenFinishMsg",
+    calibMotorWarningMsg: "calibMotorWarningMsg",
+    calibMotorDirectionTestTitle: "calibMotorDirectionTestTitle",
+    calibMotorDirectionTestMsg: "calibMotorDirectionTestMsg",
+    calibMotorCalcSleepRatioTitle: "calibMotorCalcSleepRatioTitle",
+    calibMotorCalcSleepRatioMsg: "calibMotorCalcSleepRatioMsg",
+    calibMotorFinishTitle: "calibMotorFinishTitle",
+    calibMotorFinishMsg: "calibMotorFinishMsg",
   },
   [TRANSLATION_ROOT_KEYS.TIPS_TRK]: {
     tipBut: "tipBut",

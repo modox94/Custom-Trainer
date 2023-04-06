@@ -35,16 +35,9 @@
   height: 100%;
 }
 
-.textAlignCenter {
-  text-align: center;
-}
-
-.textAlignCenter input {
-  text-align: center;
-}
-
 .text {
   font-size: calc(var(--available-height) / 14);
+  text-align: center;
 }
 
 .text p b {

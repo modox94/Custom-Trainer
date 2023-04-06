@@ -1,12 +1,6 @@
-import {
-  Alignment,
-  Button,
-  ControlGroup,
-  InputGroup,
-  Intent,
-} from "@blueprintjs/core";
+import { Alignment, Button, Intent } from "@blueprintjs/core";
 import { IconNames } from "@blueprintjs/icons";
-import { get, isNumber, noop, round } from "lodash";
+import { get, isFinite, noop, round } from "lodash";
 import PropTypes from "prop-types";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -18,8 +12,8 @@ import {
   TRANSLATION_ROOT_KEYS,
 } from "../../constants/translationConst";
 import { getTranslationPath } from "../../utils/translationUtils";
+import InputNumber from "../InputNumber/InputNumber";
 import MultistepDialogCustom from "../MultistepDialogCustom/MultistepDialogCustom";
-import styles from "./Settings.module.css";
 
 const { COMMON_TRK, SETTINGS_TRK } = TRANSLATION_ROOT_KEYS;
 const { warning } = TRANSLATION_KEYS[COMMON_TRK];
@@ -37,6 +31,10 @@ const {
 } = TRANSLATION_KEYS[SETTINGS_TRK];
 
 const getTPath = (...args) => getTranslationPath(SETTINGS_TRK, ...args);
+
+const USER_DATA_STEP = 1;
+
+const GEAR_RATIO_STEP = 0.01;
 
 const DIALOG_STEPS = {
   WARNING: "WARNING",
@@ -88,33 +86,43 @@ const CalibrationCadenceDialog = props => {
     setCurrentStep(newStep);
   };
 
-  const onIncreaseUserData = useCallback(() => {
-    if (isNumber(userData) && userData >= 0) {
-      setUserData(userData + 1);
-    } else {
-      setUserData(0);
+  const onCollectData = useCallback(() => {
+    if (!collectedData && !collectingInProgress) {
+      setCollectingInProgress(true);
     }
-  }, [userData]);
+
+    if (collectingInProgress) {
+      setCollectingInProgress(false);
+    }
+  }, [collectedData, collectingInProgress]);
 
   const onDecreaseUserData = useCallback(() => {
-    if (isNumber(userData) && userData > 0) {
-      setUserData(userData - 1);
+    if (isFinite(userData) && userData > 0) {
+      setUserData(userData - USER_DATA_STEP);
     } else {
       setUserData(0);
     }
   }, [userData]);
 
-  const onIncreaseGearRatio = useCallback(() => {
-    if (isNumber(gearRatio) && gearRatio >= 0) {
-      setGearRatio(round(gearRatio + 0.01, 2));
+  const onIncreaseUserData = useCallback(() => {
+    if (isFinite(userData) && userData >= 0) {
+      setUserData(userData + USER_DATA_STEP);
+    } else {
+      setUserData(0);
+    }
+  }, [userData]);
+
+  const onDecreaseGearRatio = useCallback(() => {
+    if (isFinite(gearRatio) && gearRatio > 0) {
+      setGearRatio(round(gearRatio - GEAR_RATIO_STEP, 2));
     } else {
       setGearRatio(0);
     }
   }, [gearRatio]);
 
-  const onDecreaseGearRatio = useCallback(() => {
-    if (isNumber(gearRatio) && gearRatio > 0) {
-      setGearRatio(round(gearRatio - 0.01, 2));
+  const onIncreaseGearRatio = useCallback(() => {
+    if (isFinite(gearRatio) && gearRatio >= 0) {
+      setGearRatio(round(gearRatio + GEAR_RATIO_STEP, 2));
     } else {
       setGearRatio(0);
     }
@@ -158,16 +166,6 @@ const CalibrationCadenceDialog = props => {
   }, [collectedData, collectingInProgress, currentStep, userData]);
 
   const dialogSteps = useMemo(() => {
-    const toCollectData = () => {
-      if (!collectedData && !collectingInProgress) {
-        setCollectingInProgress(true);
-      }
-
-      if (collectingInProgress) {
-        setCollectingInProgress(false);
-      }
-    };
-
     let icon, intent, text, disabled;
 
     if (!collectingInProgress) {
@@ -205,7 +203,7 @@ const CalibrationCadenceDialog = props => {
               large
               fill
               text={text}
-              onClick={toCollectData}
+              onClick={onCollectData}
             />
           </>
         ),
@@ -217,26 +215,11 @@ const CalibrationCadenceDialog = props => {
         panel: (
           <>
             <p>{t(getTPath(calibCadenUserDataMsg))}</p>
-            <ControlGroup fill>
-              <Button
-                large
-                intent={Intent.PRIMARY}
-                icon={IconNames.MINUS}
-                onClick={onDecreaseUserData}
-              />
-              <InputGroup
-                className={styles.textAlignCenter}
-                large
-                readOnly
-                value={userData}
-              />
-              <Button
-                large
-                intent={Intent.PRIMARY}
-                icon={IconNames.PLUS}
-                onClick={onIncreaseUserData}
-              />
-            </ControlGroup>
+            <InputNumber
+              onDecrease={onDecreaseUserData}
+              onIncrease={onIncreaseUserData}
+              value={userData}
+            />
           </>
         ),
       },
@@ -247,26 +230,11 @@ const CalibrationCadenceDialog = props => {
         panel: (
           <>
             <p>{t(getTPath(calibCadenFinishMsg))}</p>
-            <ControlGroup fill>
-              <Button
-                large
-                intent={Intent.PRIMARY}
-                icon={IconNames.MINUS}
-                onClick={onDecreaseGearRatio}
-              />
-              <InputGroup
-                className={styles.textAlignCenter}
-                large
-                readOnly
-                value={gearRatio}
-              />
-              <Button
-                large
-                intent={Intent.PRIMARY}
-                icon={IconNames.PLUS}
-                onClick={onIncreaseGearRatio}
-              />
-            </ControlGroup>
+            <InputNumber
+              onDecrease={onDecreaseGearRatio}
+              onIncrease={onIncreaseGearRatio}
+              value={gearRatio}
+            />
           </>
         ),
       },
@@ -280,6 +248,7 @@ const CalibrationCadenceDialog = props => {
     onIncreaseGearRatio,
     onIncreaseUserData,
     t,
+    onCollectData,
     userData,
   ]);
 

@@ -204,25 +204,35 @@ ipcMain.handle(EVENTS.EDIT_BOOT_CONFIG, async (event, opt, value) => {
   }
 });
 
-ipcMain.handle(EVENTS.MOTOR_CALIBRATION, async () => {
-  motor.updateField(MOTOR_FIELDS.SLEEP_RATIO, null);
-  store.editSettings(FILE_CONST.PERIPHERAL, MOTOR_FIELDS.SLEEP_RATIO, null);
-
-  const calibResult = await motor.calibration();
-  if (isFinite(calibResult)) {
-    motor.updateField(MOTOR_FIELDS.SLEEP_RATIO, calibResult);
-    store.editSettings(
-      FILE_CONST.PERIPHERAL,
-      MOTOR_FIELDS.SLEEP_RATIO,
-      calibResult,
-    );
-    return true;
-  }
-
-  motor.updateField(MOTOR_FIELDS.SLEEP_RATIO, null);
-  store.editSettings(FILE_CONST.PERIPHERAL, MOTOR_FIELDS.SLEEP_RATIO, null);
-  return calibResult;
+ipcMain.handle(EVENTS.MOTOR_CALIB_DIRECTION_TEST, async () => {
+  const result = await motor.calibrationDirectionTest();
+  return result;
 });
+
+ipcMain.handle(EVENTS.MOTOR_CALIB_CALC_SLEEP_RATIO, async () => {
+  const result = await motor.calibrationCalcSleepRatio();
+  return result;
+});
+
+// ipcMain.handle(EVENTS.MOTOR_CALIBRATION, async () => {
+//   motor.updateField(MOTOR_FIELDS.SLEEP_RATIO, null);
+//   store.editSettings(FILE_CONST.PERIPHERAL, MOTOR_FIELDS.SLEEP_RATIO, null);
+
+//   const calibResult = await motor.calibration();
+//   if (isFinite(calibResult)) {
+//     motor.updateField(MOTOR_FIELDS.SLEEP_RATIO, calibResult);
+//     store.editSettings(
+//       FILE_CONST.PERIPHERAL,
+//       MOTOR_FIELDS.SLEEP_RATIO,
+//       calibResult,
+//     );
+//     return true;
+//   }
+
+//   motor.updateField(MOTOR_FIELDS.SLEEP_RATIO, null);
+//   store.editSettings(FILE_CONST.PERIPHERAL, MOTOR_FIELDS.SLEEP_RATIO, null);
+//   return calibResult;
+// });
 
 ipcMain.handle(EVENTS.GET_MOTOR_LEVEL, async () => {
   return await motor.getMotorLevel();

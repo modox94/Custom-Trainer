@@ -355,6 +355,34 @@ const resources = {
         TK[COMMON_TRK].finish,
       )})".`,
     },
+    [TK[SETTINGS_TRK].calibMotorWarningMsg]: {
+      [en]: "TODO calibMotorWarningMsg",
+      [ru]: "TODO calibMotorWarningMsg",
+    },
+    [TK[SETTINGS_TRK].calibMotorDirectionTestTitle]: {
+      [en]: "TODO calibMotorDirectionTestTitle",
+      [ru]: "TODO calibMotorDirectionTestTitle",
+    },
+    [TK[SETTINGS_TRK].calibMotorDirectionTestMsg]: {
+      [en]: "TODO calibMotorDirectionTestMsg",
+      [ru]: "TODO calibMotorDirectionTestMsg",
+    },
+    [TK[SETTINGS_TRK].calibMotorCalcSleepRatioTitle]: {
+      [en]: "TODO calibMotorCalcSleepRatioTitle",
+      [ru]: "TODO calibMotorCalcSleepRatioTitle",
+    },
+    [TK[SETTINGS_TRK].calibMotorCalcSleepRatioMsg]: {
+      [en]: "TODO calibMotorCalcSleepRatioMsg",
+      [ru]: "TODO calibMotorCalcSleepRatioMsg",
+    },
+    [TK[SETTINGS_TRK].calibMotorFinishTitle]: {
+      [en]: "TODO calibMotorFinishTitle",
+      [ru]: "TODO calibMotorFinishTitle",
+    },
+    [TK[SETTINGS_TRK].calibMotorFinishMsg]: {
+      [en]: "TODO calibMotorFinishMsg",
+      [ru]: "TODO calibMotorFinishMsg",
+    },
   },
   [TIPS_TRK]: {
     [TK[TIPS_TRK].tipBut]: {

@@ -198,6 +198,20 @@ class MotorDriver {
     return round((posCur - posMin) / interval) + 1;
   }
 
+  async calibrationDirectionTest() {
+    console.log("calibrationDirectionTest");
+    await sleep(2000);
+    return true;
+    //
+  }
+
+  async calibrationCalcSleepRatio() {
+    console.log("calibrationCalcSleepRatio");
+    await sleep(2000);
+    return 1234;
+    //
+  }
+
   async calibration() {
     const ac = new AbortController();
     this.actionCancel();

@@ -76,8 +76,16 @@ export const DANGERmoveBack = async () => {
   return await window.electron.ipcRenderer.invoke(EVENTS.DANGER_MOVE_BACK);
 };
 
-export const motorCalibration = async () => {
-  return await window.electron.ipcRenderer.invoke(EVENTS.MOTOR_CALIBRATION);
+export const motorCalibDirectionTest = async () => {
+  return await window.electron.ipcRenderer.invoke(
+    EVENTS.MOTOR_CALIB_DIRECTION_TEST,
+  );
+};
+
+export const motorCalibCalcSleepRatio = async () => {
+  return await window.electron.ipcRenderer.invoke(
+    EVENTS.MOTOR_CALIB_CALC_SLEEP_RATIO,
+  );
 };
 
 export const setMotorLevel = motorLevel => {
