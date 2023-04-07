@@ -2,12 +2,13 @@ import { Alignment, Button, Intent } from "@blueprintjs/core";
 import { IconNames } from "@blueprintjs/icons";
 import { isFinite, noop } from "lodash";
 import PropTypes from "prop-types";
-import React, { useCallback, useMemo, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import {
   editSettings,
   motorCalibCalcSleepRatio,
   motorCalibDirectionTest,
+  stopMotor,
 } from "../../api/ipc";
 import { FILE_CONST } from "../../constants/reduxConst";
 import { MOTOR_FIELDS } from "../../constants/settingsConst";
@@ -16,6 +17,7 @@ import {
   TRANSLATION_ROOT_KEYS,
 } from "../../constants/translationConst";
 import { getTranslationPath } from "../../utils/translationUtils";
+import ErrorText from "../ErrorText/ErrorText";
 import InputNumber from "../InputNumber/InputNumber";
 import MultistepDialogCustom from "../MultistepDialogCustom/MultistepDialogCustom";
 
@@ -54,6 +56,12 @@ const CalibrationMotorDialog = props => {
   const [stepInProgress, setStepInProgress] = useState(false);
   const [directionTestResult, setDirectionTestResult] = useState(null);
   const [calcSleepRatioResult, setCalcSleepRatio] = useState(null);
+
+  useEffect(() => {
+    return () => {
+      stopMotor();
+    };
+  }, []);
 
   const onChangeStep = newStep => {
     switch (newStep) {
@@ -230,6 +238,11 @@ const CalibrationMotorDialog = props => {
         title: t(getTPath(calibMotorDirectionTestTitle)),
         panel: (
           <>
+            {directionTestResult?.error && (
+              <p>
+                <ErrorText error={directionTestResult.error} />
+              </p>
+            )}
             <p>{t(getTPath(calibMotorDirectionTestMsg))}</p>
             <Button
               alignText={Alignment.CENTER}
@@ -251,6 +264,11 @@ const CalibrationMotorDialog = props => {
         title: t(getTPath(calibMotorCalcSleepRatioTitle)),
         panel: (
           <>
+            {calcSleepRatioResult?.error && (
+              <p>
+                <ErrorText error={calcSleepRatioResult.error} />
+              </p>
+            )}
             <p>{t(getTPath(calibMotorCalcSleepRatioMsg))}</p>
             <Button
               alignText={Alignment.CENTER}

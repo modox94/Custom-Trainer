@@ -200,9 +200,135 @@ class MotorDriver {
 
   async calibrationDirectionTest() {
     console.log("calibrationDirectionTest");
-    await sleep(2000);
-    return true;
-    //
+
+    const ac = new AbortController();
+    this.actionCancel();
+    this.action = ac;
+    ac.signal.onabort = this.stop.bind(this);
+
+    if (
+      !isFinite(this[MOTOR_FIELDS.MAX_POS]) ||
+      !isFinite(this[MOTOR_FIELDS.MIN_POS])
+    ) {
+      return { error: ERRORS.CALIBRATION_NO_DATA };
+    } else if (
+      Math.abs(this[MOTOR_FIELDS.MAX_POS] - this[MOTOR_FIELDS.MIN_POS]) <= 10
+    ) {
+      return { error: ERRORS.CALIBRATION_INVALID_EDGES };
+    }
+
+    let loadingTimer = LOADING_TIMER;
+    // TODO improve this part
+    while (!this.isReady && !this.isError) {
+      if (loadingTimer-- <= 0) {
+        return { error: ERRORS.LOADING_TIMER_EXPIRED };
+      }
+
+      console.log("loading...");
+
+      await sleep(LOADING_PAUSE);
+    }
+
+    if (this.isError) {
+      return { error: ERRORS.POTEN_ERROR };
+    }
+
+    let posCur = round(await this.readPosition());
+
+    if (!isFinite(posCur)) {
+      return { error: ERRORS.POTEN_ERROR };
+    }
+
+    let directionCur;
+    let directionChanged = false;
+    const distanceToMin = Math.abs(this[MOTOR_FIELDS.MIN_POS] - posCur);
+    const distanceToMax = Math.abs(this[MOTOR_FIELDS.MAX_POS] - posCur);
+    if (distanceToMin > distanceToMax) {
+      directionCur = MOVE_DIRECTION.back;
+    } else {
+      directionCur = MOVE_DIRECTION.forward;
+    }
+
+    const posData = [posCur]; // 65, MOVE_DIRECTION, 66, MOVE_DIRECTION, 67,...
+    const checkPosData = () => {
+      let behaviorСounter = 0;
+
+      for (let index = 0; index < posData.length; index++) {
+        const posPrevEl = posData[index - 2];
+        const directionEl = posData[index - 1];
+        const posEl = posData[index];
+
+        if (
+          isFinite(posPrevEl) &&
+          isFinite(posEl) &&
+          MOVE_DIRECTION_ARRAY.includes(directionEl)
+        ) {
+          switch (directionEl) {
+            case MOVE_DIRECTION.forward:
+              if (posEl > posPrevEl) {
+                behaviorСounter += 1;
+              } else if (posEl < posPrevEl) {
+                return {
+                  error: ERRORS.CALIBRATION_WRONG_DIRECTION,
+                };
+              }
+              break;
+
+            case MOVE_DIRECTION.back:
+              if (posEl < posPrevEl) {
+                behaviorСounter += 1;
+              } else if (posEl > posPrevEl) {
+                return {
+                  error: ERRORS.CALIBRATION_WRONG_DIRECTION,
+                };
+              }
+              break;
+
+            default:
+              break;
+          }
+        }
+      }
+
+      if (behaviorСounter >= CALIBRATION_MIN_POINTS) {
+        if (!directionChanged) {
+          directionCur =
+            directionCur === MOVE_DIRECTION.forward
+              ? MOVE_DIRECTION.back
+              : MOVE_DIRECTION.forward;
+          directionChanged = true;
+          behaviorСounter = 0;
+        } else {
+          return true;
+        }
+      }
+
+      if (posData.length > CALIBRATION_MAX_MOVES) {
+        return { error: ERRORS.CALIBRATION_TOO_LONG };
+      }
+
+      return TEST_IN_PROGRESS;
+    };
+
+    while (checkPosData() === TEST_IN_PROGRESS && !ac.signal?.aborted) {
+      await this.DANGER_move(directionCur, ac);
+      posData.push(directionCur);
+
+      await sleep(DELAY_FOR_READ);
+
+      posCur = round(await this.readPosition());
+
+      posData.push(posCur);
+    }
+
+    const testResult = checkPosData();
+    if (testResult !== true) {
+      return {
+        ...testResult,
+        error: testResult?.error || ERRORS.CALIBRATION_UNKNOWN,
+      };
+    }
+    return testResult;
   }
 
   async calibrationCalcSleepRatio() {
