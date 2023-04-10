@@ -1,4 +1,4 @@
-import { Button, Classes, Icon, Intent } from "@blueprintjs/core";
+import { Button, Icon, Intent } from "@blueprintjs/core";
 import { IconNames } from "@blueprintjs/icons";
 import clsx from "clsx";
 import { get, isFinite, round } from "lodash";
@@ -163,7 +163,7 @@ const Motor = () => {
     <>
       <Container>
         <Item
-          className={clsx(styles.tinyPadding, { [Classes.SKELETON]: disabled })}
+          className={clsx(styles.tinyPadding, { [styles.opacity50]: disabled })}
           onClick={onClickLeft}
         >
           <Icon className={styles.icon} icon={IconNames.CARET_LEFT} />
@@ -180,7 +180,7 @@ const Motor = () => {
           </div>
         </Item>
         <Item
-          className={clsx(styles.tinyPadding, { [Classes.SKELETON]: disabled })}
+          className={clsx(styles.tinyPadding, { [styles.opacity50]: disabled })}
           onClick={onClickRight}
         >
           <Icon className={styles.icon} icon={IconNames.CARET_RIGHT} />
@@ -189,7 +189,7 @@ const Motor = () => {
       <Container>
         <Item
           className={clsx(styles.flexColumn, styles.smallPadding, {
-            [Classes.SKELETON]: disabled,
+            [styles.opacity50]: disabled,
           })}
           onClick={onSwapMotor}
         >
@@ -209,7 +209,7 @@ const Motor = () => {
         </Item>
         <Item
           className={clsx(styles.flexColumn, styles.smallPadding, {
-            [Classes.SKELETON]: disabled,
+            [styles.opacity50]: disabled,
           })}
           onClick={onSwapPotentiometer}
         >
@@ -230,7 +230,7 @@ const Motor = () => {
 
         <Item
           className={clsx(styles.flexColumn, styles.smallPadding, {
-            [Classes.SKELETON]: disabled,
+            [styles.opacity50]: disabled,
           })}
           onClick={onSelectMin}
         >
@@ -243,7 +243,7 @@ const Motor = () => {
         </Item>
         <Item
           className={clsx(styles.flexColumn, styles.smallPadding, {
-            [Classes.SKELETON]: disabled,
+            [styles.opacity50]: disabled,
           })}
           onClick={onSelectMax}
         >
