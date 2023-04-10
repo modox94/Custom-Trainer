@@ -245,7 +245,7 @@ const resources = {
       [ru]: "Показывать подсказки внизу страницы",
     },
     [TK[SETTINGS_TRK].motorDisclaimerMsg]: {
-      [en]: "TODO motorDisclaimerMsg",
+      [en]: "Attention, on this page you can harm your equipment. Make sure you understand what you're doing.",
       [ru]: "Внимание, в этом разделе вы можете навредить своему оборудованию. Убедитесь, что понимаете что делаете.",
     },
     [TK[SETTINGS_TRK].toCalibrateMotorBut]: {
@@ -383,6 +383,11 @@ const resources = {
       [en]: "TODO calibMotorFinishMsg",
       [ru]: "TODO calibMotorFinishMsg",
     },
+
+    // [TK[SETTINGS_TRK].]: {
+    //   [en]: "",
+    //   [ru]: "",
+    // },
   },
   [TIPS_TRK]: {
     [TK[TIPS_TRK].tipBut]: {
@@ -490,20 +495,20 @@ const resources = {
       [ru]: "TODO rpmSettingsTip",
     },
     [TK[TIPS_TRK].motorToLeftBut]: {
-      [en]: "TODO motorToLeftBut",
-      [ru]: "TODO motorToLeftBut",
+      [en]: "Left",
+      [ru]: "Налево",
     },
     [TK[TIPS_TRK].motorToLeftTip]: {
-      [en]: "TODO motorToLeftTip",
-      [ru]: "TODO motorToLeftTip",
+      [en]: "The conditional direction of movement of the motor.",
+      [ru]: "Условное направление движения двигателя.",
     },
     [TK[TIPS_TRK].motorToRightBut]: {
-      [en]: "TODO motorToRightBut",
-      [ru]: "TODO motorToRightBut",
+      [en]: "Right",
+      [ru]: "Направо",
     },
     [TK[TIPS_TRK].motorToRightTip]: {
-      [en]: "TODO motorToRightTip",
-      [ru]: "TODO motorToRightTip",
+      [en]: "The conditional direction of movement of the motor.",
+      [ru]: "Условное направление движения двигателя.",
     },
     [TK[TIPS_TRK].motorPotenBut]: {
       [en]: "Potentiometer",
