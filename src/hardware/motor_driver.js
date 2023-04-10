@@ -1,4 +1,4 @@
-const { get, isFinite, isFunction, noop, round } = require("lodash");
+const { get, isFinite, isFunction, noop, round, min } = require("lodash");
 const { Gpio } = require("onoff");
 const {
   CALIBRATION_MAX_MOVES,
@@ -199,8 +199,6 @@ class MotorDriver {
   }
 
   async calibrationDirectionTest() {
-    console.log("calibrationDirectionTest");
-
     const ac = new AbortController();
     this.actionCancel();
     this.action = ac;
@@ -332,9 +330,46 @@ class MotorDriver {
   }
 
   async calibrationCalcSleepRatio() {
-    console.log("calibrationCalcSleepRatio");
-    await sleep(2000);
-    return 1234;
+    const ac = new AbortController();
+    this.actionCancel();
+    this.action = ac;
+    ac.signal.onabort = this.stop.bind(this);
+
+    if (ac.signal?.aborted) {
+      return { error: ERRORS.PROMISE_CANCELLED };
+    }
+    await this.setLevel(1, ac);
+
+    let sleepRatio = 0;
+    // TODO CALIBRATION_ST_CYCLES
+    for (let idx = 0; idx < 1; idx++) {
+      if (ac.signal?.aborted) {
+        return { error: ERRORS.PROMISE_CANCELLED };
+      }
+      const toMaxEdgeRes = await this.setLevel(MAX_RES_LEVEL, ac, sleepRatio);
+      const { error: errorToMax, driveTime: driveTimeToMax } = toMaxEdgeRes;
+
+      if (errorToMax) {
+        return toMaxEdgeRes;
+      }
+
+      if (ac.signal?.aborted) {
+        return { error: ERRORS.PROMISE_CANCELLED };
+      }
+      const toMinEdgeRes = await this.setLevel(1, ac);
+      const { error: errorToMin, driveTime: driveTimeToMin } = toMinEdgeRes;
+
+      if (errorToMin) {
+        return toMinEdgeRes;
+      }
+
+      sleepRatio = min([driveTimeToMax, driveTimeToMin]); // round((driveTimeSum / 2) * 0.95);
+      console.log("sleepRatio", sleepRatio);
+
+      // this.updateField(MOTOR_FIELDS.SLEEP_RATIO, sleepRatio);
+    }
+
+    return sleepRatio;
     //
   }
 
@@ -500,8 +535,10 @@ class MotorDriver {
     return this[MOTOR_FIELDS.SLEEP_RATIO];
   }
 
-  async setLevel(level, outerAc) {
+  async setLevel(level, outerAc, outerSR) {
     const ac = outerAc || new AbortController();
+    const sleepRatio =
+      outerSR === undefined ? this[MOTOR_FIELDS.SLEEP_RATIO] : outerSR;
 
     if (!outerAc) {
       this.actionCancel();
@@ -559,10 +596,10 @@ class MotorDriver {
 
     let firstTime = false;
 
-    if (this[MOTOR_FIELDS.SLEEP_RATIO]) {
+    if (sleepRatio > 0) {
       firstTime =
         (Math.abs(posCur - posTarget) / interval) *
-        (this[MOTOR_FIELDS.SLEEP_RATIO] / (MAX_RES_LEVEL - 1));
+        (sleepRatio / (MAX_RES_LEVEL - 1));
     }
 
     // TODO improve checking position
