@@ -1,5 +1,22 @@
 const { noop } = require("lodash");
-const mcpadc = require("mcp-spi-adc");
+
+let mcpadc;
+try {
+  mcpadc = require("mcp-spi-adc");
+} catch (error) {
+  console.log("import mcp-spi-adc error", error);
+
+  mcpadc = {
+    open: (arg, cb) => {
+      cb("ERROR");
+
+      return {
+        read: noop,
+        close: noop,
+      };
+    },
+  };
+}
 
 class PotentiometerSensor {
   constructor() {
