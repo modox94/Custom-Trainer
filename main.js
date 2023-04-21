@@ -48,34 +48,6 @@ const preventDisplaySleepFn = (event, flag) => {
   }
 };
 
-const createWindow = () => {
-  win = new BrowserWindow({
-    width: 800,
-    height: 600,
-    fullscreenable: true,
-    fullscreen: app.isPackaged,
-    webPreferences: {
-      preload: path.join(__dirname, "preload.js"),
-      contextIsolation: true,
-      enableRemoteModule: true,
-    },
-  });
-
-  if (process.env.ELECTRON_START_URL) {
-    win.loadURL(process.env.ELECTRON_START_URL);
-  } else {
-    win.loadFile("./renderer/build/index.html");
-  }
-};
-
-app.whenReady().then(() => {
-  createWindow();
-
-  app.on("activate", () => {
-    if (BrowserWindow.getAllWindows().length === 0) createWindow();
-  });
-});
-
 const onQuit = () => {
   try {
     motor.off();
@@ -103,6 +75,51 @@ const onQuit = () => {
 app.on("window-all-closed", app.quit.bind(app));
 
 app.on("will-quit", onQuit);
+
+const createWindow = () => {
+  win = new BrowserWindow({
+    width: 800,
+    height: 600,
+    fullscreenable: true,
+    fullscreen: app.isPackaged,
+    webPreferences: {
+      preload: path.join(__dirname, "preload.js"),
+      contextIsolation: true,
+      enableRemoteModule: true,
+    },
+  });
+
+  if (process.env.ELECTRON_START_URL) {
+    win.loadURL(process.env.ELECTRON_START_URL);
+  } else {
+    win.loadFile("./renderer/build/index.html");
+  }
+};
+
+const gotTheLock = app.requestSingleInstanceLock();
+
+if (!gotTheLock) {
+  app.quit();
+} else {
+  app.on("second-instance", () => {
+    if (win) {
+      if (win.isMinimized()) {
+        win.restore();
+      }
+      win.focus();
+    }
+  });
+
+  app.whenReady().then(() => {
+    createWindow();
+
+    app.on("activate", () => {
+      if (BrowserWindow.getAllWindows().length === 0) {
+        createWindow();
+      }
+    });
+  });
+}
 
 const onCadenceFn = () => {
   if (isFunction(win?.webContents?.send)) {
