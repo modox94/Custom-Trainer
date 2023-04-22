@@ -96,9 +96,7 @@ const createWindow = () => {
   }
 };
 
-const gotTheLock = app.requestSingleInstanceLock();
-
-if (!gotTheLock) {
+if (!app.requestSingleInstanceLock()) {
   app.quit();
 } else {
   app.on("second-instance", () => {
@@ -112,6 +110,10 @@ if (!gotTheLock) {
 
   app.whenReady().then(() => {
     createWindow();
+
+    if (!app.requestSingleInstanceLock()) {
+      app.quit();
+    }
 
     app.on("activate", () => {
       if (BrowserWindow.getAllWindows().length === 0) {
