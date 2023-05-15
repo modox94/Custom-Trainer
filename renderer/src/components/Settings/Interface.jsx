@@ -29,6 +29,7 @@ const Interface = props => {
     useGetSettingsQuery(undefined, { refetchOnMountOrArgChange: true }) || {};
   const cursorNone = get(settings, [FILE_CONST.INTERFACE, "cursorNone"], false);
   const showTips = get(settings, [FILE_CONST.INTERFACE, "showTips"], false);
+  const devStatus = get(settings, [FILE_CONST.INTERFACE, "devStatus"], false);
 
   const onChangeCursorNone = event => {
     const checked = get(event, ["target", "checked"]);
@@ -56,6 +57,11 @@ const Interface = props => {
     editSettings(FILE_CONST.INTERFACE, "showTips", checked);
   };
 
+  const onChangeDevStatus = event => {
+    const checked = get(event, ["target", "checked"]);
+    editSettings(FILE_CONST.INTERFACE, "devStatus", checked);
+  };
+
   return (
     <>
       <Container fullHeight>
@@ -73,6 +79,13 @@ const Interface = props => {
             label={t(getTranslationPath(SETTINGS_TRK, showTipsTKey))}
             checked={Boolean(showTips)}
             onChange={onChangeShowTips}
+          />
+          <Switch
+            large
+            alignIndicator={Alignment.RIGHT}
+            label={"TODO Dev Mode"}
+            checked={Boolean(devStatus)}
+            onChange={onChangeDevStatus}
           />
         </Item>
         <Item className={styles.overflowItem}></Item>

@@ -1,12 +1,14 @@
 import { Button, ButtonGroup, Icon, Navbar } from "@blueprintjs/core";
 import { IconNames } from "@blueprintjs/icons";
-import { get } from "lodash";
+import { get, round } from "lodash";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "react-redux";
 import { useLocation, useMatch } from "react-router-dom";
+import { useGetPotentiometerQuery, useGetSettingsQuery } from "../../api/ipc";
 import { DASH, SPACE } from "../../constants/commonConst";
 import { PAGES, PAGES_PATHS, SUB_PATHS } from "../../constants/pathConst";
+import { FILE_CONST } from "../../constants/reduxConst";
 import {
   TRANSLATION_KEYS,
   TRANSLATION_ROOT_KEYS,
@@ -90,6 +92,16 @@ const Footer = props => {
   const footerStatus = useSelector(getFooterStatus);
   const [tip, setTip] = useState(TIP_DEFAULT);
   const [tipsPath, setTipsPath] = useState(TIPS_PATH_DEFAULT);
+
+  const { data: settings = {} } =
+    useGetSettingsQuery(undefined, { refetchOnMountOrArgChange: true }) || {};
+  const devStatus = get(settings, [FILE_CONST.INTERFACE, "devStatus"], false);
+  const { data: potentiometerValueRaw } =
+    useGetPotentiometerQuery(undefined, {
+      skip: Boolean(devStatus),
+      pollingInterval: 500,
+    }) || {};
+  const potentiometerValue = round(potentiometerValueRaw);
 
   const filenameMatchPE_EDIT = useMatch(
     `${PAGES_PATHS[PROGRAM_EDITOR]}/${SUB_PATHS[PROGRAM_EDITOR].EDIT}/:${SUB_PATHS.FILENAME}`,
@@ -488,50 +500,43 @@ const Footer = props => {
                 ),
               }),
           },
-
-          /*
-<Icon className={styles.icon} icon={IconNames.CARET_LEFT} />
- <Icon className={styles.icon} icon={IconNames.CARET_RIGHT} />
-EngineMotorElectroIcon
-<Icon
-            className={clsx(styles.icon50, styles.tinyPadding, {
-              [styles.blueIcon]: swappedPotentiometerWires,
-              [styles.grayIcon]: !swappedPotentiometerWires,
-            })}
-            icon={IconNames.REFRESH}
-          />
-PotentiometerSymbol
-FeatherIcon
-DumbbellIcon
-          */
         ],
     };
   }, [t, setTip]);
 
   const onTipClose = useCallback(() => setTip(TIP_DEFAULT), [setTip]);
 
-  if (!footerStatus) {
+  if (!footerStatus && !devStatus) {
     return null;
   }
 
   return (
     <Navbar fixedToTop className={styles.footer} style={containerStyle}>
       <ButtonGroup large minimal>
-        <Button
-          icon={IconNames.HELP}
-          text={t(getTPath(tipBut))}
-          onClick={() => setTip({ body: t(getTPath(tipDescrip)) })}
-        />
-        {get(tipsObject, tipsPath, []).map((tipEl, idx) => {
-          return (
-            <Button
-              key={`${tipsPath.join("-")}-${idx}`}
-              icon={tipEl.buttonIcon}
-              text={tipEl.buttonText}
-              onClick={tipEl.onClick}
-            />
-          );
-        })}
+        {Boolean(devStatus) && (
+          <Button
+            icon={<PotentiometerSymbol className={styles.blueIcon} />}
+            text={String(potentiometerValue)}
+          />
+        )}
+        {Boolean(footerStatus) && (
+          <Button
+            icon={IconNames.HELP}
+            text={t(getTPath(tipBut))}
+            onClick={() => setTip({ body: t(getTPath(tipDescrip)) })}
+          />
+        )}
+        {Boolean(footerStatus) &&
+          get(tipsObject, tipsPath, []).map((tipEl, idx) => {
+            return (
+              <Button
+                key={`${tipsPath.join("-")}-${idx}`}
+                icon={tipEl.buttonIcon}
+                text={tipEl.buttonText}
+                onClick={tipEl.onClick}
+              />
+            );
+          })}
       </ButtonGroup>
 
       <DialogCustom

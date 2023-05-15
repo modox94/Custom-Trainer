@@ -57,6 +57,8 @@ const interfaceSchema = {
   properties: {
     lang: { enum: Object.values(LANGS_CODES) },
     cursorNone: { type: "boolean" },
+    showTips: { type: "boolean" },
+    devStatus: { type: "boolean" },
   },
   required: ["lang"],
   additionalProperties: true,
