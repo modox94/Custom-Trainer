@@ -70,6 +70,7 @@ export const TRANSLATION_KEYS = {
     cursorNoneTitle: "cursorNoneTitle",
     cursorNoneMsg: "cursorNoneMsg",
     showTipsTKey: "showTipsTKey",
+    devStatusTKey: "devStatusTKey",
     motorDisclaimerMsg: "motorDisclaimerMsg",
     toCalibrateMotorBut: "toCalibrateMotorBut",
     toCalibrateMotorMsg: "toCalibrateMotorMsg",

@@ -244,6 +244,10 @@ const resources = {
       [en]: "Show tips at the bottom of the page",
       [ru]: "Показывать подсказки внизу страницы",
     },
+    [TK[SETTINGS_TRK].devStatusTKey]: {
+      [en]: "Developer mode",
+      [ru]: "Режим разработчика",
+    },
     [TK[SETTINGS_TRK].motorDisclaimerMsg]: {
       [en]: "Attention, on this page you can harm your equipment. Make sure you understand what you're doing.",
       [ru]: "Внимание, в этом разделе вы можете навредить своему оборудованию. Убедитесь, что понимаете что делаете.",

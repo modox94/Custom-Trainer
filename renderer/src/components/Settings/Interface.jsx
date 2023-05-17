@@ -18,7 +18,7 @@ import styles from "./Settings.module.css";
 
 const { COMMON_TRK, SETTINGS_TRK } = TRANSLATION_ROOT_KEYS;
 const { cancelTKey, yes } = TRANSLATION_KEYS[COMMON_TRK];
-const { cursorNoneTitle, cursorNoneMsg, showTipsTKey } =
+const { cursorNoneTitle, cursorNoneMsg, showTipsTKey, devStatusTKey } =
   TRANSLATION_KEYS[SETTINGS_TRK];
 
 const Interface = props => {
@@ -83,7 +83,7 @@ const Interface = props => {
           <Switch
             large
             alignIndicator={Alignment.RIGHT}
-            label={"TODO Dev Mode"}
+            label={t(getTranslationPath(SETTINGS_TRK, devStatusTKey))}
             checked={Boolean(devStatus)}
             onChange={onChangeDevStatus}
           />
