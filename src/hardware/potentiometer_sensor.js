@@ -1,4 +1,9 @@
-const { noop } = require("lodash");
+const { noop, random } = require("lodash");
+
+const sensorPlaceholder = {
+  read: cb => cb(undefined, { value: random(0, 1, true) }),
+  close: noop,
+};
 
 let mcpadc;
 try {
@@ -10,10 +15,7 @@ try {
     open: (arg, cb) => {
       cb("ERROR");
 
-      return {
-        read: noop,
-        close: noop,
-      };
+      return sensorPlaceholder;
     },
   };
 }
@@ -21,14 +23,20 @@ try {
 class PotentiometerSensor {
   constructor() {
     this.condition = { isReady: false, error: false };
-    this.sensor = mcpadc.open(5, err => {
-      if (err) {
-        console.log("err", err);
-        this.condition.error = err;
-      } else {
-        this.condition.isReady = true;
-      }
-    });
+
+    if (process.env.ELECTRON_DEV_MODE) {
+      this.sensor = sensorPlaceholder;
+      this.condition.isReady = true;
+    } else {
+      this.sensor = mcpadc.open(5, err => {
+        if (err) {
+          console.log("err", err);
+          this.condition.error = err;
+        } else {
+          this.condition.isReady = true;
+        }
+      });
+    }
   }
 
   async readPosition() {

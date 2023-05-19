@@ -37,7 +37,7 @@ const Interface = props => {
       dispatch(tryCursorNone());
       setShowAlert(true);
     } else if (cursorNone) {
-      editSettings(FILE_CONST.INTERFACE, "cursorNone", false);
+      editSettings(FILE_CONST.INTERFACE, { cursorNone: false });
     }
   };
 
@@ -47,19 +47,19 @@ const Interface = props => {
   };
 
   const onConfirmCursorNone = () => {
-    editSettings(FILE_CONST.INTERFACE, "cursorNone", true);
+    editSettings(FILE_CONST.INTERFACE, { cursorNone: true });
     dispatch(resetCursorNone());
     setShowAlert(false);
   };
 
   const onChangeShowTips = event => {
     const checked = get(event, ["target", "checked"]);
-    editSettings(FILE_CONST.INTERFACE, "showTips", checked);
+    editSettings(FILE_CONST.INTERFACE, { showTips: checked });
   };
 
   const onChangeDevStatus = event => {
     const checked = get(event, ["target", "checked"]);
-    editSettings(FILE_CONST.INTERFACE, "devStatus", checked);
+    editSettings(FILE_CONST.INTERFACE, { devStatus: checked });
   };
 
   return (

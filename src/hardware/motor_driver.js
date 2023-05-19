@@ -98,6 +98,8 @@ class MotorDriver {
       case MOTOR_FIELDS.SLEEP_RATIO:
         if (isFinite(value)) {
           this[field] = round(value);
+        } else if (value === null) {
+          this[field] = value;
         }
         break;
 

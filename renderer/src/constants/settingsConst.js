@@ -4,6 +4,8 @@ export * as MOTOR_FIELDS from "./MOTOR_FIELDS.json";
 
 export const MAX_RES_LEVEL = 10;
 
+export const MIN_MOTOR_STROKE = 50;
+
 export const MAX_RPM_LEVEL = 120;
 
 export const RES_STEP = 1;

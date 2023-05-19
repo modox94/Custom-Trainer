@@ -111,14 +111,9 @@ export const editProgram = (filename, programObject) =>
 export const deleteProgram = filename =>
   window.electron.ipcRenderer.send(EVENTS.DELETE_PROGRAM, filename);
 
-export const editSettings = (filename, field, value) => {
+export const editSettings = (filename, data) => {
   if (Object.values(FILE_CONST).includes(filename)) {
-    window.electron.ipcRenderer.send(
-      EVENTS.EDIT_SETTINGS,
-      filename,
-      field,
-      value,
-    );
+    window.electron.ipcRenderer.send(EVENTS.EDIT_SETTINGS, filename, data);
   } else {
     console.log("error invalid filename");
   }

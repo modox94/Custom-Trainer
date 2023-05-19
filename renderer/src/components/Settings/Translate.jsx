@@ -12,7 +12,7 @@ const Translate = props => {
   const { i18n } = useTranslation();
 
   const changeLanguage = langCode => {
-    editSettings(FILE_CONST.INTERFACE, "lang", langCode);
+    editSettings(FILE_CONST.INTERFACE, { lang: langCode });
   };
 
   const selectRu =

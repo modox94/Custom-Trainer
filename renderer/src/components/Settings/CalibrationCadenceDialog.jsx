@@ -129,7 +129,9 @@ const CalibrationCadenceDialog = props => {
   }, [gearRatio]);
 
   const onFinal = useCallback(() => {
-    editSettings(FILE_CONST.PERIPHERAL, CADENCE_FIELDS.GEAR_RATIO, gearRatio);
+    editSettings(FILE_CONST.PERIPHERAL, {
+      [CADENCE_FIELDS.GEAR_RATIO]: gearRatio,
+    });
     onClose();
   }, [gearRatio, onClose]);
 

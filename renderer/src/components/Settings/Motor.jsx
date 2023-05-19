@@ -14,7 +14,7 @@ import {
 } from "../../api/ipc";
 import { DASH } from "../../constants/commonConst";
 import { FILE_CONST } from "../../constants/reduxConst";
-import { MOTOR_FIELDS } from "../../constants/settingsConst";
+import { MIN_MOTOR_STROKE, MOTOR_FIELDS } from "../../constants/settingsConst";
 import {
   TRANSLATION_KEYS,
   TRANSLATION_ROOT_KEYS,
@@ -116,11 +116,21 @@ const Motor = () => {
       return;
     }
 
-    editSettings(
-      FILE_CONST.PERIPHERAL,
-      MOTOR_FIELDS.MIN_POS,
-      potentiometerValue,
-    );
+    const newSettings = {};
+
+    newSettings[MOTOR_FIELDS.MIN_POS] = potentiometerValue;
+    newSettings[MOTOR_FIELDS.SLEEP_RATIO] = null;
+    if (maxPosition === null) {
+      // do nothing
+    } else if (potentiometerValue >= maxPosition) {
+      // TODO show error
+      newSettings[MOTOR_FIELDS.MAX_POS] = null;
+    } else if (Math.abs(potentiometerValue - maxPosition) < MIN_MOTOR_STROKE) {
+      // TODO show error
+      newSettings[MOTOR_FIELDS.MAX_POS] = null;
+    }
+
+    editSettings(FILE_CONST.PERIPHERAL, newSettings);
   };
 
   const onSelectMax = () => {
@@ -128,35 +138,45 @@ const Motor = () => {
       return;
     }
 
-    editSettings(
-      FILE_CONST.PERIPHERAL,
-      MOTOR_FIELDS.MAX_POS,
-      potentiometerValue,
-    );
+    const newSettings = {};
+    newSettings[MOTOR_FIELDS.MAX_POS] = potentiometerValue;
+
+    newSettings[MOTOR_FIELDS.SLEEP_RATIO] = null;
+    if (minPosition === null) {
+      // do nothing
+    } else if (minPosition >= potentiometerValue) {
+      newSettings[MOTOR_FIELDS.MIN_POS] = null;
+    }
+    if (Math.abs(minPosition - potentiometerValue) < MIN_MOTOR_STROKE) {
+      // TODO show error
+      newSettings[MOTOR_FIELDS.MIN_POS] = null;
+    }
+
+    editSettings(FILE_CONST.PERIPHERAL, newSettings);
   };
 
   const onSwapMotor = () => {
     if (disabled) {
       return;
     }
-
-    editSettings(
-      FILE_CONST.PERIPHERAL,
-      MOTOR_FIELDS.SWAP_MOTOR_WIRES,
-      !swappedMotorWires,
-    );
+    const newSettings = {};
+    newSettings[MOTOR_FIELDS.SWAP_MOTOR_WIRES] = !swappedMotorWires;
+    newSettings[MOTOR_FIELDS.MIN_POS] = null;
+    newSettings[MOTOR_FIELDS.MAX_POS] = null;
+    newSettings[MOTOR_FIELDS.SLEEP_RATIO] = null;
+    editSettings(FILE_CONST.PERIPHERAL, newSettings);
   };
 
   const onSwapPotentiometer = () => {
     if (disabled) {
       return;
     }
-
-    editSettings(
-      FILE_CONST.PERIPHERAL,
-      MOTOR_FIELDS.SWAP_POTEN_WIRES,
-      !swappedPotentiometerWires,
-    );
+    const newSettings = {};
+    newSettings[MOTOR_FIELDS.SWAP_POTEN_WIRES] = !swappedPotentiometerWires;
+    newSettings[MOTOR_FIELDS.MIN_POS] = null;
+    newSettings[MOTOR_FIELDS.MAX_POS] = null;
+    newSettings[MOTOR_FIELDS.SLEEP_RATIO] = null;
+    editSettings(FILE_CONST.PERIPHERAL, newSettings);
   };
 
   return (

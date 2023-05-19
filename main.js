@@ -5,7 +5,7 @@ const {
   Menu,
   powerSaveBlocker,
 } = require("electron");
-const { isFunction, get } = require("lodash");
+const { isFunction, get, isObject } = require("lodash");
 const path = require("node:path");
 const sudo = require("sudo-prompt");
 const {
@@ -276,34 +276,42 @@ ipcMain.on(EVENTS.EDIT_PROGRAM, async (event, filename, programObject) =>
   store.editProgram(filename, programObject),
 );
 
-ipcMain.on(EVENTS.EDIT_SETTINGS, async (event, filename, field, value) => {
-  switch (filename) {
-    case FILE_CONST.PERIPHERAL: {
-      switch (field) {
-        case MOTOR_FIELDS.MIN_POS:
-        case MOTOR_FIELDS.MAX_POS:
-        case MOTOR_FIELDS.SLEEP_RATIO:
-        case MOTOR_FIELDS.SWAP_MOTOR_WIRES:
-        case MOTOR_FIELDS.SWAP_POTEN_WIRES:
-          motor.updateField(field, value);
-          break;
+ipcMain.on(EVENTS.EDIT_SETTINGS, async (event, filename, data) => {
+  if (!isObject(data)) {
+    console.log("invalid data", data);
+  }
+  for (const field in data) {
+    if (Object.hasOwnProperty.call(data, field)) {
+      const value = data[field];
+      switch (filename) {
+        case FILE_CONST.PERIPHERAL: {
+          switch (field) {
+            case MOTOR_FIELDS.MIN_POS:
+            case MOTOR_FIELDS.MAX_POS:
+            case MOTOR_FIELDS.SLEEP_RATIO:
+            case MOTOR_FIELDS.SWAP_MOTOR_WIRES:
+            case MOTOR_FIELDS.SWAP_POTEN_WIRES:
+              motor.updateField(field, value);
+              break;
 
-        case CADENCE_FIELDS.GEAR_RATIO:
-          rate.updateField(field, value);
+            case CADENCE_FIELDS.GEAR_RATIO:
+              rate.updateField(field, value);
+              break;
+
+            default:
+              break;
+          }
+
           break;
+        }
 
         default:
           break;
       }
-
-      break;
     }
-
-    default:
-      break;
   }
 
-  store.editSettings(filename, field, value);
+  store.editSettings(filename, data);
 });
 
 ipcMain.on(EVENTS.DELETE_PROGRAM, async (event, filename) =>

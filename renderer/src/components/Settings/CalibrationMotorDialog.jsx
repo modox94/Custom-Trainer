@@ -128,11 +128,9 @@ const CalibrationMotorDialog = props => {
 
   const onFinal = useCallback(() => {
     if (isFinite(calcSleepRatioResult)) {
-      editSettings(
-        FILE_CONST.PERIPHERAL,
-        MOTOR_FIELDS.SLEEP_RATIO,
-        calcSleepRatioResult,
-      );
+      editSettings(FILE_CONST.PERIPHERAL, {
+        [MOTOR_FIELDS.SLEEP_RATIO]: calcSleepRatioResult,
+      });
     }
     onClose();
   }, [calcSleepRatioResult, onClose]);
