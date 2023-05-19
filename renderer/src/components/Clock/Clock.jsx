@@ -11,7 +11,7 @@ import styles from "./Clock.module.css";
 import zeroFill from "zero-fill";
 
 const { WORKOUT_TRK } = TRANSLATION_ROOT_KEYS;
-const { current_T, time_T } = TRANSLATION_KEYS[WORKOUT_TRK];
+const { currentTKey, timeTKey } = TRANSLATION_KEYS[WORKOUT_TRK];
 
 const getTPath = (...args) => getTranslationPath(WORKOUT_TRK, ...args);
 
@@ -21,8 +21,8 @@ const Clock = props => {
 
   return (
     <Item className={styles.clock}>
-      <p>{t(getTPath(current_T))}</p>
-      <p>{t(getTPath(time_T))}</p>
+      <p>{t(getTPath(currentTKey))}</p>
+      <p>{t(getTPath(timeTKey))}</p>
       <p>
         <b>{`${zeroFill(2, hours)}:${zeroFill(2, minutes)}`}</b>
       </p>

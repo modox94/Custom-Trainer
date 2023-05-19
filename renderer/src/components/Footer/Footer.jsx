@@ -522,16 +522,16 @@ const Footer = props => {
     <Navbar fixedToTop className={styles.footer} style={containerStyle}>
       <ButtonGroup large minimal>
         {Boolean(devStatus) && (
-          <Button
-            icon={<PotentiometerSymbol className={styles.blueIcon} />}
-            text={String(potentiometerValue)}
-          />
-        )}
-        {Boolean(devStatus) && (
-          <Button
-            icon={IconNames.DASHBOARD}
-            text={String(round(currentCadence))}
-          />
+          <>
+            <Button
+              icon={<PotentiometerSymbol className={styles.blueIcon} />}
+              text={String(potentiometerValue)}
+            />
+            <Button
+              icon={IconNames.DASHBOARD}
+              text={String(round(currentCadence))}
+            />
+          </>
         )}
         {Boolean(footerStatus && showTips) && (
           <Button

@@ -1,10 +1,10 @@
-import { Button, Intent } from "@blueprintjs/core";
+import { Button } from "@blueprintjs/core";
 import { IconNames } from "@blueprintjs/icons";
 import { get, round } from "lodash";
 import React, { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useSelector } from "react-redux";
-import { useMatch, useNavigate } from "react-router-dom";
+import { useMatch } from "react-router-dom";
 import { useTimer } from "react-timer-hook";
 import {
   preventDisplaySleep,
@@ -30,7 +30,7 @@ import Timer from "../Timer/Timer";
 import styles from "./ProgramMode.module.css";
 
 const { COMMON_TRK, WORKOUT_TRK } = TRANSLATION_ROOT_KEYS;
-const { back, repeat } = TRANSLATION_KEYS[COMMON_TRK];
+const { repeat } = TRANSLATION_KEYS[COMMON_TRK];
 const { trainingDone, trainingDoneMsg } = TRANSLATION_KEYS[WORKOUT_TRK];
 const { RUN } = RUNNINIG_STATUS;
 const { SELECT_PROGRAM } = PAGES;
@@ -59,7 +59,6 @@ const ProgramMode = props => {
   const [counter, setCounter] = useState(undefined);
   const [isDone, setIsDone] = useState(false);
   const [totalEndTime, setTotalEndTime] = useState(undefined);
-  const navigate = useNavigate();
   const runningStatus = useSelector(getRunningStatus);
 
   const filenameMatch = useMatch(
@@ -175,10 +174,6 @@ const ProgramMode = props => {
     seconds,
   ]);
 
-  const goBack = () => {
-    navigate(-1);
-  };
-
   const repeatProgram = () => {
     setCounter(undefined);
     setIsDone(false);
@@ -214,22 +209,14 @@ const ProgramMode = props => {
         isCloseButtonShown={false}
         body={t(getTranslationPath(WORKOUT_TRK, trainingDoneMsg))}
         footerMinimal
+        goBackBtn
         footer={
-          <>
-            <Button
-              large
-              icon={IconNames.REPEAT}
-              text={t(getTPath(repeat))}
-              onClick={repeatProgram}
-            />
-            <Button
-              large
-              intent={Intent.SUCCESS}
-              icon={IconNames.ARROW_LEFT}
-              text={t(getTPath(back))}
-              onClick={goBack}
-            />
-          </>
+          <Button
+            large
+            icon={IconNames.REPEAT}
+            text={t(getTPath(repeat))}
+            onClick={repeatProgram}
+          />
         }
       />
     </>

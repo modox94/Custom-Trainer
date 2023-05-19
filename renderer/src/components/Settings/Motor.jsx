@@ -4,7 +4,6 @@ import clsx from "clsx";
 import { get, isFinite, round } from "lodash";
 import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
-import { useNavigate } from "react-router-dom";
 import {
   DANGERmoveBack,
   DANGERmoveForward,
@@ -32,12 +31,11 @@ import { Container, Item } from "../SquareGrid/SquareGrid";
 import styles from "./Settings.module.css";
 
 const { COMMON_TRK, SETTINGS_TRK } = TRANSLATION_ROOT_KEYS;
-const { ok, back, warning } = TRANSLATION_KEYS[COMMON_TRK];
+const { ok, warning } = TRANSLATION_KEYS[COMMON_TRK];
 const { motorDisclaimerMsg } = TRANSLATION_KEYS[SETTINGS_TRK];
 
 const Motor = () => {
   const { t } = useTranslation();
-  const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [disclaimer, setDisclaimer] = useState(true);
 
@@ -70,10 +68,6 @@ const Motor = () => {
   );
 
   const disabled = loading || !isFinite(potentiometerValue);
-
-  const goBack = () => {
-    navigate(-1);
-  };
 
   const onClickLeft = async () => {
     if (disabled) {
@@ -290,22 +284,15 @@ const Motor = () => {
           />
         }
         footerMinimal
+        goBackBtn
         footer={
-          <>
-            <Button
-              large
-              icon={IconNames.ARROW_LEFT}
-              text={t(getTranslationPath(COMMON_TRK, back))}
-              onClick={goBack}
-            />
-            <Button
-              large
-              intent={Intent.DANGER}
-              icon={IconNames.TICK}
-              text={t(getTranslationPath(COMMON_TRK, ok))}
-              onClick={() => setDisclaimer(false)}
-            />
-          </>
+          <Button
+            large
+            intent={Intent.DANGER}
+            icon={IconNames.TICK}
+            text={t(getTranslationPath(COMMON_TRK, ok))}
+            onClick={() => setDisclaimer(false)}
+          />
         }
       />
     </>

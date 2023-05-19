@@ -15,7 +15,7 @@ import { Item } from "../SquareGrid/SquareGrid";
 import styles from "./Timer.module.css";
 
 const { WORKOUT_TRK } = TRANSLATION_ROOT_KEYS;
-const { remaining_T, elapsed_T, time_T } = TRANSLATION_KEYS[WORKOUT_TRK];
+const { remainingTKey, elapsedTKey, timeTKey } = TRANSLATION_KEYS[WORKOUT_TRK];
 const { RUN } = RUNNINIG_STATUS;
 
 const getTPath = (...args) => getTranslationPath(WORKOUT_TRK, ...args);
@@ -102,9 +102,9 @@ const Timer = props => {
   return (
     <Item className={styles.timer} onClick={disabled ? undefined : onClick}>
       <p>
-        {t(getTPath(type === TIMER_TYPES.REMAIN ? remaining_T : elapsed_T))}
+        {t(getTPath(type === TIMER_TYPES.REMAIN ? remainingTKey : elapsedTKey))}
       </p>
-      <p>{t(getTPath(time_T))}</p>
+      <p>{t(getTPath(timeTKey))}</p>
       <p>
         <b>
           {type === TIMER_TYPES.REMAIN

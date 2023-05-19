@@ -102,6 +102,10 @@ const resources = {
       [en]: "Warning",
       [ru]: "Предупреждение",
     },
+    [TK[COMMON_TRK].errorTKey]: {
+      [en]: "Error",
+      [ru]: "Ошибка",
+    },
     [TK[COMMON_TRK].start]: {
       [en]: "Start",
       [ru]: "Начать",
@@ -116,19 +120,19 @@ const resources = {
       [en]: "Program mode",
       [ru]: "Режим программы",
     },
-    [TK[WORKOUT_TRK].current_T]: {
+    [TK[WORKOUT_TRK].currentTKey]: {
       [en]: "Current",
       [ru]: "Текущее",
     },
-    [TK[WORKOUT_TRK].remaining_T]: {
+    [TK[WORKOUT_TRK].remainingTKey]: {
       [en]: "Remaining",
       [ru]: "Оставшееся",
     },
-    [TK[WORKOUT_TRK].elapsed_T]: {
+    [TK[WORKOUT_TRK].elapsedTKey]: {
       [en]: "Elapsed",
       [ru]: "Прошедшее",
     },
-    [TK[WORKOUT_TRK].time_T]: {
+    [TK[WORKOUT_TRK].timeTKey]: {
       [en]: "time",
       [ru]: "время",
     },
@@ -567,6 +571,10 @@ const resources = {
     [ERRORS.POTEN_ERROR]: {
       [en]: "TODO POTEN_ERROR",
       [ru]: "TODO POTEN_ERROR",
+    },
+    [ERRORS.INVALID_MOTOR_SETTINGS]: {
+      [en]: "TODO INVALID_MOTOR_SETTINGS",
+      [ru]: "TODO INVALID_MOTOR_SETTINGS",
     },
     [ERRORS.INVALID_RESIST_LEVEL]: {
       [en]: "TODO INVALID_RESIST_LEVEL",
