@@ -161,7 +161,7 @@ const App = () => {
             </Route>
           </Routes>
 
-          {withFooter && <Footer />}
+          {(showTips || devStatus) && <Footer />}
         </div>
       </MemoryRouter>
     </PortalProvider>
