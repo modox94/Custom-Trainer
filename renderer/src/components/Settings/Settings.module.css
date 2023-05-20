@@ -113,3 +113,7 @@
 .settingButtonMargin {
   margin-left: var(--medium-gap);
 }
+
+.opacity50 {
+  opacity: 50%;
+}

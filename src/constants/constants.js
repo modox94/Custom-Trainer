@@ -1,5 +1,7 @@
 exports.BOOT_CONFIG_OPT = require("../../renderer/src/constants/BOOT_CONFIG_OPT.json");
 
+exports.CADENCE_FIELDS = require("../../renderer/src/constants/CADENCE_FIELDS.json");
+
 exports.ERRORS = require("../../renderer/src/constants/ERRORS.json");
 
 exports.EVENTS = require("../../renderer/src/constants/EVENTS.json");
@@ -54,10 +56,6 @@ exports.PHYSICAL_TO_GPIO = {
 exports.LINE_FEED = "\n"; // TODO transfer to json
 
 exports.HASH_SIGN = "#"; // TODO transfer to json
-
-exports.DEFAULT_WINDOW = 60;
-
-exports.DEFAULT_M_C = 1;
 
 exports.PAUSE_DELAY = 2500; // TODO transfer to json
 

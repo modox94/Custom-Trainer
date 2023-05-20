@@ -1,17 +1,42 @@
-const { noop } = require("lodash");
-const mcpadc = require("mcp-spi-adc");
+const { noop, random } = require("lodash");
+
+const sensorPlaceholder = {
+  read: cb => cb(undefined, { value: random(0, 1, true) }),
+  close: noop,
+};
+
+let mcpadc;
+try {
+  mcpadc = require("mcp-spi-adc");
+} catch (error) {
+  console.log("import mcp-spi-adc error", error);
+
+  mcpadc = {
+    open: (arg, cb) => {
+      cb("ERROR");
+
+      return sensorPlaceholder;
+    },
+  };
+}
 
 class PotentiometerSensor {
   constructor() {
     this.condition = { isReady: false, error: false };
-    this.sensor = mcpadc.open(5, err => {
-      if (err) {
-        console.log("err", err);
-        this.condition.error = err;
-      } else {
-        this.condition.isReady = true;
-      }
-    });
+
+    if (process.env.ELECTRON_DEV_MODE) {
+      this.sensor = sensorPlaceholder;
+      this.condition.isReady = true;
+    } else {
+      this.sensor = mcpadc.open(5, err => {
+        if (err) {
+          console.log("err", err);
+          this.condition.error = err;
+        } else {
+          this.condition.isReady = true;
+        }
+      });
+    }
   }
 
   async readPosition() {

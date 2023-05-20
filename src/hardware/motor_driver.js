@@ -1,4 +1,4 @@
-const { get, isFinite, isFunction, noop, round } = require("lodash");
+const { get, isFinite, isFunction, noop, round, min } = require("lodash");
 const { Gpio } = require("onoff");
 const {
   CALIBRATION_MAX_MOVES,
@@ -98,6 +98,8 @@ class MotorDriver {
       case MOTOR_FIELDS.SLEEP_RATIO:
         if (isFinite(value)) {
           this[field] = round(value);
+        } else if (value === null) {
+          this[field] = value;
         }
         break;
 
@@ -196,6 +198,181 @@ class MotorDriver {
         ? this[MOTOR_FIELDS.MIN_POS]
         : this[MOTOR_FIELDS.MAX_POS];
     return round((posCur - posMin) / interval) + 1;
+  }
+
+  async calibrationDirectionTest() {
+    const ac = new AbortController();
+    this.actionCancel();
+    this.action = ac;
+    ac.signal.onabort = this.stop.bind(this);
+
+    if (
+      !isFinite(this[MOTOR_FIELDS.MAX_POS]) ||
+      !isFinite(this[MOTOR_FIELDS.MIN_POS])
+    ) {
+      return { error: ERRORS.CALIBRATION_NO_DATA };
+    } else if (
+      Math.abs(this[MOTOR_FIELDS.MAX_POS] - this[MOTOR_FIELDS.MIN_POS]) <= 10
+    ) {
+      return { error: ERRORS.CALIBRATION_INVALID_EDGES };
+    }
+
+    let loadingTimer = LOADING_TIMER;
+    // TODO improve this part
+    while (!this.isReady && !this.isError) {
+      if (loadingTimer-- <= 0) {
+        return { error: ERRORS.LOADING_TIMER_EXPIRED };
+      }
+
+      console.log("loading...");
+
+      await sleep(LOADING_PAUSE);
+    }
+
+    if (this.isError) {
+      return { error: ERRORS.POTEN_ERROR };
+    }
+
+    let posCur = round(await this.readPosition());
+
+    if (!isFinite(posCur)) {
+      return { error: ERRORS.POTEN_ERROR };
+    }
+
+    let directionCur;
+    let directionChanged = false;
+    const distanceToMin = Math.abs(this[MOTOR_FIELDS.MIN_POS] - posCur);
+    const distanceToMax = Math.abs(this[MOTOR_FIELDS.MAX_POS] - posCur);
+    if (distanceToMin > distanceToMax) {
+      directionCur = MOVE_DIRECTION.back;
+    } else {
+      directionCur = MOVE_DIRECTION.forward;
+    }
+
+    const posData = [posCur]; // 65, MOVE_DIRECTION, 66, MOVE_DIRECTION, 67,...
+    const checkPosData = () => {
+      let behaviorСounter = 0;
+
+      for (let index = 0; index < posData.length; index++) {
+        const posPrevEl = posData[index - 2];
+        const directionEl = posData[index - 1];
+        const posEl = posData[index];
+
+        if (
+          isFinite(posPrevEl) &&
+          isFinite(posEl) &&
+          MOVE_DIRECTION_ARRAY.includes(directionEl)
+        ) {
+          switch (directionEl) {
+            case MOVE_DIRECTION.forward:
+              if (posEl > posPrevEl) {
+                behaviorСounter += 1;
+              } else if (posEl < posPrevEl) {
+                return {
+                  error: ERRORS.CALIBRATION_WRONG_DIRECTION,
+                };
+              }
+              break;
+
+            case MOVE_DIRECTION.back:
+              if (posEl < posPrevEl) {
+                behaviorСounter += 1;
+              } else if (posEl > posPrevEl) {
+                return {
+                  error: ERRORS.CALIBRATION_WRONG_DIRECTION,
+                };
+              }
+              break;
+
+            default:
+              break;
+          }
+        }
+      }
+
+      if (behaviorСounter >= CALIBRATION_MIN_POINTS) {
+        if (!directionChanged) {
+          directionCur =
+            directionCur === MOVE_DIRECTION.forward
+              ? MOVE_DIRECTION.back
+              : MOVE_DIRECTION.forward;
+          directionChanged = true;
+          behaviorСounter = 0;
+        } else {
+          return true;
+        }
+      }
+
+      if (posData.length > CALIBRATION_MAX_MOVES) {
+        return { error: ERRORS.CALIBRATION_TOO_LONG };
+      }
+
+      return TEST_IN_PROGRESS;
+    };
+
+    while (checkPosData() === TEST_IN_PROGRESS && !ac.signal?.aborted) {
+      await this.DANGER_move(directionCur, ac);
+      posData.push(directionCur);
+
+      await sleep(DELAY_FOR_READ);
+
+      posCur = round(await this.readPosition());
+
+      posData.push(posCur);
+    }
+
+    const testResult = checkPosData();
+    if (testResult !== true) {
+      return {
+        ...testResult,
+        error: testResult?.error || ERRORS.CALIBRATION_UNKNOWN,
+      };
+    }
+    return testResult;
+  }
+
+  async calibrationCalcSleepRatio() {
+    const ac = new AbortController();
+    this.actionCancel();
+    this.action = ac;
+    ac.signal.onabort = this.stop.bind(this);
+
+    if (ac.signal?.aborted) {
+      return { error: ERRORS.PROMISE_CANCELLED };
+    }
+    await this.setLevel(1, ac);
+
+    let sleepRatio = 0;
+    // TODO CALIBRATION_ST_CYCLES
+    for (let idx = 0; idx < 1; idx++) {
+      if (ac.signal?.aborted) {
+        return { error: ERRORS.PROMISE_CANCELLED };
+      }
+      const toMaxEdgeRes = await this.setLevel(MAX_RES_LEVEL, ac, sleepRatio);
+      const { error: errorToMax, driveTime: driveTimeToMax } = toMaxEdgeRes;
+
+      if (errorToMax) {
+        return toMaxEdgeRes;
+      }
+
+      if (ac.signal?.aborted) {
+        return { error: ERRORS.PROMISE_CANCELLED };
+      }
+      const toMinEdgeRes = await this.setLevel(1, ac);
+      const { error: errorToMin, driveTime: driveTimeToMin } = toMinEdgeRes;
+
+      if (errorToMin) {
+        return toMinEdgeRes;
+      }
+
+      sleepRatio = min([driveTimeToMax, driveTimeToMin]); // round((driveTimeSum / 2) * 0.95);
+      console.log("sleepRatio", sleepRatio);
+
+      // this.updateField(MOTOR_FIELDS.SLEEP_RATIO, sleepRatio);
+    }
+
+    return sleepRatio;
+    //
   }
 
   async calibration() {
@@ -360,8 +537,10 @@ class MotorDriver {
     return this[MOTOR_FIELDS.SLEEP_RATIO];
   }
 
-  async setLevel(level, outerAc) {
+  async setLevel(level, outerAc, outerSR) {
     const ac = outerAc || new AbortController();
+    const sleepRatio =
+      outerSR === undefined ? this[MOTOR_FIELDS.SLEEP_RATIO] : outerSR;
 
     if (!outerAc) {
       this.actionCancel();
@@ -419,10 +598,10 @@ class MotorDriver {
 
     let firstTime = false;
 
-    if (this[MOTOR_FIELDS.SLEEP_RATIO]) {
+    if (sleepRatio > 0) {
       firstTime =
         (Math.abs(posCur - posTarget) / interval) *
-        (this[MOTOR_FIELDS.SLEEP_RATIO] / (MAX_RES_LEVEL - 1));
+        (sleepRatio / (MAX_RES_LEVEL - 1));
     }
 
     // TODO improve checking position

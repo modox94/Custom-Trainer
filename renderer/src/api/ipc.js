@@ -76,12 +76,19 @@ export const DANGERmoveBack = async () => {
   return await window.electron.ipcRenderer.invoke(EVENTS.DANGER_MOVE_BACK);
 };
 
-export const motorCalibration = async () => {
-  return await window.electron.ipcRenderer.invoke(EVENTS.MOTOR_CALIBRATION);
+export const motorCalibDirectionTest = async () => {
+  return await window.electron.ipcRenderer.invoke(
+    EVENTS.MOTOR_CALIB_DIRECTION_TEST,
+  );
+};
+
+export const motorCalibCalcSleepRatio = async () => {
+  return await window.electron.ipcRenderer.invoke(
+    EVENTS.MOTOR_CALIB_CALC_SLEEP_RATIO,
+  );
 };
 
 export const setMotorLevel = motorLevel => {
-  console.log("setMotorLevel", motorLevel); // TODO remove
   window.electron.ipcRenderer.send(EVENTS.SET_MOTOR_LEVEL, motorLevel);
 };
 
@@ -104,14 +111,9 @@ export const editProgram = (filename, programObject) =>
 export const deleteProgram = filename =>
   window.electron.ipcRenderer.send(EVENTS.DELETE_PROGRAM, filename);
 
-export const editSettings = (filename, field, value) => {
+export const editSettings = (filename, data) => {
   if (Object.values(FILE_CONST).includes(filename)) {
-    window.electron.ipcRenderer.send(
-      EVENTS.EDIT_SETTINGS,
-      filename,
-      field,
-      value,
-    );
+    window.electron.ipcRenderer.send(EVENTS.EDIT_SETTINGS, filename, data);
   } else {
     console.log("error invalid filename");
   }

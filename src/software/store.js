@@ -10,6 +10,7 @@ const {
   isFunction,
   set,
   unset,
+  assign,
 } = require("lodash");
 const chokidar = require("chokidar");
 const defaultTrainingPrograms = require("../../default_training_programs");
@@ -57,6 +58,8 @@ const interfaceSchema = {
   properties: {
     lang: { enum: Object.values(LANGS_CODES) },
     cursorNone: { type: "boolean" },
+    showTips: { type: "boolean" },
+    devStatus: { type: "boolean" },
   },
   required: ["lang"],
   additionalProperties: true,
@@ -450,18 +453,18 @@ class Store {
     this.edit(DIR_CONST.PROGRAMS, filename, data);
   }
 
-  editSettings(filename, field, value) {
+  editSettings(filename, data) {
     if (Object.values(FILE_CONST).includes(filename)) {
       const newData = cloneDeep(
         get(this.store, [DIR_CONST.SETTINGS, filename], {}),
       );
-      set(newData, [field], value);
+      assign(newData, data);
+
       this.edit(DIR_CONST.SETTINGS, filename, newData);
     } else {
       console.log("error invalid args");
       console.log("filename", filename);
-      console.log("field", field);
-      console.log("value", value);
+      console.log("data", data);
     }
   }
 

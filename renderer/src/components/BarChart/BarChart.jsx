@@ -1,5 +1,5 @@
 import clsx from "clsx";
-import { get, isFinite, noop, round, set, unset } from "lodash";
+import { get, isFinite, noop, round, unset } from "lodash";
 import PropTypes from "prop-types";
 import React, { useEffect, useMemo, useRef } from "react";
 import { MAX_RES_LEVEL, MAX_RPM_LEVEL } from "../../constants/settingsConst";
@@ -31,10 +31,10 @@ const BarChart = props => {
           key: `${idx}_${resistanceLevel}_${targetRpm}`,
           styleResistance: { height: heightResistance },
           styleRpm: { display: "none", height: heightRpm },
+          onClick: () => setStep(idx),
         };
         if (isEditor) {
           unset(result, ["styleRpm", "display"]);
-          set(result, ["onClick"], () => setStep(idx));
         }
 
         return result;

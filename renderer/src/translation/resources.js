@@ -102,9 +102,21 @@ const resources = {
       [en]: "Warning",
       [ru]: "Предупреждение",
     },
+    [TK[COMMON_TRK].errorTKey]: {
+      [en]: "Error",
+      [ru]: "Ошибка",
+    },
     [TK[COMMON_TRK].start]: {
       [en]: "Start",
       [ru]: "Начать",
+    },
+    [TK[COMMON_TRK].finish]: {
+      [en]: "Finish",
+      [ru]: "Завершить",
+    },
+    [TK[COMMON_TRK].continueTKey]: {
+      [en]: "Continue",
+      [ru]: "Продолжить",
     },
   },
   [WORKOUT_TRK]: {
@@ -112,19 +124,19 @@ const resources = {
       [en]: "Program mode",
       [ru]: "Режим программы",
     },
-    [TK[WORKOUT_TRK].current_T]: {
+    [TK[WORKOUT_TRK].currentTKey]: {
       [en]: "Current",
       [ru]: "Текущее",
     },
-    [TK[WORKOUT_TRK].remaining_T]: {
+    [TK[WORKOUT_TRK].remainingTKey]: {
       [en]: "Remaining",
       [ru]: "Оставшееся",
     },
-    [TK[WORKOUT_TRK].elapsed_T]: {
+    [TK[WORKOUT_TRK].elapsedTKey]: {
       [en]: "Elapsed",
       [ru]: "Прошедшее",
     },
-    [TK[WORKOUT_TRK].time_T]: {
+    [TK[WORKOUT_TRK].timeTKey]: {
       [en]: "time",
       [ru]: "время",
     },
@@ -240,17 +252,29 @@ const resources = {
       [en]: "Show tips at the bottom of the page",
       [ru]: "Показывать подсказки внизу страницы",
     },
+    [TK[SETTINGS_TRK].devStatusTKey]: {
+      [en]: "Developer mode",
+      [ru]: "Режим разработчика",
+    },
     [TK[SETTINGS_TRK].motorDisclaimerMsg]: {
-      [en]: "TODO motorDisclaimerMsg",
+      [en]: "Attention, on this page you can harm your equipment. Make sure you understand what you're doing.",
       [ru]: "Внимание, в этом разделе вы можете навредить своему оборудованию. Убедитесь, что понимаете что делаете.",
     },
-    [TK[SETTINGS_TRK].toCalibrateBut]: {
-      [en]: "TODO calibrationBut",
+    [TK[SETTINGS_TRK].toCalibrateMotorBut]: {
+      [en]: "TODO toCalibrateMotorBut",
       [ru]: "Калибровка двигателя",
     },
-    [TK[SETTINGS_TRK].toCalibrateMsg]: {
+    [TK[SETTINGS_TRK].toCalibrateMotorMsg]: {
       [en]: "TODO calibrationMsg",
       [ru]: "TODO calibrationMsg",
+    },
+    [TK[SETTINGS_TRK].toCalibrateCadenceBut]: {
+      [en]: "TODO toCalibrateCadenceBut",
+      [ru]: "Калибровка датчика скорости",
+    },
+    [TK[SETTINGS_TRK].toCalibrateCadenceMsg]: {
+      [en]: "TODO toCalibrateCadenceMsg",
+      [ru]: "TODO toCalibrateCadenceMsg",
     },
     [TK[SETTINGS_TRK].sleepRatioKey]: {
       [en]: "TODO sleepRatioKey",
@@ -290,6 +314,86 @@ const resources = {
     [TK[SETTINGS_TRK].spiAboutMsg]: {
       [en]: "TODO spiAboutMsg",
       [ru]: "Эта функция необходима для получения данных с потенциометра, если она не включена, то приложение не сможет работать. На данный момент программная эмуляция SPI не реализована.",
+    },
+    [TK[SETTINGS_TRK].gearRatioKey]: {
+      [en]: "Gear ratio of speedometer",
+      [ru]: "Передаточное число датчика скорости",
+    },
+    [TK[SETTINGS_TRK].startCalibration]: {
+      [en]: "Start calibration",
+      [ru]: "Начать калибровку",
+    },
+    [TK[SETTINGS_TRK].stopCalibration]: {
+      [en]: "Stop calibration",
+      [ru]: "Закончить калибровку",
+    },
+    [TK[SETTINGS_TRK].calibCadenWarningMsg]: {
+      [en]: "TODO calibCadenWarningMsg",
+      [ru]: `Калибровка датчика скорости будет проходить в несколько этапов. Нажмите кнопку "$t(${getTP(
+        COMMON_TRK,
+        TK[COMMON_TRK].next,
+      )})", чтобы продолжить.`,
+    },
+    [TK[SETTINGS_TRK].calibCadenCollectDataTitle]: {
+      [en]: "Collect data",
+      [ru]: "Сбор данных",
+    },
+    [TK[SETTINGS_TRK].calibCadenCollectDataMsg]: {
+      [en]: "TODO calibCadenCollectDataMsg",
+      [ru]: `Для калибровки датчика перед началом процедуры необходимо установить педали в положение, которое вам будет легко воспроизвести (например левый шатун в крайнем нижнем положении). Педали должны быть неподвижны. Затем вам следует нажать кнопку "$t(${getTP(
+        SETTINGS_TRK,
+        TK[SETTINGS_TRK].startCalibration,
+      )})" ниже и совершить несколько (~10) полных оборотов педалями с равномерной скоростью, вращая только вперед и остановить педали в том же положении, что при начале калибровки. Вы должны запомнить сколько именно полных оборотов вы сделали (от этого зависит точность расчетов). Затем вам следует нажать кнопку ниже "$t(${getTP(
+        SETTINGS_TRK,
+        TK[SETTINGS_TRK].stopCalibration,
+      )})" и перейти к следующему шагу.`,
+    },
+    [TK[SETTINGS_TRK].calibCadenUserDataTitle]: {
+      [en]: "Data input",
+      [ru]: "Ввод данных",
+    },
+    [TK[SETTINGS_TRK].calibCadenUserDataMsg]: {
+      [en]: "TODO calibCadenUserDataMsg",
+      [ru]: "Ниже вы должны ввести количество полных оборотов, которые вы совершили на предыдущем шаге.",
+    },
+    [TK[SETTINGS_TRK].calibCadenFinishTitle]: {
+      [en]: "Saving",
+      [ru]: "Сохранение",
+    },
+    [TK[SETTINGS_TRK].calibCadenFinishMsg]: {
+      [en]: "TODO calibCadenFinishMsg",
+      [ru]: `Ниже вы можете изменить рассчитанное передаточное число, если понимаете что делаете. В противном случае просто нажмите кнопку "$t(${getTP(
+        COMMON_TRK,
+        TK[COMMON_TRK].finish,
+      )})".`,
+    },
+    [TK[SETTINGS_TRK].calibMotorWarningMsg]: {
+      [en]: "TODO calibMotorWarningMsg",
+      [ru]: "TODO calibMotorWarningMsg",
+    },
+    [TK[SETTINGS_TRK].calibMotorDirectionTestTitle]: {
+      [en]: "TODO calibMotorDirectionTestTitle",
+      [ru]: "TODO calibMotorDirectionTestTitle",
+    },
+    [TK[SETTINGS_TRK].calibMotorDirectionTestMsg]: {
+      [en]: "TODO calibMotorDirectionTestMsg",
+      [ru]: "TODO calibMotorDirectionTestMsg",
+    },
+    [TK[SETTINGS_TRK].calibMotorCalcSleepRatioTitle]: {
+      [en]: "TODO calibMotorCalcSleepRatioTitle",
+      [ru]: "TODO calibMotorCalcSleepRatioTitle",
+    },
+    [TK[SETTINGS_TRK].calibMotorCalcSleepRatioMsg]: {
+      [en]: "TODO calibMotorCalcSleepRatioMsg",
+      [ru]: "TODO calibMotorCalcSleepRatioMsg",
+    },
+    [TK[SETTINGS_TRK].calibMotorFinishTitle]: {
+      [en]: "TODO calibMotorFinishTitle",
+      [ru]: "TODO calibMotorFinishTitle",
+    },
+    [TK[SETTINGS_TRK].calibMotorFinishMsg]: {
+      [en]: "TODO calibMotorFinishMsg",
+      [ru]: "TODO calibMotorFinishMsg",
     },
   },
   [TIPS_TRK]: {
@@ -398,20 +502,20 @@ const resources = {
       [ru]: "TODO rpmSettingsTip",
     },
     [TK[TIPS_TRK].motorToLeftBut]: {
-      [en]: "TODO motorToLeftBut",
-      [ru]: "TODO motorToLeftBut",
+      [en]: "Left",
+      [ru]: "Налево",
     },
     [TK[TIPS_TRK].motorToLeftTip]: {
-      [en]: "TODO motorToLeftTip",
-      [ru]: "TODO motorToLeftTip",
+      [en]: "The conditional direction of movement of the motor.",
+      [ru]: "Условное направление движения двигателя.",
     },
     [TK[TIPS_TRK].motorToRightBut]: {
-      [en]: "TODO motorToRightBut",
-      [ru]: "TODO motorToRightBut",
+      [en]: "Right",
+      [ru]: "Направо",
     },
     [TK[TIPS_TRK].motorToRightTip]: {
-      [en]: "TODO motorToRightTip",
-      [ru]: "TODO motorToRightTip",
+      [en]: "The conditional direction of movement of the motor.",
+      [ru]: "Условное направление движения двигателя.",
     },
     [TK[TIPS_TRK].motorPotenBut]: {
       [en]: "Potentiometer",
@@ -470,6 +574,30 @@ const resources = {
     [ERRORS.INVALID_RESIST_LEVEL]: {
       [en]: "TODO INVALID_RESIST_LEVEL",
       [ru]: "TODO INVALID_RESIST_LEVEL",
+    },
+    [ERRORS.INVALID_MOTOR_SETTINGS]: {
+      [en]: "TODO INVALID_MOTOR_SETTINGS",
+      [ru]: "Ваш двигатель не настроен или его настройки недопустимы. Перейдите в раздел настройки двигателя и исправьте их.",
+    },
+    [ERRORS.POTEN_VALUE_OUT_RANGE]: {
+      [en]: "TODO POTEN_VALUE_OUT_RANGE",
+      [ru]: "Значение потенциометра вне допустимых пределов. Значение должно быть больше {{MIN_POTEN_VALUE}} и меньше {{MAX_POTEN_VALUE}}.",
+    },
+    [ERRORS.MOTOR_MIN_HIGH_MAX_LOW]: {
+      [en]: "TODO MOTOR_MIN_HIGH_MAX_LOW",
+      [ru]: "Значение при низкой нагрузке не может быть больше, чем при высокой нагрузке. Также значение при высокой нагрузке не может быть меньше, чем значение при низкой нагрузке.",
+    },
+    [ERRORS.MOTOR_MIN_MAX_INVALID]: {
+      [en]: "TODO MOTOR_MIN_MAX_INVALID",
+      [ru]: "Такое значение не может быть сохранено, т.к. минимальный диапазон хода двигателя должен быть не менее {{MIN_MOTOR_STROKE}}.",
+    },
+    [ERRORS.MOTOR_SHORT_STROKE]: {
+      [en]: "TODO MOTOR_SHORT_STROKE",
+      [ru]: "При текущих настройках диапазон хода двигателя меньше допустимого значения ({{MIN_MOTOR_STROKE}}).",
+    },
+    [ERRORS.MOTOR_SETTINGS_RESET]: {
+      [en]: "TODO MOTOR_SETTINGS_RESET",
+      [ru]: "При изменении этого параметра все остальные настройки двигателя будут сброшены.",
     },
     [ERRORS.LOADING_TIMER_EXPIRED]: {
       [en]: "TODO LOADING_TIMER_EXPIRED",

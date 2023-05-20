@@ -9,8 +9,8 @@ import { useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { useSelector } from "react-redux";
 import { MemoryRouter, Outlet, Route, Routes } from "react-router-dom";
-import { useGetBootQuery, useGetSettingsQuery } from "./api/ipc";
 import "./App.css";
+import { useGetBootQuery, useGetSettingsQuery } from "./api/ipc";
 import Footer from "./components/Footer/Footer";
 import MainPage from "./components/MainPage/MainPage";
 import ManualMode from "./components/ManualMode/ManualMode";
@@ -50,6 +50,7 @@ const App = () => {
   const lang = get(settings, [FILE_CONST.INTERFACE, "lang"], "");
   const cursorNone = get(settings, [FILE_CONST.INTERFACE, "cursorNone"], false);
   const showTips = get(settings, [FILE_CONST.INTERFACE, "showTips"], false);
+  const devStatus = get(settings, [FILE_CONST.INTERFACE, "devStatus"], false);
   useGetBootQuery(undefined, { refetchOnMountOrArgChange: true });
 
   useEffect(() => {
@@ -63,13 +64,15 @@ const App = () => {
     body.classList.toggle("cursorNone", cursorNone || cursorNoneTemp);
   }, [cursorNone, cursorNoneTemp]);
 
+  const withFooter = Boolean(footerStatus || devStatus);
+
   return (
     <PortalProvider>
       <MemoryRouter>
         <div
           className={clsx("app", {
-            withHeader: !footerStatus,
-            withHeaderAndFooter: footerStatus,
+            withHeader: !withFooter,
+            withHeaderAndFooter: withFooter,
           })}
         >
           <Navigation />
@@ -158,7 +161,7 @@ const App = () => {
             </Route>
           </Routes>
 
-          {showTips && <Footer />}
+          {(showTips || devStatus) && <Footer />}
         </div>
       </MemoryRouter>
     </PortalProvider>

@@ -10,12 +10,13 @@ import {
   TRANSLATION_ROOT_KEYS,
 } from "../../constants/translationConst";
 import { getRunningStatus } from "../../selectors/environmentSelectors";
+import { usePrevious } from "../../utils/commonUtils";
 import { getTranslationPath } from "../../utils/translationUtils";
 import { Item } from "../SquareGrid/SquareGrid";
 import styles from "./Timer.module.css";
 
 const { WORKOUT_TRK } = TRANSLATION_ROOT_KEYS;
-const { remaining_T, elapsed_T, time_T } = TRANSLATION_KEYS[WORKOUT_TRK];
+const { remainingTKey, elapsedTKey, timeTKey } = TRANSLATION_KEYS[WORKOUT_TRK];
 const { RUN } = RUNNINIG_STATUS;
 
 const getTPath = (...args) => getTranslationPath(WORKOUT_TRK, ...args);
@@ -27,6 +28,7 @@ const Timer = props => {
   const runningStatus = useSelector(getRunningStatus);
   const [type, setType] = useState(propsType);
   const { t } = useTranslation();
+  const prevExpiryTimestamp = usePrevious(expiryTimestamp);
   const {
     seconds: seconds_E,
     minutes: minutes_E,
@@ -44,9 +46,19 @@ const Timer = props => {
     isRunning: isRunning_R,
     pause: pause_R,
     resume: resume_R,
+    restart: restart_R,
   } = useTimer({
     expiryTimestamp,
   });
+
+  useEffect(() => {
+    if (
+      expiryTimestamp !== prevExpiryTimestamp &&
+      new Date() < expiryTimestamp
+    ) {
+      restart_R(expiryTimestamp);
+    }
+  }, [expiryTimestamp, prevExpiryTimestamp, restart_R]);
 
   useEffect(() => {
     const isExpired =
@@ -102,9 +114,9 @@ const Timer = props => {
   return (
     <Item className={styles.timer} onClick={disabled ? undefined : onClick}>
       <p>
-        {t(getTPath(type === TIMER_TYPES.REMAIN ? remaining_T : elapsed_T))}
+        {t(getTPath(type === TIMER_TYPES.REMAIN ? remainingTKey : elapsedTKey))}
       </p>
-      <p>{t(getTPath(time_T))}</p>
+      <p>{t(getTPath(timeTKey))}</p>
       <p>
         <b>
           {type === TIMER_TYPES.REMAIN

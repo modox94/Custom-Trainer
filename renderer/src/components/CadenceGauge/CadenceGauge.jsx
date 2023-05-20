@@ -19,7 +19,7 @@ const CadenceGauge = props => {
   const { className, targetRpm } = props;
   const dispatch = useDispatch();
   const runningStatus = useSelector(getRunningStatus);
-  const cadenceObject = useGetCadenceQuery() || {};
+  const cadenceObject = useGetCadenceQuery();
   const currentCadence = get(cadenceObject, ["data", "result"], 0);
   const lastTimecode = get(cadenceObject, ["data", "lastTimecode"]);
   const value = useMemo(

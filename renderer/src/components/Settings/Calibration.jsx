@@ -3,36 +3,47 @@ import clsx from "clsx";
 import { get, isFinite } from "lodash";
 import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import {
-  motorCalibration,
-  stopMotor,
-  useGetSettingsQuery,
-} from "../../api/ipc";
+import { stopMotor, useGetSettingsQuery } from "../../api/ipc";
 import { DASH } from "../../constants/commonConst";
 import { FILE_CONST } from "../../constants/reduxConst";
-import { MOTOR_FIELDS } from "../../constants/settingsConst";
+import { CADENCE_FIELDS, MOTOR_FIELDS } from "../../constants/settingsConst";
 import {
   TRANSLATION_KEYS,
   TRANSLATION_ROOT_KEYS,
 } from "../../constants/translationConst";
 import { getTranslationPath } from "../../utils/translationUtils";
 import { Container, Item } from "../SquareGrid/SquareGrid";
+import CalibrationCadenceDialog from "./CalibrationCadenceDialog";
+import CalibrationMotorDialog from "./CalibrationMotorDialog";
 import SettingLine from "./SettingLine";
 
 const { COMMON_TRK, SETTINGS_TRK } = TRANSLATION_ROOT_KEYS;
 const { start } = TRANSLATION_KEYS[COMMON_TRK];
-const { toCalibrateBut, sleepRatioKey } = TRANSLATION_KEYS[SETTINGS_TRK];
+const { toCalibrateMotorBut, toCalibrateCadenceBut, sleepRatioKey } =
+  TRANSLATION_KEYS[SETTINGS_TRK];
+
 const getTPath = (...args) => getTranslationPath(SETTINGS_TRK, ...args);
+
+const DIALOG_TYPE = {
+  MOTOR: "MOTOR",
+  CADENCE: "CADENCE",
+};
 
 const Calibration = () => {
   const { t } = useTranslation();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(false);
+  const [dialogType, setDialogType] = useState();
   const { data: settings = {} } =
     useGetSettingsQuery(undefined, { refetchOnMountOrArgChange: true }) || {};
   const sleepRatio = get(
     settings,
     [FILE_CONST.PERIPHERAL, MOTOR_FIELDS.SLEEP_RATIO],
+    null,
+  );
+  const gearRatio = get(
+    settings,
+    [FILE_CONST.PERIPHERAL, CADENCE_FIELDS.GEAR_RATIO],
     null,
   );
 
@@ -42,16 +53,19 @@ const Calibration = () => {
     };
   }, []);
 
-  const toCalibrateMotor = async () => {
-    if (loading) {
-      return;
-    }
+  const toCalibrateMotor = () => {
     setLoading(true);
-    const result = await motorCalibration();
-    if (result?.error) {
-      setError(result?.error);
-    }
+    setDialogType(DIALOG_TYPE.MOTOR);
+  };
+
+  const toCalibrateCadence = () => {
+    setLoading(true);
+    setDialogType(DIALOG_TYPE.CADENCE);
+  };
+
+  const onCloseDialog = () => {
     setLoading(false);
+    setDialogType(undefined);
   };
 
   return (
@@ -59,9 +73,14 @@ const Calibration = () => {
       <Container fullHeight>
         <Item className={clsx({ [Classes.SKELETON]: loading })}>
           <SettingLine
-            title={t(getTPath(toCalibrateBut))}
+            title={t(getTPath(toCalibrateMotorBut))}
             buttonText={t(getTranslationPath(COMMON_TRK, start))}
             onClick={toCalibrateMotor}
+          />
+          <SettingLine
+            title={t(getTPath(toCalibrateCadenceBut))}
+            buttonText={t(getTranslationPath(COMMON_TRK, start))}
+            onClick={toCalibrateCadence}
           />
         </Item>
         <Item className={clsx({ [Classes.SKELETON]: loading })}>
@@ -69,9 +88,17 @@ const Calibration = () => {
             title={t(getTPath(sleepRatioKey))}
             value={!isFinite(sleepRatio) ? DASH : String(sleepRatio)}
           />
-          <SettingLine title={String(error)} />
+          <SettingLine title="TODO gearRatio" value={String(gearRatio)} />
+          <SettingLine title="TODO error" value={String(error)} />
         </Item>
       </Container>
+
+      {dialogType === DIALOG_TYPE.MOTOR && (
+        <CalibrationMotorDialog onClose={onCloseDialog} setError={setError} />
+      )}
+      {dialogType === DIALOG_TYPE.CADENCE && (
+        <CalibrationCadenceDialog onClose={onCloseDialog} setError={setError} />
+      )}
     </>
   );
 };

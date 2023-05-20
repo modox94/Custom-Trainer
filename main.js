@@ -5,7 +5,7 @@ const {
   Menu,
   powerSaveBlocker,
 } = require("electron");
-const { isFunction, get } = require("lodash");
+const { isFunction, get, isObject } = require("lodash");
 const path = require("node:path");
 const sudo = require("sudo-prompt");
 const {
@@ -18,47 +18,24 @@ const {
   LINE_FEED,
   MOTOR_FIELDS,
   MOVE_DIRECTION,
+  CADENCE_FIELDS,
 } = require("./src/constants/constants");
-const { rate } = require("./src/hardware/cadence_sensor");
 const MotorDriver = require("./src/hardware/motor_driver");
+const { aplicationMenu } = require("./src/software/aplication_menu");
 const Store = require("./src/software/store");
 const { commentConfigOpt, convertConfigToObj } = require("./src/utils/utils");
+const Frequency = require("./src/hardware/cadence_sensor");
 
-const template = [
-  {
-    role: "fileMenu",
-  },
-  {
-    label: "View",
-    submenu: [
-      { role: "reload" },
-      { role: "toggleDevTools" },
-      { type: "separator" },
-      { role: "resetZoom" },
-      { type: "separator" },
-      { role: "togglefullscreen" },
-    ],
-  },
-  {
-    role: "help",
-    submenu: [
-      {
-        label: "GitHub",
-        click: async () => {
-          const { shell } = require("electron");
-          await shell.openExternal("https://github.com/modox94/Custom-Trainer");
-        },
-      },
-    ],
-  },
-];
-const menu = Menu.buildFromTemplate(template);
-Menu.setApplicationMenu(menu);
+Menu.setApplicationMenu(aplicationMenu);
 
 const store = new Store();
-const motor = new MotorDriver(
-  get(store.store, [DIR_CONST.SETTINGS, FILE_CONST.PERIPHERAL], {}),
+const settingsPeripheral = get(
+  store.store,
+  [DIR_CONST.SETTINGS, FILE_CONST.PERIPHERAL],
+  {},
 );
+const rate = new Frequency(settingsPeripheral);
+const motor = new MotorDriver(settingsPeripheral);
 
 let win = null;
 let preventDisplaySleepID = false;
@@ -70,34 +47,6 @@ const preventDisplaySleepFn = (event, flag) => {
     preventDisplaySleepID = false;
   }
 };
-
-const createWindow = () => {
-  win = new BrowserWindow({
-    width: 800,
-    height: 600,
-    fullscreenable: true,
-    fullscreen: app.isPackaged,
-    webPreferences: {
-      preload: path.join(__dirname, "preload.js"),
-      contextIsolation: true,
-      enableRemoteModule: true,
-    },
-  });
-
-  if (process.env.ELECTRON_START_URL) {
-    win.loadURL(process.env.ELECTRON_START_URL);
-  } else {
-    win.loadFile("./renderer/build/index.html");
-  }
-};
-
-app.whenReady().then(() => {
-  createWindow();
-
-  app.on("activate", () => {
-    if (BrowserWindow.getAllWindows().length === 0) createWindow();
-  });
-});
 
 const onQuit = () => {
   try {
@@ -126,6 +75,53 @@ const onQuit = () => {
 app.on("window-all-closed", app.quit.bind(app));
 
 app.on("will-quit", onQuit);
+
+const createWindow = () => {
+  win = new BrowserWindow({
+    width: 800,
+    height: 600,
+    fullscreenable: true,
+    fullscreen: app.isPackaged,
+    webPreferences: {
+      preload: path.join(__dirname, "preload.js"),
+      contextIsolation: true,
+      enableRemoteModule: true,
+    },
+  });
+
+  if (process.env.ELECTRON_START_URL) {
+    win.loadURL(process.env.ELECTRON_START_URL);
+  } else {
+    win.loadFile("./renderer/build/index.html");
+  }
+};
+
+if (!app.requestSingleInstanceLock()) {
+  app.quit();
+} else {
+  app.on("second-instance", () => {
+    if (win) {
+      if (win.isMinimized()) {
+        win.restore();
+      }
+      win.focus();
+    }
+  });
+
+  app.whenReady().then(() => {
+    createWindow();
+
+    if (!app.requestSingleInstanceLock()) {
+      app.quit();
+    }
+
+    app.on("activate", () => {
+      if (BrowserWindow.getAllWindows().length === 0) {
+        createWindow();
+      }
+    });
+  });
+}
 
 const onCadenceFn = () => {
   if (isFunction(win?.webContents?.send)) {
@@ -227,25 +223,35 @@ ipcMain.handle(EVENTS.EDIT_BOOT_CONFIG, async (event, opt, value) => {
   }
 });
 
-ipcMain.handle(EVENTS.MOTOR_CALIBRATION, async () => {
-  motor.updateField(MOTOR_FIELDS.SLEEP_RATIO, null);
-  store.editSettings(FILE_CONST.PERIPHERAL, MOTOR_FIELDS.SLEEP_RATIO, null);
-
-  const calibResult = await motor.calibration();
-  if (isFinite(calibResult)) {
-    motor.updateField(MOTOR_FIELDS.SLEEP_RATIO, calibResult);
-    store.editSettings(
-      FILE_CONST.PERIPHERAL,
-      MOTOR_FIELDS.SLEEP_RATIO,
-      calibResult,
-    );
-    return true;
-  }
-
-  motor.updateField(MOTOR_FIELDS.SLEEP_RATIO, null);
-  store.editSettings(FILE_CONST.PERIPHERAL, MOTOR_FIELDS.SLEEP_RATIO, null);
-  return calibResult;
+ipcMain.handle(EVENTS.MOTOR_CALIB_DIRECTION_TEST, async () => {
+  const result = await motor.calibrationDirectionTest();
+  return result;
 });
+
+ipcMain.handle(EVENTS.MOTOR_CALIB_CALC_SLEEP_RATIO, async () => {
+  const result = await motor.calibrationCalcSleepRatio();
+  return result;
+});
+
+// ipcMain.handle(EVENTS.MOTOR_CALIBRATION, async () => {
+//   motor.updateField(MOTOR_FIELDS.SLEEP_RATIO, null);
+//   store.editSettings(FILE_CONST.PERIPHERAL, MOTOR_FIELDS.SLEEP_RATIO, null);
+
+//   const calibResult = await motor.calibration();
+//   if (isFinite(calibResult)) {
+//     motor.updateField(MOTOR_FIELDS.SLEEP_RATIO, calibResult);
+//     store.editSettings(
+//       FILE_CONST.PERIPHERAL,
+//       MOTOR_FIELDS.SLEEP_RATIO,
+//       calibResult,
+//     );
+//     return true;
+//   }
+
+//   motor.updateField(MOTOR_FIELDS.SLEEP_RATIO, null);
+//   store.editSettings(FILE_CONST.PERIPHERAL, MOTOR_FIELDS.SLEEP_RATIO, null);
+//   return calibResult;
+// });
 
 ipcMain.handle(EVENTS.GET_MOTOR_LEVEL, async () => {
   return await motor.getMotorLevel();
@@ -270,30 +276,42 @@ ipcMain.on(EVENTS.EDIT_PROGRAM, async (event, filename, programObject) =>
   store.editProgram(filename, programObject),
 );
 
-ipcMain.on(EVENTS.EDIT_SETTINGS, async (event, filename, field, value) => {
-  switch (filename) {
-    case FILE_CONST.PERIPHERAL: {
-      switch (field) {
-        case MOTOR_FIELDS.MIN_POS:
-        case MOTOR_FIELDS.MAX_POS:
-        case MOTOR_FIELDS.SLEEP_RATIO:
-        case MOTOR_FIELDS.SWAP_MOTOR_WIRES:
-        case MOTOR_FIELDS.SWAP_POTEN_WIRES:
-          motor.updateField(field, value);
+ipcMain.on(EVENTS.EDIT_SETTINGS, async (event, filename, data) => {
+  if (!isObject(data)) {
+    console.log("invalid data", data);
+  }
+  for (const field in data) {
+    if (Object.hasOwnProperty.call(data, field)) {
+      const value = data[field];
+      switch (filename) {
+        case FILE_CONST.PERIPHERAL: {
+          switch (field) {
+            case MOTOR_FIELDS.MIN_POS:
+            case MOTOR_FIELDS.MAX_POS:
+            case MOTOR_FIELDS.SLEEP_RATIO:
+            case MOTOR_FIELDS.SWAP_MOTOR_WIRES:
+            case MOTOR_FIELDS.SWAP_POTEN_WIRES:
+              motor.updateField(field, value);
+              break;
+
+            case CADENCE_FIELDS.GEAR_RATIO:
+              rate.updateField(field, value);
+              break;
+
+            default:
+              break;
+          }
+
           break;
+        }
 
         default:
           break;
       }
-
-      break;
     }
-
-    default:
-      break;
   }
 
-  store.editSettings(filename, field, value);
+  store.editSettings(filename, data);
 });
 
 ipcMain.on(EVENTS.DELETE_PROGRAM, async (event, filename) =>

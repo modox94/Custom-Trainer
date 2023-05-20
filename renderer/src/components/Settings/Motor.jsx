@@ -1,10 +1,9 @@
-import { Button, Classes, Icon, Intent } from "@blueprintjs/core";
+import { Button, Icon, Intent } from "@blueprintjs/core";
 import { IconNames } from "@blueprintjs/icons";
 import clsx from "clsx";
 import { get, isFinite, round } from "lodash";
 import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
-import { useNavigate } from "react-router-dom";
 import {
   DANGERmoveBack,
   DANGERmoveForward,
@@ -12,9 +11,14 @@ import {
   useGetPotentiometerQuery,
   useGetSettingsQuery,
 } from "../../api/ipc";
-import { DASH } from "../../constants/commonConst";
+import { DASH, ERRORS } from "../../constants/commonConst";
 import { FILE_CONST } from "../../constants/reduxConst";
-import { MOTOR_FIELDS } from "../../constants/settingsConst";
+import {
+  MAX_POTEN_VALUE,
+  MIN_MOTOR_STROKE,
+  MIN_POTEN_VALUE,
+  MOTOR_FIELDS,
+} from "../../constants/settingsConst";
 import {
   TRANSLATION_KEYS,
   TRANSLATION_ROOT_KEYS,
@@ -32,14 +36,21 @@ import { Container, Item } from "../SquareGrid/SquareGrid";
 import styles from "./Settings.module.css";
 
 const { COMMON_TRK, SETTINGS_TRK } = TRANSLATION_ROOT_KEYS;
-const { ok, back, warning } = TRANSLATION_KEYS[COMMON_TRK];
+const { ok, warning, errorTKey, cancelTKey, continueTKey } =
+  TRANSLATION_KEYS[COMMON_TRK];
 const { motorDisclaimerMsg } = TRANSLATION_KEYS[SETTINGS_TRK];
+
+const errorsWithCustomFooter = [
+  ERRORS.MOTOR_MIN_HIGH_MAX_LOW,
+  ERRORS.MOTOR_SHORT_STROKE,
+  ERRORS.MOTOR_SETTINGS_RESET,
+];
 
 const Motor = () => {
   const { t } = useTranslation();
-  const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [disclaimer, setDisclaimer] = useState(true);
+  const [error, setError] = useState(false);
 
   const { data: potentiometerValueRaw } =
     useGetPotentiometerQuery(undefined, {
@@ -70,10 +81,6 @@ const Motor = () => {
   );
 
   const disabled = loading || !isFinite(potentiometerValue);
-
-  const goBack = () => {
-    navigate(-1);
-  };
 
   const onClickLeft = async () => {
     if (disabled) {
@@ -111,16 +118,59 @@ const Motor = () => {
     setLoading(false);
   };
 
+  const resetError = () => setError(false);
+
+  const onChangeHard = (event, errorArg) => {
+    const { newSettings } = errorArg || error || {};
+
+    if (newSettings) {
+      editSettings(FILE_CONST.PERIPHERAL, newSettings);
+    }
+
+    resetError();
+  };
+
   const onSelectMin = () => {
     if (disabled) {
       return;
     }
 
-    editSettings(
-      FILE_CONST.PERIPHERAL,
-      MOTOR_FIELDS.MIN_POS,
-      potentiometerValue,
-    );
+    const newError = {
+      target: MOTOR_FIELDS.MIN_POS,
+      newSettings: {
+        [MOTOR_FIELDS.MIN_POS]: potentiometerValue,
+        [MOTOR_FIELDS.SLEEP_RATIO]: null,
+      },
+    };
+
+    if (
+      potentiometerValue > MAX_POTEN_VALUE ||
+      potentiometerValue < MIN_POTEN_VALUE
+    ) {
+      newError.code = ERRORS.POTEN_VALUE_OUT_RANGE;
+      setError(newError);
+      return;
+    }
+    if (potentiometerValue > MAX_POTEN_VALUE - MIN_MOTOR_STROKE) {
+      newError.code = ERRORS.MOTOR_MIN_MAX_INVALID;
+      setError(newError);
+      return;
+    }
+    if (maxPosition === null) {
+      // do nothing
+    } else if (potentiometerValue >= maxPosition) {
+      newError.newSettings[MOTOR_FIELDS.MAX_POS] = null;
+      newError.code = ERRORS.MOTOR_MIN_HIGH_MAX_LOW;
+      setError(newError);
+      return;
+    } else if (Math.abs(maxPosition - potentiometerValue) < MIN_MOTOR_STROKE) {
+      newError.newSettings[MOTOR_FIELDS.MAX_POS] = null;
+      newError.code = ERRORS.MOTOR_SHORT_STROKE;
+      setError(newError);
+      return;
+    }
+
+    onChangeHard(undefined, newError);
   };
 
   const onSelectMax = () => {
@@ -128,11 +178,42 @@ const Motor = () => {
       return;
     }
 
-    editSettings(
-      FILE_CONST.PERIPHERAL,
-      MOTOR_FIELDS.MAX_POS,
-      potentiometerValue,
-    );
+    const newError = {
+      target: MOTOR_FIELDS.MAX_POS,
+      newSettings: {
+        [MOTOR_FIELDS.MAX_POS]: potentiometerValue,
+        [MOTOR_FIELDS.SLEEP_RATIO]: null,
+      },
+    };
+
+    if (
+      potentiometerValue > MAX_POTEN_VALUE ||
+      potentiometerValue < MIN_POTEN_VALUE
+    ) {
+      newError.code = ERRORS.POTEN_VALUE_OUT_RANGE;
+      setError(newError);
+      return;
+    }
+    if (potentiometerValue < MIN_POTEN_VALUE + MIN_MOTOR_STROKE) {
+      newError.code = ERRORS.MOTOR_MIN_MAX_INVALID;
+      setError(newError);
+      return;
+    }
+    if (minPosition === null) {
+      // do nothing
+    } else if (minPosition >= potentiometerValue) {
+      newError.newSettings[MOTOR_FIELDS.MIN_POS] = null;
+      newError.code = ERRORS.MOTOR_MIN_HIGH_MAX_LOW;
+      setError(newError);
+      return;
+    } else if (Math.abs(minPosition - potentiometerValue) < MIN_MOTOR_STROKE) {
+      newError.newSettings[MOTOR_FIELDS.MIN_POS] = null;
+      newError.code = ERRORS.MOTOR_SHORT_STROKE;
+      setError(newError);
+      return;
+    }
+
+    onChangeHard(undefined, newError);
   };
 
   const onSwapMotor = () => {
@@ -140,11 +221,18 @@ const Motor = () => {
       return;
     }
 
-    editSettings(
-      FILE_CONST.PERIPHERAL,
-      MOTOR_FIELDS.SWAP_MOTOR_WIRES,
-      !swappedMotorWires,
-    );
+    const newError = {
+      target: MOTOR_FIELDS.SWAP_MOTOR_WIRES,
+      code: ERRORS.MOTOR_SETTINGS_RESET,
+      newSettings: {
+        [MOTOR_FIELDS.SWAP_MOTOR_WIRES]: !swappedMotorWires,
+        [MOTOR_FIELDS.MIN_POS]: null,
+        [MOTOR_FIELDS.MAX_POS]: null,
+        [MOTOR_FIELDS.SLEEP_RATIO]: null,
+      },
+    };
+
+    setError(newError);
   };
 
   const onSwapPotentiometer = () => {
@@ -152,18 +240,25 @@ const Motor = () => {
       return;
     }
 
-    editSettings(
-      FILE_CONST.PERIPHERAL,
-      MOTOR_FIELDS.SWAP_POTEN_WIRES,
-      !swappedPotentiometerWires,
-    );
+    const newError = {
+      target: MOTOR_FIELDS.SWAP_POTEN_WIRES,
+      code: ERRORS.MOTOR_SETTINGS_RESET,
+      newSettings: {
+        [MOTOR_FIELDS.SWAP_POTEN_WIRES]: !swappedPotentiometerWires,
+        [MOTOR_FIELDS.MIN_POS]: null,
+        [MOTOR_FIELDS.MAX_POS]: null,
+        [MOTOR_FIELDS.SLEEP_RATIO]: null,
+      },
+    };
+
+    setError(newError);
   };
 
   return (
     <>
       <Container>
         <Item
-          className={clsx(styles.tinyPadding, { [Classes.SKELETON]: disabled })}
+          className={clsx(styles.tinyPadding, { [styles.opacity50]: disabled })}
           onClick={onClickLeft}
         >
           <Icon className={styles.icon} icon={IconNames.CARET_LEFT} />
@@ -180,7 +275,7 @@ const Motor = () => {
           </div>
         </Item>
         <Item
-          className={clsx(styles.tinyPadding, { [Classes.SKELETON]: disabled })}
+          className={clsx(styles.tinyPadding, { [styles.opacity50]: disabled })}
           onClick={onClickRight}
         >
           <Icon className={styles.icon} icon={IconNames.CARET_RIGHT} />
@@ -189,7 +284,7 @@ const Motor = () => {
       <Container>
         <Item
           className={clsx(styles.flexColumn, styles.smallPadding, {
-            [Classes.SKELETON]: disabled,
+            [styles.opacity50]: disabled,
           })}
           onClick={onSwapMotor}
         >
@@ -209,7 +304,7 @@ const Motor = () => {
         </Item>
         <Item
           className={clsx(styles.flexColumn, styles.smallPadding, {
-            [Classes.SKELETON]: disabled,
+            [styles.opacity50]: disabled,
           })}
           onClick={onSwapPotentiometer}
         >
@@ -230,7 +325,7 @@ const Motor = () => {
 
         <Item
           className={clsx(styles.flexColumn, styles.smallPadding, {
-            [Classes.SKELETON]: disabled,
+            [styles.opacity50]: disabled,
           })}
           onClick={onSelectMin}
         >
@@ -243,7 +338,7 @@ const Motor = () => {
         </Item>
         <Item
           className={clsx(styles.flexColumn, styles.smallPadding, {
-            [Classes.SKELETON]: disabled,
+            [styles.opacity50]: disabled,
           })}
           onClick={onSelectMax}
         >
@@ -256,28 +351,62 @@ const Motor = () => {
         </Item>
       </Container>
 
-      <DialogCustom
-        isOpen={disclaimer}
-        icon={IconNames.WARNING_SIGN}
-        title={t(getTranslationPath(COMMON_TRK, warning))}
-        canEscapeKeyClose={false}
-        canOutsideClickClose={false}
-        isCloseButtonShown={false}
-        onClose={() => setDisclaimer(false)}
-        body={
-          <ErrorText
-            text={t(getTranslationPath(SETTINGS_TRK, motorDisclaimerMsg))}
-          />
-        }
-        footerMinimal
-        footer={
-          <>
-            <Button
-              large
-              icon={IconNames.ARROW_LEFT}
-              text={t(getTranslationPath(COMMON_TRK, back))}
-              onClick={goBack}
+      {error && (
+        <DialogCustom
+          isOpen={Boolean(error)}
+          icon={IconNames.WARNING_SIGN}
+          title={
+            error?.code === ERRORS.MOTOR_SETTINGS_RESET
+              ? t(getTranslationPath(COMMON_TRK, warning))
+              : t(getTranslationPath(COMMON_TRK, errorTKey))
+          }
+          canEscapeKeyClose={false}
+          canOutsideClickClose={false}
+          isCloseButtonShown={false}
+          onClose={resetError}
+          body={<ErrorText error={error?.code} />}
+          footerMinimal
+          okBtn={!errorsWithCustomFooter.includes(error?.code)}
+          footer={
+            errorsWithCustomFooter.includes(error?.code) ? (
+              <>
+                <Button
+                  large
+                  intent={Intent.PRIMARY}
+                  icon={IconNames.TICK}
+                  text={t(getTranslationPath(COMMON_TRK, cancelTKey))}
+                  onClick={resetError}
+                />
+                <Button
+                  large
+                  intent={Intent.DANGER}
+                  icon={IconNames.EDIT}
+                  text={t(getTranslationPath(COMMON_TRK, continueTKey))}
+                  onClick={onChangeHard}
+                />
+              </>
+            ) : undefined
+          }
+        />
+      )}
+
+      {disclaimer && (
+        <DialogCustom
+          isOpen={disclaimer}
+          icon={IconNames.WARNING_SIGN}
+          title={t(getTranslationPath(COMMON_TRK, warning))}
+          canEscapeKeyClose={false}
+          canOutsideClickClose={false}
+          isCloseButtonShown={false}
+          onClose={() => setDisclaimer(false)}
+          body={
+            <ErrorText
+              text={t(getTranslationPath(SETTINGS_TRK, motorDisclaimerMsg))}
             />
+          }
+          footerMinimal
+          goBackBtn
+          footer={
             <Button
               large
               intent={Intent.DANGER}
@@ -285,9 +414,9 @@ const Motor = () => {
               text={t(getTranslationPath(COMMON_TRK, ok))}
               onClick={() => setDisclaimer(false)}
             />
-          </>
-        }
-      />
+          }
+        />
+      )}
     </>
   );
 };
