@@ -37,6 +37,7 @@ export const TRANSLATION_KEYS = {
     errorTKey: "errorTKey",
     start: "start",
     finish: "finish",
+    continueTKey: "continueTKey",
   },
   [TRANSLATION_ROOT_KEYS.WORKOUT_TRK]: {
     programMode: "programMode",

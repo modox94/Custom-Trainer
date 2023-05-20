@@ -19,7 +19,7 @@ import {
 import { getTranslationPath } from "../../utils/translationUtils";
 
 const { COMMON_TRK } = TRANSLATION_ROOT_KEYS;
-const { back } = TRANSLATION_KEYS[COMMON_TRK];
+const { back, ok } = TRANSLATION_KEYS[COMMON_TRK];
 
 const DialogCustom = props => {
   const {
@@ -35,6 +35,7 @@ const DialogCustom = props => {
     footerMinimal,
     footer,
     goBackBtn,
+    okBtn,
   } = props;
 
   const { t } = useTranslation();
@@ -58,20 +59,31 @@ const DialogCustom = props => {
       onClose={onClose}
     >
       <DialogBody className={Classes.TEXT_LARGE}>{body}</DialogBody>
-      <DialogFooter minimal={Boolean(footerMinimal)}>
-        <div className={Classes.DIALOG_FOOTER_ACTIONS}>
-          {goBackBtn && (
-            <Button
-              intent={Intent.PRIMARY}
-              large
-              icon={IconNames.ARROW_LEFT}
-              text={t(getTranslationPath(COMMON_TRK, back))}
-              onClick={goBack}
-            />
-          )}
-          {footer}
-        </div>
-      </DialogFooter>
+
+      {(goBackBtn || footer || okBtn) && (
+        <DialogFooter minimal={Boolean(footerMinimal)}>
+          <div className={Classes.DIALOG_FOOTER_ACTIONS}>
+            {goBackBtn && (
+              <Button
+                intent={Intent.PRIMARY}
+                large
+                icon={IconNames.ARROW_LEFT}
+                text={t(getTranslationPath(COMMON_TRK, back))}
+                onClick={goBack}
+              />
+            )}
+            {footer}
+            {okBtn && (
+              <Button
+                large
+                icon={IconNames.TICK}
+                text={t(getTranslationPath(COMMON_TRK, ok))}
+                onClick={onClose}
+              />
+            )}
+          </div>
+        </DialogFooter>
+      )}
     </Dialog>
   );
 };

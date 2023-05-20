@@ -114,6 +114,10 @@ const resources = {
       [en]: "Finish",
       [ru]: "Завершить",
     },
+    [TK[COMMON_TRK].continueTKey]: {
+      [en]: "Continue",
+      [ru]: "Продолжить",
+    },
   },
   [WORKOUT_TRK]: {
     [TK[WORKOUT_TRK].programMode]: {
@@ -391,11 +395,6 @@ const resources = {
       [en]: "TODO calibMotorFinishMsg",
       [ru]: "TODO calibMotorFinishMsg",
     },
-
-    // [TK[SETTINGS_TRK].]: {
-    //   [en]: "",
-    //   [ru]: "",
-    // },
   },
   [TIPS_TRK]: {
     [TK[TIPS_TRK].tipBut]: {
@@ -572,13 +571,33 @@ const resources = {
       [en]: "TODO POTEN_ERROR",
       [ru]: "TODO POTEN_ERROR",
     },
-    [ERRORS.INVALID_MOTOR_SETTINGS]: {
-      [en]: "TODO INVALID_MOTOR_SETTINGS",
-      [ru]: "TODO INVALID_MOTOR_SETTINGS",
-    },
     [ERRORS.INVALID_RESIST_LEVEL]: {
       [en]: "TODO INVALID_RESIST_LEVEL",
       [ru]: "TODO INVALID_RESIST_LEVEL",
+    },
+    [ERRORS.INVALID_MOTOR_SETTINGS]: {
+      [en]: "TODO INVALID_MOTOR_SETTINGS",
+      [ru]: "Ваш двигатель не настроен или его настройки недопустимы. Перейдите в раздел настройки двигателя и исправьте их.",
+    },
+    [ERRORS.POTEN_VALUE_OUT_RANGE]: {
+      [en]: "TODO POTEN_VALUE_OUT_RANGE",
+      [ru]: "Значение потенциометра вне допустимых пределов. Значение должно быть больше {{MIN_POTEN_VALUE}} и меньше {{MAX_POTEN_VALUE}}.",
+    },
+    [ERRORS.MOTOR_MIN_HIGH_MAX_LOW]: {
+      [en]: "TODO MOTOR_MIN_HIGH_MAX_LOW",
+      [ru]: "Значение при низкой нагрузке не может быть больше, чем при высокой нагрузке. Также значение при высокой нагрузке не может быть меньше, чем значение при низкой нагрузке.",
+    },
+    [ERRORS.MOTOR_MIN_MAX_INVALID]: {
+      [en]: "TODO MOTOR_MIN_MAX_INVALID",
+      [ru]: "Такое значение не может быть сохранено, т.к. минимальный диапазон хода двигателя должен быть не менее {{MIN_MOTOR_STROKE}}.",
+    },
+    [ERRORS.MOTOR_SHORT_STROKE]: {
+      [en]: "TODO MOTOR_SHORT_STROKE",
+      [ru]: "При текущих настройках диапазон хода двигателя меньше допустимого значения ({{MIN_MOTOR_STROKE}}).",
+    },
+    [ERRORS.MOTOR_SETTINGS_RESET]: {
+      [en]: "TODO MOTOR_SETTINGS_RESET",
+      [ru]: "При изменении этого параметра все остальные настройки двигателя будут сброшены.",
     },
     [ERRORS.LOADING_TIMER_EXPIRED]: {
       [en]: "TODO LOADING_TIMER_EXPIRED",
