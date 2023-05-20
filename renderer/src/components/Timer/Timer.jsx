@@ -10,6 +10,7 @@ import {
   TRANSLATION_ROOT_KEYS,
 } from "../../constants/translationConst";
 import { getRunningStatus } from "../../selectors/environmentSelectors";
+import { usePrevious } from "../../utils/commonUtils";
 import { getTranslationPath } from "../../utils/translationUtils";
 import { Item } from "../SquareGrid/SquareGrid";
 import styles from "./Timer.module.css";
@@ -27,6 +28,7 @@ const Timer = props => {
   const runningStatus = useSelector(getRunningStatus);
   const [type, setType] = useState(propsType);
   const { t } = useTranslation();
+  const prevExpiryTimestamp = usePrevious(expiryTimestamp);
   const {
     seconds: seconds_E,
     minutes: minutes_E,
@@ -44,9 +46,19 @@ const Timer = props => {
     isRunning: isRunning_R,
     pause: pause_R,
     resume: resume_R,
+    restart: restart_R,
   } = useTimer({
     expiryTimestamp,
   });
+
+  useEffect(() => {
+    if (
+      expiryTimestamp !== prevExpiryTimestamp &&
+      new Date() < expiryTimestamp
+    ) {
+      restart_R(expiryTimestamp);
+    }
+  }, [expiryTimestamp, prevExpiryTimestamp, restart_R]);
 
   useEffect(() => {
     const isExpired =

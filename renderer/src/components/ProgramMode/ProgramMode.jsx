@@ -136,7 +136,7 @@ const ProgramMode = props => {
       const stepEndTime = new Date();
       stepEndTime.setMilliseconds(stepEndTime.getMilliseconds() + minute);
       restart(stepEndTime);
-      setCounter(counter + 1);
+      setCounter(newCounter);
     }
   }, [
     counter,
@@ -179,7 +179,28 @@ const ProgramMode = props => {
     setIsDone(false);
     setTotalEndTime(undefined);
     stopMotor();
-    preventDisplaySleep(false);
+  };
+
+  const selectStep = idx => {
+    const programLength = get(steps, ["length"], 0);
+
+    if (idx >= 0 && idx < programLength) {
+      setMotorLevel(
+        round(
+          (steps[idx].resistanceLevel / maxResistanceLevel) * MAX_RES_LEVEL,
+        ),
+      );
+      const stepEndTime = new Date();
+      stepEndTime.setMilliseconds(stepEndTime.getMilliseconds() + minute);
+      restart(stepEndTime);
+      setCounter(idx);
+
+      const newTotalEndTime = new Date();
+      newTotalEndTime.setMilliseconds(
+        newTotalEndTime.getMilliseconds() + (programLength - idx) * minute,
+      );
+      setTotalEndTime(newTotalEndTime);
+    }
   };
 
   return (
@@ -197,6 +218,7 @@ const ProgramMode = props => {
           steps={steps}
           maxResistanceLevel={maxResistanceLevel}
           currentStep={counter}
+          setStep={selectStep}
           isDone={isDone}
         />
       </Container>
