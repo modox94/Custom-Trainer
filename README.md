@@ -82,12 +82,10 @@ Go to settings page.
   </tr>
 </table>
 
-Задайте значения потенциометра для крайних (самого легкого **[6]** и тяжелого **[7]**) положений нагрузки. Значение легкой нагрузки должно быть численно **[2]** меньше тяжелой. Двигатель должен двигаться при влево **[1]** - уменьшение значения **[2]** потенциометра, вправо **[3]** - увеличение значения. При необходимости вы можете обратить показания потенциометра **[5]** или направления двигателя **[4]**.
 Set the potentiometer values for the edge (easiest **[6]** and hardest **[7]**) resistance level. When pressed to the left button **[1]** - the value of the potentiometer **[2]** should decrease, to the right button **[3]** - increase. If necessary, you can reverse the potentiometer **[5]** or motor direction **[4]**.
 
 I recommend watching a recording of the setup process in [this](https://www.youtube.com/watch?v=wF2pY8McmVg) video.
 
-В дальнейшем эта инструкция будет дополнятся по мере возможности, а приложение совершенствоваться. Если вы хотите внести изменения, дополнения или у вас есть вопросы вы можете написать мне в [telegram](https://t.me/crazynike94).
 In the future, this manual and the application will be improved as far as possible. If you want to make changes or have questions, you can text me at [telegram](https://t.me/crazynike94).
 
 The application actually does not require a lot of resources and would probably work fine even on RPI1, however I could not compile the application for the 32 bit version of the software. If someone can help to do this, then it will be possible to greatly reduce the cost of upgrading the trainer.
