@@ -261,7 +261,7 @@ const resources = {
       [ru]: "Внимание, в этом разделе вы можете навредить своему оборудованию. Убедитесь, что понимаете что делаете.",
     },
     [TK[SETTINGS_TRK].toCalibrateMotorBut]: {
-      [en]: "TODO toCalibrateMotorBut",
+      [en]: "Motor calibration",
       [ru]: "Калибровка двигателя",
     },
     [TK[SETTINGS_TRK].toCalibrateMotorMsg]: {
@@ -269,7 +269,7 @@ const resources = {
       [ru]: "TODO calibrationMsg",
     },
     [TK[SETTINGS_TRK].toCalibrateCadenceBut]: {
-      [en]: "TODO toCalibrateCadenceBut",
+      [en]: "Speed sensor calibration",
       [ru]: "Калибровка датчика скорости",
     },
     [TK[SETTINGS_TRK].toCalibrateCadenceMsg]: {
@@ -297,7 +297,10 @@ const resources = {
       [ru]: "Включение SPI",
     },
     [TK[SETTINGS_TRK].spiOnMsg]: {
-      [en]: "TODO spiOnMsg",
+      [en]: `You have to enable the SPI interface in the operating system settings. You can do this in the OS settings menu or in the console by running the raspi-config command. After this, you should reboot the device. There is an option to enable this setting in this app, but I do not recommend using this feature, because it is still in development. If you still want to use it, then click the "$t(${getTP(
+        COMMON_TRK,
+        TK[COMMON_TRK].turnOn,
+      )})" and enter the administrator password.`,
       [ru]: `Для корректной работы приложения необходимо включить интерфейс SPI в настройках операционной системы. Вы можете сделать это в настройках или в консоли выполнив команду raspi-config. После включение необходимо перезагрузить устройство. В этом приложении доступна возможность включить эту настройку, но я не рекомендую пользоваться этой функцией, т.к. она всё ещё находится в разработке. Если вы все же хотите воспользоваться ей, то нажмите кнопку "$t(${getTP(
         COMMON_TRK,
         TK[COMMON_TRK].turnOn,
@@ -308,15 +311,15 @@ const resources = {
       [ru]: "Включение SPI",
     },
     [TK[SETTINGS_TRK].spiTipMsg]: {
-      [en]: "TODO spiTipMsg",
+      [en]: "The SPI interface is already enabled on this device. After switching on, the device needs to be rebooted for correct works.",
       [ru]: "Интерфейс SPI уже включен на этом устройстве. После включения требуется перезагрузка устройства для корретной работы.",
     },
     [TK[SETTINGS_TRK].spiAboutMsg]: {
-      [en]: "TODO spiAboutMsg",
-      [ru]: "Эта функция необходима для получения данных с потенциометра, если она не включена, то приложение не сможет работать. На данный момент программная эмуляция SPI не реализована.",
+      [en]: "This option is necessary to receive data from the potentiometer, if it is not enabled, the application will not be able to work. At the moment, SPI software emulation is not implemented at this app.",
+      [ru]: "Эта функция необходима для получения данных с потенциометра, если она не включена, то приложение не сможет работать. На данный момент программная эмуляция SPI не реализована в этом приложении.",
     },
     [TK[SETTINGS_TRK].gearRatioKey]: {
-      [en]: "Gear ratio of speedometer",
+      [en]: "Gear ratio of speed sensor",
       [ru]: "Передаточное число датчика скорости",
     },
     [TK[SETTINGS_TRK].startCalibration]: {
@@ -328,7 +331,10 @@ const resources = {
       [ru]: "Закончить калибровку",
     },
     [TK[SETTINGS_TRK].calibCadenWarningMsg]: {
-      [en]: "TODO calibCadenWarningMsg",
+      [en]: `Calibration of the speed sensor will take place in several stages. Press "$t(${getTP(
+        COMMON_TRK,
+        TK[COMMON_TRK].next,
+      )})" button for continue.`,
       [ru]: `Калибровка датчика скорости будет проходить в несколько этапов. Нажмите кнопку "$t(${getTP(
         COMMON_TRK,
         TK[COMMON_TRK].next,
