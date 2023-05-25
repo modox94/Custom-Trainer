@@ -1,6 +1,6 @@
+import LANGS_CODES from "./LANGS_CODES.json";
 import { ERRORS } from "./commonConst";
 import { PAGES } from "./pathConst";
-import LANGS_CODES from "./LANGS_CODES.json";
 
 export { LANGS_CODES };
 

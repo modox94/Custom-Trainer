@@ -5,6 +5,7 @@ import React, { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useLocation, useMatch, useNavigate } from "react-router-dom";
 import { setFullScreen, useGetProgramsQuery } from "../../api/ipc";
+import { DASH } from "../../constants/commonConst";
 import { PAGES, PAGES_PATHS, SUB_PATHS } from "../../constants/pathConst";
 import {
   TRANSLATION_KEYS,
@@ -14,11 +15,16 @@ import { getTranslationPath } from "../../utils/translationUtils";
 import styles from "./Navigation.module.css";
 
 const { MAIN, MANUAL_MODE, SETTINGS, SELECT_PROGRAM, PROGRAM_EDITOR } = PAGES;
-const { COMMON_TRK, WORKOUT_TRK, PROGRAM_EDITOR_TRK } = TRANSLATION_ROOT_KEYS;
+const { COMMON_TRK, WORKOUT_TRK, PROGRAM_EDITOR_TRK, SETTINGS_TRK, TIPS_TRK } =
+  TRANSLATION_ROOT_KEYS;
 const { back, fullscreen } = TRANSLATION_KEYS[COMMON_TRK];
 const { newProgram, editProgram, copyProgram, deleteProgram } =
   TRANSLATION_KEYS[PROGRAM_EDITOR_TRK];
 const { programMode } = TRANSLATION_KEYS[WORKOUT_TRK];
+const { languageTKey, interfaceTKey, peripheral, performance, advanced } =
+  TRANSLATION_KEYS[SETTINGS_TRK];
+const { motorBut, calibrationBut, rpmSettingsBut, heartBeatSettingsBut } =
+  TRANSLATION_KEYS[TIPS_TRK];
 
 const getTPath = (...args) => getTranslationPath(COMMON_TRK, ...args);
 
@@ -55,8 +61,79 @@ const Navigation = () => {
         break;
 
       case PAGES_PATHS[SETTINGS]:
-      case `${PAGES_PATHS[SETTINGS]}/${SUB_PATHS[SETTINGS].TRANSLATE}`:
         setTitle(t(getTPath(SETTINGS)));
+        break;
+
+      case `${PAGES_PATHS[SETTINGS]}/${SUB_PATHS[SETTINGS].TRANSLATE}`:
+        setTitle(
+          `${t(getTPath(SETTINGS))} ${DASH} ${t(
+            getTranslationPath(SETTINGS_TRK, languageTKey),
+          )}`,
+        );
+        break;
+
+      case `${PAGES_PATHS[SETTINGS]}/${SUB_PATHS[SETTINGS].INTERFACE}`:
+        setTitle(
+          `${t(getTPath(SETTINGS))} ${DASH} ${t(
+            getTranslationPath(SETTINGS_TRK, interfaceTKey),
+          )}`,
+        );
+        break;
+
+      case `${PAGES_PATHS[SETTINGS]}/${SUB_PATHS[SETTINGS].PERIPHERAL}`:
+        setTitle(
+          `${t(getTPath(SETTINGS))} ${DASH} ${t(
+            getTranslationPath(SETTINGS_TRK, peripheral),
+          )}`,
+        );
+        break;
+
+      case `${PAGES_PATHS[SETTINGS]}/${SUB_PATHS[SETTINGS].PERIPHERAL}/${SUB_PATHS[SETTINGS].MOTOR}`:
+        setTitle(
+          `${t(getTPath(SETTINGS))} ${DASH} ${t(
+            getTranslationPath(SETTINGS_TRK, peripheral),
+          )} ${DASH} ${t(getTranslationPath(TIPS_TRK, motorBut))}`,
+        );
+        break;
+
+      case `${PAGES_PATHS[SETTINGS]}/${SUB_PATHS[SETTINGS].PERIPHERAL}/${SUB_PATHS[SETTINGS].CALIBRATION}`:
+        setTitle(
+          `${t(getTPath(SETTINGS))} ${DASH} ${t(
+            getTranslationPath(SETTINGS_TRK, peripheral),
+          )} ${DASH} ${t(getTranslationPath(TIPS_TRK, calibrationBut))}`,
+        );
+        break;
+
+      case `${PAGES_PATHS[SETTINGS]}/${SUB_PATHS[SETTINGS].PERIPHERAL}/${SUB_PATHS[SETTINGS].RPM}`:
+        setTitle(
+          `${t(getTPath(SETTINGS))} ${DASH} ${t(
+            getTranslationPath(SETTINGS_TRK, peripheral),
+          )} ${DASH} ${t(getTranslationPath(TIPS_TRK, rpmSettingsBut))}`,
+        );
+        break;
+
+      case `${PAGES_PATHS[SETTINGS]}/${SUB_PATHS[SETTINGS].PERIPHERAL}/${SUB_PATHS[SETTINGS].HEARTBEAT}`:
+        setTitle(
+          `${t(getTPath(SETTINGS))} ${DASH} ${t(
+            getTranslationPath(SETTINGS_TRK, peripheral),
+          )} ${DASH} ${t(getTranslationPath(TIPS_TRK, heartBeatSettingsBut))}`,
+        );
+        break;
+
+      case `${PAGES_PATHS[SETTINGS]}/${SUB_PATHS[SETTINGS].PERFORMANCE}`:
+        setTitle(
+          `${t(getTPath(SETTINGS))} ${DASH} ${t(
+            getTranslationPath(SETTINGS_TRK, performance),
+          )}`,
+        );
+        break;
+
+      case `${PAGES_PATHS[SETTINGS]}/${SUB_PATHS[SETTINGS].ADVANCED}`:
+        setTitle(
+          `${t(getTPath(SETTINGS))} ${DASH} ${t(
+            getTranslationPath(SETTINGS_TRK, advanced),
+          )}`,
+        );
         break;
 
       case PAGES_PATHS[SELECT_PROGRAM]:
