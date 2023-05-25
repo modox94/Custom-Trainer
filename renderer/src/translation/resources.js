@@ -345,7 +345,13 @@ const resources = {
       [ru]: "Сбор данных",
     },
     [TK[SETTINGS_TRK].calibCadenCollectDataMsg]: {
-      [en]: "TODO calibCadenCollectDataMsg",
+      [en]: `Before starting the procedure, you should set the pedals to a position that will be easy for you to reproduce (for example, the left crank in the lowest position). The pedals have to be motionless. Then you should press "$t(${getTP(
+        SETTINGS_TRK,
+        TK[SETTINGS_TRK].startCalibration,
+      )})" button below and make a few (~10) full cycles with the pedals at a steady speed, rotating only forward and stop the pedals in the same position as at the beginning of the calibration. You must remember exactly how many full cycles you made (the accuracy of the calculations depends on this). Then you should click "$t(${getTP(
+        SETTINGS_TRK,
+        TK[SETTINGS_TRK].stopCalibration,
+      )})" button below and go to the next step.`,
       [ru]: `Для калибровки датчика перед началом процедуры необходимо установить педали в положение, которое вам будет легко воспроизвести (например левый шатун в крайнем нижнем положении). Педали должны быть неподвижны. Затем вам следует нажать кнопку "$t(${getTP(
         SETTINGS_TRK,
         TK[SETTINGS_TRK].startCalibration,
@@ -359,7 +365,7 @@ const resources = {
       [ru]: "Ввод данных",
     },
     [TK[SETTINGS_TRK].calibCadenUserDataMsg]: {
-      [en]: "TODO calibCadenUserDataMsg",
+      [en]: "You must enter below the number of complete cycles that you made in the previous step.",
       [ru]: "Ниже вы должны ввести количество полных оборотов, которые вы совершили на предыдущем шаге.",
     },
     [TK[SETTINGS_TRK].calibCadenFinishTitle]: {
@@ -367,7 +373,10 @@ const resources = {
       [ru]: "Сохранение",
     },
     [TK[SETTINGS_TRK].calibCadenFinishMsg]: {
-      [en]: "TODO calibCadenFinishMsg",
+      [en]: `Below you can change the calculated gear ratio if you understand what you are doing. Otherwise just press "$t(${getTP(
+        COMMON_TRK,
+        TK[COMMON_TRK].finish,
+      )})" button.`,
       [ru]: `Ниже вы можете изменить рассчитанное передаточное число, если понимаете что делаете. В противном случае просто нажмите кнопку "$t(${getTP(
         COMMON_TRK,
         TK[COMMON_TRK].finish,
@@ -528,7 +537,7 @@ const resources = {
       [ru]: "Потенциометр",
     },
     [TK[TIPS_TRK].motorPotenTip]: {
-      [en]: "TODO motorPotenTip",
+      [en]: "The current reading of the motor potentiometer, in other words the position of the motor.",
       [ru]: "Текущие показания потенциометра двигателя, другими словами значения положения двигателя.",
     },
     [TK[TIPS_TRK].motorMinPosBut]: {
@@ -582,27 +591,27 @@ const resources = {
       [ru]: "TODO INVALID_RESIST_LEVEL",
     },
     [ERRORS.INVALID_MOTOR_SETTINGS]: {
-      [en]: "TODO INVALID_MOTOR_SETTINGS",
+      [en]: "Your motor is not configured or its settings are invalid. Go to the motor settings section and fix it.",
       [ru]: "Ваш двигатель не настроен или его настройки недопустимы. Перейдите в раздел настройки двигателя и исправьте их.",
     },
     [ERRORS.POTEN_VALUE_OUT_RANGE]: {
-      [en]: "TODO POTEN_VALUE_OUT_RANGE",
+      [en]: "Potentiometer value out of range. The value must be greater than {{MIN_POTEN_VALUE}} and less than {{MAX_POTEN_VALUE}}.",
       [ru]: "Значение потенциометра вне допустимых пределов. Значение должно быть больше {{MIN_POTEN_VALUE}} и меньше {{MAX_POTEN_VALUE}}.",
     },
     [ERRORS.MOTOR_MIN_HIGH_MAX_LOW]: {
-      [en]: "TODO MOTOR_MIN_HIGH_MAX_LOW",
+      [en]: "The value at easiest position cannot be greater than at hardest position. Also, the hardest position value cannot be less than the easiest position value.",
       [ru]: "Значение при низкой нагрузке не может быть больше, чем при высокой нагрузке. Также значение при высокой нагрузке не может быть меньше, чем значение при низкой нагрузке.",
     },
     [ERRORS.MOTOR_MIN_MAX_INVALID]: {
-      [en]: "TODO MOTOR_MIN_MAX_INVALID",
+      [en]: "This value cannot be saved because the minimum stroke range of the motor must be at least {{MIN_MOTOR_STROKE}}.",
       [ru]: "Такое значение не может быть сохранено, т.к. минимальный диапазон хода двигателя должен быть не менее {{MIN_MOTOR_STROKE}}.",
     },
     [ERRORS.MOTOR_SHORT_STROKE]: {
-      [en]: "TODO MOTOR_SHORT_STROKE",
+      [en]: "At current settings, the motor stroke range is less than the allowable value ({{MIN_MOTOR_STROKE}}).",
       [ru]: "При текущих настройках диапазон хода двигателя меньше допустимого значения ({{MIN_MOTOR_STROKE}}).",
     },
     [ERRORS.MOTOR_SETTINGS_RESET]: {
-      [en]: "TODO MOTOR_SETTINGS_RESET",
+      [en]: "Changing this parameter will reset all other motor settings.",
       [ru]: "При изменении этого параметра все остальные настройки двигателя будут сброшены.",
     },
     [ERRORS.LOADING_TIMER_EXPIRED]: {
