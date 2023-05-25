@@ -614,6 +614,10 @@ const resources = {
       [en]: "Changing this parameter will reset all other motor settings.",
       [ru]: "При изменении этого параметра все остальные настройки двигателя будут сброшены.",
     },
+    [ERRORS.BOOT_CONFIG_SPI_OFF]: {
+      [en]: "You have to enable the SPI interface in the settings.",
+      [ru]: "Для корректной работы приложения необходимо включить интерфейс SPI в настройках.",
+    },
     [ERRORS.LOADING_TIMER_EXPIRED]: {
       [en]: "TODO LOADING_TIMER_EXPIRED",
       [ru]: "TODO LOADING_TIMER_EXPIRED",

@@ -7,12 +7,13 @@ import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 import {
   deleteProgram,
+  useGetBootQuery,
   useGetProgramsQuery,
   useGetSettingsQuery,
 } from "../../api/ipc";
 import { ERRORS } from "../../constants/commonConst";
 import { PAGES, PAGES_PATHS, SUB_PATHS } from "../../constants/pathConst";
-import { FILE_CONST } from "../../constants/reduxConst";
+import { BOOT_CONFIG_OPT, FILE_CONST } from "../../constants/reduxConst";
 import { SP_MODE } from "../../constants/selectProgramConst";
 import { MIN_MOTOR_STROKE, MOTOR_FIELDS } from "../../constants/settingsConst";
 import {
@@ -27,7 +28,7 @@ import { Container, Item } from "../SquareGrid/SquareGrid";
 
 const { SELECT_PROGRAM, PROGRAM_EDITOR, SETTINGS } = PAGES;
 const { COMMON_TRK, PROGRAM_EDITOR_TRK, TIPS_TRK } = TRANSLATION_ROOT_KEYS;
-const { deleteTKey, cancelTKey, copyTKey, back, errorTKey } =
+const { deleteTKey, cancelTKey, copyTKey, errorTKey } =
   TRANSLATION_KEYS[COMMON_TRK];
 const { deleteProgHead, deleteProgMsg, copyProgHead, copyProgMsg } =
   TRANSLATION_KEYS[PROGRAM_EDITOR_TRK];
@@ -59,21 +60,24 @@ const SelectProgram = props => {
     [FILE_CONST.PERIPHERAL, MOTOR_FIELDS.MAX_POS],
     null,
   );
-
+  const { data: bootConfig } =
+    useGetBootQuery(undefined, { refetchOnMountOrArgChange: true }) || {};
+  const spiStatus = get(bootConfig, [BOOT_CONFIG_OPT.SPI], null);
   const isValidSettings =
     isFinite(minPosition) &&
     isFinite(maxPosition) &&
     minPosition < maxPosition &&
-    Math.abs(minPosition - maxPosition) > MIN_MOTOR_STROKE;
+    Math.abs(minPosition - maxPosition) > MIN_MOTOR_STROKE &&
+    spiStatus;
 
-  const goBack = useCallback(() => {
-    navigate(-1);
-  }, [navigate]);
-
-  const goToSettings = useCallback(() => {
+  const goToSettingsMotor = useCallback(() => {
     navigate(
       `${PAGES_PATHS[SETTINGS]}/${SUB_PATHS[SETTINGS].PERIPHERAL}/${SUB_PATHS[SETTINGS].MOTOR}`,
     );
+  }, [navigate]);
+
+  const goToSettingsSpi = useCallback(() => {
+    navigate(`${PAGES_PATHS[SETTINGS]}/${SUB_PATHS[SETTINGS].PERFORMANCE}`);
   }, [navigate]);
 
   const onDialogClose = useCallback(() => {
@@ -222,23 +226,33 @@ const SelectProgram = props => {
         title={t(getTranslationPath(COMMON_TRK, errorTKey))}
         canOutsideClickClose={false}
         isCloseButtonShown={false}
-        body={<ErrorText error={ERRORS.INVALID_MOTOR_SETTINGS} />}
+        body={
+          <ErrorText
+            error={
+              !spiStatus
+                ? ERRORS.BOOT_CONFIG_SPI_OFF
+                : ERRORS.INVALID_MOTOR_SETTINGS
+            }
+          />
+        }
         footerMinimal
+        goBackBtn
         footer={
-          <>
+          !spiStatus ? (
             <Button
               large
-              icon={IconNames.ARROW_LEFT}
-              text={t(getTranslationPath(COMMON_TRK, back))}
-              onClick={goBack}
+              icon={IconNames.COG}
+              text="TODO SPI"
+              onClick={goToSettingsSpi}
             />
+          ) : (
             <Button
               large
               icon={<EngineMotorElectroIcon />}
               text={t(getTranslationPath(TIPS_TRK, motorBut))}
-              onClick={goToSettings}
+              onClick={goToSettingsMotor}
             />
-          </>
+          )
         }
       />
 

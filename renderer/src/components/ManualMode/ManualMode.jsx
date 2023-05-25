@@ -9,12 +9,13 @@ import {
   preventDisplaySleep,
   setMotorLevel,
   stopMotor,
+  useGetBootQuery,
   useGetMotorLevelQuery,
   useGetSettingsQuery,
 } from "../../api/ipc";
 import { DASH, ERRORS } from "../../constants/commonConst";
 import { PAGES, PAGES_PATHS, SUB_PATHS } from "../../constants/pathConst";
-import { FILE_CONST } from "../../constants/reduxConst";
+import { BOOT_CONFIG_OPT, FILE_CONST } from "../../constants/reduxConst";
 import {
   MAX_RES_LEVEL,
   MIN_MOTOR_STROKE,
@@ -60,16 +61,24 @@ const ManualMode = props => {
     [FILE_CONST.PERIPHERAL, MOTOR_FIELDS.MAX_POS],
     null,
   );
+  const { data: bootConfig } =
+    useGetBootQuery(undefined, { refetchOnMountOrArgChange: true }) || {};
+  const spiStatus = get(bootConfig, [BOOT_CONFIG_OPT.SPI], null);
   const isValidSettings =
     isFinite(minPosition) &&
     isFinite(maxPosition) &&
     minPosition < maxPosition &&
-    Math.abs(minPosition - maxPosition) > MIN_MOTOR_STROKE;
+    Math.abs(minPosition - maxPosition) > MIN_MOTOR_STROKE &&
+    spiStatus;
 
-  const goToSettings = useCallback(() => {
+  const goToSettingsMotor = useCallback(() => {
     navigate(
       `${PAGES_PATHS[SETTINGS]}/${SUB_PATHS[SETTINGS].PERIPHERAL}/${SUB_PATHS[SETTINGS].MOTOR}`,
     );
+  }, [navigate]);
+
+  const goToSettingsSpi = useCallback(() => {
+    navigate(`${PAGES_PATHS[SETTINGS]}/${SUB_PATHS[SETTINGS].PERFORMANCE}`);
   }, [navigate]);
 
   useEffect(() => {
@@ -157,16 +166,33 @@ const ManualMode = props => {
         title={t(getTranslationPath(COMMON_TRK, errorTKey))}
         canOutsideClickClose={false}
         isCloseButtonShown={false}
-        body={<ErrorText error={ERRORS.INVALID_MOTOR_SETTINGS} />}
+        body={
+          <ErrorText
+            error={
+              !spiStatus
+                ? ERRORS.BOOT_CONFIG_SPI_OFF
+                : ERRORS.INVALID_MOTOR_SETTINGS
+            }
+          />
+        }
         footerMinimal
         goBackBtn
         footer={
-          <Button
-            large
-            icon={<EngineMotorElectroIcon />}
-            text={t(getTranslationPath(TIPS_TRK, motorBut))}
-            onClick={goToSettings}
-          />
+          !spiStatus ? (
+            <Button
+              large
+              icon={IconNames.COG}
+              text="TODO SPI"
+              onClick={goToSettingsSpi}
+            />
+          ) : (
+            <Button
+              large
+              icon={<EngineMotorElectroIcon />}
+              text={t(getTranslationPath(TIPS_TRK, motorBut))}
+              onClick={goToSettingsMotor}
+            />
+          )
         }
       />
     </>
