@@ -1,14 +1,11 @@
 import { Icon } from "@blueprintjs/core";
 import { IconNames } from "@blueprintjs/icons";
 import clsx from "clsx";
-import { get, round } from "lodash";
+import { round } from "lodash";
 import PropTypes from "prop-types";
-import React, { useEffect, useMemo } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { updateRunningStatus } from "../../actions/environmentActions";
-import { useGetCadenceQuery } from "../../api/ipc";
+import React, { useMemo } from "react";
 import { RUNNINIG_STATUS } from "../../constants/reduxConst";
-import { getRunningStatus } from "../../selectors/environmentSelectors";
+import { useCadenceState } from "../../utils/commonUtils";
 import SectorOfRound from "../Scales/SectorOfRound";
 import styles from "./CadenceGauge.module.css";
 
@@ -17,14 +14,11 @@ const MAX_VALUE = 120;
 
 const CadenceGauge = props => {
   const { className, targetRpm } = props;
-  const dispatch = useDispatch();
-  const runningStatus = useSelector(getRunningStatus);
-  const cadenceObject = useGetCadenceQuery();
-  const currentCadence = get(cadenceObject, ["data", "result"], 0);
-  const lastTimecode = get(cadenceObject, ["data", "lastTimecode"]);
+  const [currentCadence, , runningStatus] = useCadenceState();
+
   const value = useMemo(
-    () => (runningStatus === PAUSE ? 0 : round(currentCadence / MAX_VALUE, 2)),
-    [currentCadence, runningStatus],
+    () => round(currentCadence / MAX_VALUE, 2),
+    [currentCadence],
   );
   const leftEdge = useMemo(
     () => round((targetRpm - 10) / MAX_VALUE, 2),
@@ -34,10 +28,6 @@ const CadenceGauge = props => {
     () => round((targetRpm + 10) / MAX_VALUE, 2),
     [targetRpm],
   );
-
-  useEffect(() => {
-    dispatch(updateRunningStatus(lastTimecode));
-  }, [dispatch, lastTimecode]);
 
   return (
     <div className={clsx(className, styles.container)}>

@@ -1,5 +1,12 @@
-import { isPlainObject } from "lodash";
+import { get, isPlainObject } from "lodash";
 import { useEffect, useRef } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { updateRunningStatus } from "../actions/environmentActions";
+import { useGetCadenceQuery } from "../api/ipc";
+import { RUNNINIG_STATUS } from "../constants/reduxConst";
+import { getRunningStatus } from "../selectors/environmentSelectors";
+
+const { PAUSE } = RUNNINIG_STATUS;
 
 export const consoleError = (error, dataObject = {}) => {
   console.error(error);
@@ -29,4 +36,22 @@ export const usePrevious = value => {
   }, [value]); // Only re-run if value changes
   // Return previous value (happens before update in useEffect above)
   return ref.current;
+};
+
+export const useCadenceState = () => {
+  const dispatch = useDispatch();
+  const runningStatus = useSelector(getRunningStatus);
+  const cadenceObject = useGetCadenceQuery();
+  const currentCadence = get(cadenceObject, ["data", "result"], 0);
+  const lastTimecode = get(cadenceObject, ["data", "lastTimecode"]);
+
+  useEffect(() => {
+    dispatch(updateRunningStatus(lastTimecode));
+  }, [dispatch, lastTimecode]);
+
+  return [
+    runningStatus === PAUSE ? 0 : currentCadence,
+    lastTimecode,
+    runningStatus,
+  ];
 };
