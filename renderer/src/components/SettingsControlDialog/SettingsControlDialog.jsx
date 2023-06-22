@@ -47,7 +47,7 @@ const SettingsControlDialog = props => {
     isFinite(minPosition) &&
     isFinite(maxPosition) &&
     minPosition < maxPosition &&
-    Math.abs(minPosition - maxPosition) > MIN_MOTOR_STROKE &&
+    Math.abs(minPosition - maxPosition) >= MIN_MOTOR_STROKE &&
     spiStatus;
 
   const goToSettingsMotor = useCallback(() => {
