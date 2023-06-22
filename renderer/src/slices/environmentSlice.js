@@ -1,6 +1,7 @@
 import { createSlice } from "@reduxjs/toolkit";
 import { get, isFinite, noop } from "lodash";
 import { updateRunningStatus } from "../actions/environmentActions";
+import { DEFAULT_STEPS } from "../constants/programEditorConst";
 import { NAMES, RUNNINIG_STATUS } from "../constants/reduxConst";
 import { isProduction } from "../utils/commonUtils";
 
@@ -26,6 +27,20 @@ const environmentSlice = createSlice({
     },
     resetCursorNone: state => {
       state.cursorNoneTemp = false;
+    },
+    setProgramTitle: (state, action) => {
+      const value = action.payload || "";
+      state.programTitle = value;
+    },
+    resetProgramTitle: state => {
+      state.programTitle = "";
+    },
+    setProgramSteps: (state, action) => {
+      const value = action.payload || DEFAULT_STEPS;
+      state.programSteps = value;
+    },
+    resetProgramSteps: state => {
+      state.programSteps = undefined;
     },
   },
   extraReducers: {
@@ -64,7 +79,15 @@ const environmentSlice = createSlice({
   },
 });
 
-export const { showFooter, hideFooter, tryCursorNone, resetCursorNone } =
-  environmentSlice.actions;
+export const {
+  showFooter,
+  hideFooter,
+  tryCursorNone,
+  resetCursorNone,
+  setProgramTitle,
+  resetProgramTitle,
+  setProgramSteps,
+  resetProgramSteps,
+} = environmentSlice.actions;
 
 export default environmentSlice;

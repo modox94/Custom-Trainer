@@ -1,11 +1,20 @@
-import React, { useCallback } from "react";
+import React, { useCallback, useEffect } from "react";
 import { useTranslation } from "react-i18next";
+import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { PAGES, PAGES_PATHS, SUB_PATHS } from "../../constants/pathConst";
 import {
   TRANSLATION_KEYS,
   TRANSLATION_ROOT_KEYS,
 } from "../../constants/translationConst";
+import {
+  getProgramSteps,
+  getProgramTitle,
+} from "../../selectors/environmentSelectors";
+import {
+  resetProgramSteps,
+  resetProgramTitle,
+} from "../../slices/environmentSlice";
 import { getTranslationPath } from "../../utils/translationUtils";
 import { Container, Item } from "../SquareGrid/SquareGrid";
 
@@ -25,11 +34,23 @@ const getTPath = (...args) => getTranslationPath(PROGRAM_EDITOR_TRK, ...args);
 const EditorMenu = props => {
   const { t } = useTranslation();
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const title = useSelector(getProgramTitle);
+  const savedSteps = useSelector(getProgramSteps);
+
+  useEffect(() => {
+    if (title?.length > 0) {
+      dispatch(resetProgramTitle());
+    }
+    if (savedSteps !== undefined) {
+      dispatch(resetProgramSteps());
+    }
+  }, [dispatch, savedSteps, title]);
 
   const onClickNew = useCallback(
     () =>
       navigate(
-        `${PAGES_PATHS[PROGRAM_EDITOR]}/${SUB_PATHS[PROGRAM_EDITOR].NEW}`,
+        `${PAGES_PATHS[PROGRAM_EDITOR]}/${SUB_PATHS[PROGRAM_EDITOR].NEW}/${SUB_PATHS[PROGRAM_EDITOR].TITLE}`,
       ),
     [navigate],
   );

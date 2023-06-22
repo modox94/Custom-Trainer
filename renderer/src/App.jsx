@@ -16,6 +16,7 @@ import MainPage from "./components/MainPage/MainPage";
 import ManualMode from "./components/ManualMode/ManualMode";
 import Navigation from "./components/Navigation/Navigation";
 import EditorMenu from "./components/ProgramEditor/EditorMenu";
+import EnterTitle from "./components/ProgramEditor/EnterTitle";
 import ProgramEditor from "./components/ProgramEditor/ProgramEditor";
 import ProgramMode from "./components/ProgramMode/ProgramMode";
 import SelectProgram from "./components/SelectProgram/SelectProgram";
@@ -130,17 +131,27 @@ const App = () => {
 
             <Route path={PAGES_PATHS[PROGRAM_EDITOR]} element={<Outlet />}>
               <Route path={SUB_PATHS.ROOT} element={<EditorMenu />} />
-              <Route
-                path={SUB_PATHS[PROGRAM_EDITOR].NEW}
-                element={<ProgramEditor mode={PE_MODE.NEW} />}
-              />
+              <Route path={SUB_PATHS[PROGRAM_EDITOR].NEW} element={<Outlet />}>
+                <Route
+                  path={SUB_PATHS[PROGRAM_EDITOR].TITLE}
+                  element={<EnterTitle mode={PE_MODE.NEW} />}
+                />
+                <Route
+                  path={SUB_PATHS[PROGRAM_EDITOR].EDITOR}
+                  element={<ProgramEditor mode={PE_MODE.NEW} />}
+                />
+              </Route>
               <Route path={SUB_PATHS[PROGRAM_EDITOR].EDIT} element={<Outlet />}>
                 <Route
                   path={SUB_PATHS.ROOT}
                   element={<SelectProgram mode={SP_MODE.EDIT} />}
                 />
                 <Route
-                  path={`:${SUB_PATHS.FILENAME}`}
+                  path={`${SUB_PATHS[PROGRAM_EDITOR].TITLE}/:${SUB_PATHS.FILENAME}`}
+                  element={<EnterTitle mode={PE_MODE.EDIT} />}
+                />
+                <Route
+                  path={`${SUB_PATHS[PROGRAM_EDITOR].EDITOR}/:${SUB_PATHS.FILENAME}`}
                   element={<ProgramEditor mode={PE_MODE.EDIT} />}
                 />
               </Route>
@@ -150,7 +161,11 @@ const App = () => {
                   element={<SelectProgram mode={SP_MODE.COPY} />}
                 />
                 <Route
-                  path={`:${SUB_PATHS.FILENAME}`}
+                  path={`${SUB_PATHS[PROGRAM_EDITOR].TITLE}/:${SUB_PATHS.FILENAME}`}
+                  element={<EnterTitle mode={PE_MODE.COPY} />}
+                />
+                <Route
+                  path={`${SUB_PATHS[PROGRAM_EDITOR].EDITOR}/:${SUB_PATHS.FILENAME}`}
                   element={<ProgramEditor mode={PE_MODE.COPY} />}
                 />
               </Route>

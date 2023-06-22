@@ -4,8 +4,9 @@ import clsx from "clsx";
 import { get, noop } from "lodash";
 import { Duration } from "luxon";
 import PropTypes from "prop-types";
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
+import { useDispatch, useSelector } from "react-redux";
 import { useMatch, useNavigate } from "react-router-dom";
 import {
   editProgram,
@@ -24,11 +25,15 @@ import {
   TRANSLATION_KEYS,
   TRANSLATION_ROOT_KEYS,
 } from "../../constants/translationConst";
+import {
+  getProgramSteps,
+  getProgramTitle,
+} from "../../selectors/environmentSelectors";
+import { setProgramSteps } from "../../slices/environmentSlice";
 import { getTranslationPath } from "../../utils/translationUtils";
 import BarChart from "../BarChart/BarChart";
 import { DumbbellIcon, GaugeHighIcon } from "../Icons";
 import { Container, Item } from "../SquareGrid/SquareGrid";
-import EnterTitle from "./EnterTitle";
 import styles from "./ProgramEditor.module.css";
 
 const { MAIN, PROGRAM_EDITOR } = PAGES;
@@ -41,14 +46,16 @@ const ProgramEditor = props => {
   const { mode } = props;
   const { t } = useTranslation();
   const navigate = useNavigate();
-  const [title, setTitle] = useState("");
+  const dispatch = useDispatch();
+  const title = useSelector(getProgramTitle);
+  const savedSteps = useSelector(getProgramSteps);
   const [currentStep, setCurrentStep] = useState(0);
 
   const filenameEditMatch = useMatch(
-    `${PAGES_PATHS[PROGRAM_EDITOR]}/${SUB_PATHS[PROGRAM_EDITOR].EDIT}/:${SUB_PATHS.FILENAME}`,
+    `${PAGES_PATHS[PROGRAM_EDITOR]}/${SUB_PATHS[PROGRAM_EDITOR].EDIT}/${SUB_PATHS[PROGRAM_EDITOR].EDITOR}/:${SUB_PATHS.FILENAME}`,
   );
   const filenameCopyMatch = useMatch(
-    `${PAGES_PATHS[PROGRAM_EDITOR]}/${SUB_PATHS[PROGRAM_EDITOR].COPY}/:${SUB_PATHS.FILENAME}`,
+    `${PAGES_PATHS[PROGRAM_EDITOR]}/${SUB_PATHS[PROGRAM_EDITOR].COPY}/${SUB_PATHS[PROGRAM_EDITOR].EDITOR}/:${SUB_PATHS.FILENAME}`,
   );
   const filename = get(filenameEditMatch || filenameCopyMatch, [
     "params",
@@ -60,14 +67,24 @@ const ProgramEditor = props => {
       refetchOnMountOrArgChange: true,
     }) || {};
   const programSteps = get(programs, [filename, "steps"], DEFAULT_STEPS);
-  const [steps, setSteps] = useState(programSteps);
+  const [steps, setSteps] = useState(savedSteps || programSteps);
   const { resistanceLevel, targetRpm } = steps[currentStep];
+
+  useEffect(() => {
+    return () => {
+      dispatch(setProgramSteps(steps));
+    };
+  }, [dispatch, steps]);
 
   const onSaveProgram = () => {
     switch (mode) {
       case PE_MODE.NEW:
       case PE_MODE.COPY:
-        saveNewProgram({ title, maxResistanceLevel: MAX_RES_LEVEL, steps });
+        saveNewProgram({
+          title,
+          maxResistanceLevel: MAX_RES_LEVEL,
+          steps,
+        });
         navigate(PAGES_PATHS[MAIN]);
         break;
 
@@ -200,10 +217,6 @@ const ProgramEditor = props => {
 
     setSteps(newSteps);
   };
-
-  if (!title) {
-    return <EnterTitle mode={mode} setTitle={setTitle} />;
-  }
 
   return (
     <>

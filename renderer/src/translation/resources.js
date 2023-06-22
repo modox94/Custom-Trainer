@@ -118,6 +118,10 @@ const resources = {
       [en]: "Continue",
       [ru]: "Продолжить",
     },
+    [TK[COMMON_TRK].allDataWillLost]: {
+      [en]: "All changes will be lost!",
+      [ru]: "Все изменения будут потеряны!",
+    },
   },
   [WORKOUT_TRK]: {
     [TK[WORKOUT_TRK].programMode]: {

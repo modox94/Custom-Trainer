@@ -2,8 +2,9 @@ import { Button, Intent } from "@blueprintjs/core";
 import { IconNames } from "@blueprintjs/icons";
 import { chunk, get } from "lodash";
 import PropTypes from "prop-types";
-import React, { useCallback, useMemo, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
+import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { deleteProgram, useGetProgramsQuery } from "../../api/ipc";
 import { PAGES, PAGES_PATHS, SUB_PATHS } from "../../constants/pathConst";
@@ -12,6 +13,14 @@ import {
   TRANSLATION_KEYS,
   TRANSLATION_ROOT_KEYS,
 } from "../../constants/translationConst";
+import {
+  getProgramSteps,
+  getProgramTitle,
+} from "../../selectors/environmentSelectors";
+import {
+  resetProgramSteps,
+  resetProgramTitle,
+} from "../../slices/environmentSlice";
 import { getTranslationPath } from "../../utils/translationUtils";
 import DialogCustom from "../DialogCustom/DialogCustom";
 import SettingsControlDialog from "../SettingsControlDialog/SettingsControlDialog";
@@ -29,11 +38,23 @@ const SelectProgram = props => {
   const { mode } = props;
   const { t } = useTranslation();
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const title = useSelector(getProgramTitle);
+  const savedSteps = useSelector(getProgramSteps);
   const [target, setTarget] = useState(TARGET_DEFAULT);
   const { data: programs = {} } =
     useGetProgramsQuery(undefined, {
       refetchOnMountOrArgChange: true,
     }) || {};
+
+  useEffect(() => {
+    if (title?.length > 0) {
+      dispatch(resetProgramTitle());
+    }
+    if (savedSteps !== undefined) {
+      dispatch(resetProgramSteps());
+    }
+  }, [dispatch, savedSteps, title]);
 
   const onDialogClose = useCallback(() => {
     switch (mode) {
@@ -51,7 +72,7 @@ const SelectProgram = props => {
     switch (mode) {
       case SP_MODE.COPY:
         navigate(
-          `${PAGES_PATHS[PROGRAM_EDITOR]}/${SUB_PATHS[PROGRAM_EDITOR].COPY}/${target}`,
+          `${PAGES_PATHS[PROGRAM_EDITOR]}/${SUB_PATHS[PROGRAM_EDITOR].COPY}/${SUB_PATHS[PROGRAM_EDITOR].TITLE}/${target}`,
         );
         break;
 
@@ -137,7 +158,7 @@ const SelectProgram = props => {
           case SP_MODE.EDIT:
             onClick = () =>
               navigate(
-                `${PAGES_PATHS[PROGRAM_EDITOR]}/${SUB_PATHS[PROGRAM_EDITOR].EDIT}/${fileName}`,
+                `${PAGES_PATHS[PROGRAM_EDITOR]}/${SUB_PATHS[PROGRAM_EDITOR].EDIT}/${SUB_PATHS[PROGRAM_EDITOR].TITLE}/${fileName}`,
               );
             break;
 

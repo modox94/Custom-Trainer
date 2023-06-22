@@ -38,6 +38,7 @@ export const TRANSLATION_KEYS = {
     start: "start",
     finish: "finish",
     continueTKey: "continueTKey",
+    allDataWillLost: "allDataWillLost",
   },
   [TRANSLATION_ROOT_KEYS.WORKOUT_TRK]: {
     programMode: "programMode",

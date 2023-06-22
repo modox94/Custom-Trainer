@@ -22,6 +22,8 @@ export const SUB_PATHS = {
     EDIT: "edit",
     COPY: "copy",
     DELETE: "delete",
+    TITLE: "title",
+    EDITOR: "editor",
   },
   [PAGES.SETTINGS]: {
     TRANSLATE: "translate",
