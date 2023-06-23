@@ -5,20 +5,17 @@ import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "react-redux";
 import { useLocation, useMatch } from "react-router-dom";
-import {
-  useGetCadenceQuery,
-  useGetPotentiometerQuery,
-  useGetSettingsQuery,
-} from "../../api/ipc";
+import { useGetPotentiometerQuery, useGetSettingsQuery } from "../../api/ipc";
 import { DASH, SPACE } from "../../constants/commonConst";
 import { PAGES, PAGES_PATHS, SUB_PATHS } from "../../constants/pathConst";
-import { FILE_CONST } from "../../constants/reduxConst";
+import { FILE_CONST, RUNNINIG_STATUS } from "../../constants/reduxConst";
 import {
   TRANSLATION_KEYS,
   TRANSLATION_ROOT_KEYS,
 } from "../../constants/translationConst";
 import { getFooterStatus } from "../../selectors/environmentSelectors";
 import { hideFooter, showFooter } from "../../slices/environmentSlice";
+import { useCadenceState } from "../../utils/commonUtils";
 import { getTranslationPath } from "../../utils/translationUtils";
 import DialogCustom from "../DialogCustom/DialogCustom";
 import {
@@ -33,6 +30,8 @@ import {
   WiresWireIcon,
 } from "../Icons";
 import styles from "./Footer.module.css";
+
+const { PAUSE } = RUNNINIG_STATUS;
 
 const containerStyle = { top: "unset" };
 
@@ -106,10 +105,8 @@ const Footer = props => {
       skip: Boolean(!devStatus),
       pollingInterval: 500,
     }) || {};
+  const [currentCadence, , runningStatus] = useCadenceState();
   const potentiometerValue = round(potentiometerValueRaw);
-  const cadenceObject = useGetCadenceQuery();
-  const currentCadence = get(cadenceObject, ["data", "result"], 0);
-  // const lastTimecode = get(cadenceObject, ["data", "lastTimecode"]);
 
   const filenameMatchPE_EDIT = useMatch(
     `${PAGES_PATHS[PROGRAM_EDITOR]}/${SUB_PATHS[PROGRAM_EDITOR].EDIT}/:${SUB_PATHS.FILENAME}`,
@@ -528,7 +525,9 @@ const Footer = props => {
               text={String(potentiometerValue)}
             />
             <Button
-              icon={IconNames.DASHBOARD}
+              icon={
+                runningStatus === PAUSE ? IconNames.PAUSE : IconNames.DASHBOARD
+              }
               text={String(round(currentCadence))}
             />
           </>

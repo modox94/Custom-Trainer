@@ -6,11 +6,12 @@ import {
   Intent,
 } from "@blueprintjs/core";
 import { IconNames } from "@blueprintjs/icons";
-import { get, noop } from "lodash";
+import { get } from "lodash";
 import PropTypes from "prop-types";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { useMatch } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { useMatch, useNavigate } from "react-router-dom";
 import Keyboard from "react-simple-keyboard";
 import "react-simple-keyboard/build/css/index.css";
 import { checkProgramTitle, useGetProgramsQuery } from "../../api/ipc";
@@ -20,6 +21,8 @@ import {
   TRANSLATION_KEYS,
   TRANSLATION_ROOT_KEYS,
 } from "../../constants/translationConst";
+import { getProgramTitle } from "../../selectors/environmentSelectors";
+import { setProgramTitle } from "../../slices/environmentSlice";
 import { getTranslationPath } from "../../utils/translationUtils";
 import { Container, Item } from "../SquareGrid/SquareGrid";
 import styles from "./EnterTitle.module.css";
@@ -76,39 +79,49 @@ const LAYOUT = {
 };
 
 const EnterTitle = props => {
-  const { mode, setTitle } = props;
+  const { mode } = props;
   const { t } = useTranslation();
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
   const keyboardRef = useRef();
+  const title = useSelector(getProgramTitle);
   const [layout, setLayout] = useState(LAYOUT_NAME.default);
-  const filenameMatch = useMatch(
-    `${PAGES_PATHS[PROGRAM_EDITOR]}/${SUB_PATHS[PROGRAM_EDITOR].EDIT}/:${SUB_PATHS.FILENAME}`,
+  const filenameEditMatch = useMatch(
+    `${PAGES_PATHS[PROGRAM_EDITOR]}/${SUB_PATHS[PROGRAM_EDITOR].EDIT}/${SUB_PATHS[PROGRAM_EDITOR].TITLE}/:${SUB_PATHS.FILENAME}`,
   );
-  const filename = get(filenameMatch, ["params", SUB_PATHS.FILENAME]);
+  const filenameCopyMatch = useMatch(
+    `${PAGES_PATHS[PROGRAM_EDITOR]}/${SUB_PATHS[PROGRAM_EDITOR].COPY}/${SUB_PATHS[PROGRAM_EDITOR].TITLE}/:${SUB_PATHS.FILENAME}`,
+  );
+  const filename = get(filenameEditMatch || filenameCopyMatch, [
+    "params",
+    SUB_PATHS.FILENAME,
+  ]);
   const { data: programs = {} } =
     useGetProgramsQuery(undefined, {
       skip: [PE_MODE.NEW].includes(mode),
       refetchOnMountOrArgChange: true,
     }) || {};
   const programTitle = get(programs, [filename, "title"], "");
-  const [input, setInput] = useState(programTitle);
+  const [input, setInput] = useState(
+    mode === PE_MODE.EDIT ? title || programTitle : title,
+  );
   const [error, setError] = useState("");
 
   useEffect(() => {
     switch (mode) {
       case PE_MODE.NEW:
+      case PE_MODE.COPY:
+        keyboardRef.current?.setInput(title);
         break;
 
       case PE_MODE.EDIT:
-        keyboardRef.current?.setInput(programTitle);
-        break;
-
-      case PE_MODE.COPY:
+        keyboardRef.current?.setInput(title || programTitle);
         break;
 
       default:
         break;
     }
-  }, [mode, programTitle]);
+  }, [mode, programTitle, title]);
 
   const checkTitle = useCallback(
     async value => {
@@ -178,14 +191,36 @@ const EnterTitle = props => {
     [checkTitle],
   );
 
-  const onNextStep = () => {
+  const onNextStep = useCallback(() => {
     const inputTrimed = input.trim();
 
     if (inputTrimed && !error) {
-      setTitle(inputTrimed);
-    }
-  };
+      dispatch(setProgramTitle(inputTrimed));
 
+      switch (mode) {
+        case PE_MODE.NEW:
+          navigate(
+            `${PAGES_PATHS[PROGRAM_EDITOR]}/${SUB_PATHS[PROGRAM_EDITOR].NEW}/${SUB_PATHS[PROGRAM_EDITOR].EDITOR}`,
+          );
+          break;
+
+        case PE_MODE.EDIT:
+          navigate(
+            `${PAGES_PATHS[PROGRAM_EDITOR]}/${SUB_PATHS[PROGRAM_EDITOR].EDIT}/${SUB_PATHS[PROGRAM_EDITOR].EDITOR}/${filename}`,
+          );
+          break;
+
+        case PE_MODE.COPY:
+          navigate(
+            `${PAGES_PATHS[PROGRAM_EDITOR]}/${SUB_PATHS[PROGRAM_EDITOR].COPY}/${SUB_PATHS[PROGRAM_EDITOR].EDITOR}/${filename}`,
+          );
+          break;
+
+        default:
+          break;
+      }
+    }
+  }, [dispatch, error, filename, input, mode, navigate]);
   return (
     <>
       <Container className={styles.inputContainer}>
@@ -237,11 +272,9 @@ const EnterTitle = props => {
 
 EnterTitle.propTypes = {
   mode: PropTypes.string,
-  setTitle: PropTypes.func,
 };
 EnterTitle.defaultProps = {
   mode: PE_MODE.NEW,
-  setTitle: noop,
 };
 
 export default EnterTitle;

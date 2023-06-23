@@ -1,6 +1,6 @@
+import LANGS_CODES from "./LANGS_CODES.json";
 import { ERRORS } from "./commonConst";
 import { PAGES } from "./pathConst";
-import LANGS_CODES from "./LANGS_CODES.json";
 
 export { LANGS_CODES };
 
@@ -38,6 +38,7 @@ export const TRANSLATION_KEYS = {
     start: "start",
     finish: "finish",
     continueTKey: "continueTKey",
+    allDataWillLost: "allDataWillLost",
   },
   [TRANSLATION_ROOT_KEYS.WORKOUT_TRK]: {
     programMode: "programMode",

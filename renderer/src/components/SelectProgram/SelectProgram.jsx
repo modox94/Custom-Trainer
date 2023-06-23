@@ -2,36 +2,35 @@ import { Button, Intent } from "@blueprintjs/core";
 import { IconNames } from "@blueprintjs/icons";
 import { chunk, get } from "lodash";
 import PropTypes from "prop-types";
-import React, { useCallback, useMemo, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
+import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import {
-  deleteProgram,
-  useGetProgramsQuery,
-  useGetSettingsQuery,
-} from "../../api/ipc";
-import { ERRORS } from "../../constants/commonConst";
+import { deleteProgram, useGetProgramsQuery } from "../../api/ipc";
 import { PAGES, PAGES_PATHS, SUB_PATHS } from "../../constants/pathConst";
-import { FILE_CONST } from "../../constants/reduxConst";
 import { SP_MODE } from "../../constants/selectProgramConst";
-import { MIN_MOTOR_STROKE, MOTOR_FIELDS } from "../../constants/settingsConst";
 import {
   TRANSLATION_KEYS,
   TRANSLATION_ROOT_KEYS,
 } from "../../constants/translationConst";
+import {
+  getProgramSteps,
+  getProgramTitle,
+} from "../../selectors/environmentSelectors";
+import {
+  resetProgramSteps,
+  resetProgramTitle,
+} from "../../slices/environmentSlice";
 import { getTranslationPath } from "../../utils/translationUtils";
 import DialogCustom from "../DialogCustom/DialogCustom";
-import ErrorText from "../ErrorText/ErrorText";
-import { EngineMotorElectroIcon } from "../Icons";
+import SettingsControlDialog from "../SettingsControlDialog/SettingsControlDialog";
 import { Container, Item } from "../SquareGrid/SquareGrid";
 
-const { SELECT_PROGRAM, PROGRAM_EDITOR, SETTINGS } = PAGES;
-const { COMMON_TRK, PROGRAM_EDITOR_TRK, TIPS_TRK } = TRANSLATION_ROOT_KEYS;
-const { deleteTKey, cancelTKey, copyTKey, back, errorTKey } =
-  TRANSLATION_KEYS[COMMON_TRK];
+const { SELECT_PROGRAM, PROGRAM_EDITOR } = PAGES;
+const { COMMON_TRK, PROGRAM_EDITOR_TRK } = TRANSLATION_ROOT_KEYS;
+const { deleteTKey, cancelTKey, copyTKey } = TRANSLATION_KEYS[COMMON_TRK];
 const { deleteProgHead, deleteProgMsg, copyProgHead, copyProgMsg } =
   TRANSLATION_KEYS[PROGRAM_EDITOR_TRK];
-const { motorBut } = TRANSLATION_KEYS[TIPS_TRK];
 
 const TARGET_DEFAULT = null;
 
@@ -39,42 +38,23 @@ const SelectProgram = props => {
   const { mode } = props;
   const { t } = useTranslation();
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const title = useSelector(getProgramTitle);
+  const savedSteps = useSelector(getProgramSteps);
   const [target, setTarget] = useState(TARGET_DEFAULT);
   const { data: programs = {} } =
     useGetProgramsQuery(undefined, {
       refetchOnMountOrArgChange: true,
     }) || {};
-  const { data: settings = {} } =
-    useGetSettingsQuery(undefined, {
-      refetchOnMountOrArgChange: true,
-      skip: mode !== SP_MODE.SELECT,
-    }) || {};
-  const minPosition = get(
-    settings,
-    [FILE_CONST.PERIPHERAL, MOTOR_FIELDS.MIN_POS],
-    null,
-  );
-  const maxPosition = get(
-    settings,
-    [FILE_CONST.PERIPHERAL, MOTOR_FIELDS.MAX_POS],
-    null,
-  );
 
-  const isValidSettings =
-    isFinite(minPosition) &&
-    isFinite(maxPosition) &&
-    minPosition < maxPosition &&
-    Math.abs(minPosition - maxPosition) > MIN_MOTOR_STROKE;
-
-  const goBack = useCallback(() => {
-    navigate(-1);
-  }, [navigate]);
-
-  const goToSettings = useCallback(() => {
-    navigate(
-      `${PAGES_PATHS[SETTINGS]}/${SUB_PATHS[SETTINGS].PERIPHERAL}/${SUB_PATHS[SETTINGS].MOTOR}`,
-    );
-  }, [navigate]);
+  useEffect(() => {
+    if (title?.length > 0) {
+      dispatch(resetProgramTitle());
+    }
+    if (savedSteps !== undefined) {
+      dispatch(resetProgramSteps());
+    }
+  }, [dispatch, savedSteps, title]);
 
   const onDialogClose = useCallback(() => {
     switch (mode) {
@@ -92,7 +72,7 @@ const SelectProgram = props => {
     switch (mode) {
       case SP_MODE.COPY:
         navigate(
-          `${PAGES_PATHS[PROGRAM_EDITOR]}/${SUB_PATHS[PROGRAM_EDITOR].COPY}/${target}`,
+          `${PAGES_PATHS[PROGRAM_EDITOR]}/${SUB_PATHS[PROGRAM_EDITOR].COPY}/${SUB_PATHS[PROGRAM_EDITOR].TITLE}/${target}`,
         );
         break;
 
@@ -178,7 +158,7 @@ const SelectProgram = props => {
           case SP_MODE.EDIT:
             onClick = () =>
               navigate(
-                `${PAGES_PATHS[PROGRAM_EDITOR]}/${SUB_PATHS[PROGRAM_EDITOR].EDIT}/${fileName}`,
+                `${PAGES_PATHS[PROGRAM_EDITOR]}/${SUB_PATHS[PROGRAM_EDITOR].EDIT}/${SUB_PATHS[PROGRAM_EDITOR].TITLE}/${fileName}`,
               );
             break;
 
@@ -216,31 +196,7 @@ const SelectProgram = props => {
         </Container>
       ))}
 
-      <DialogCustom
-        isOpen={mode === SP_MODE.SELECT && !isValidSettings}
-        icon={IconNames.WARNING_SIGN}
-        title={t(getTranslationPath(COMMON_TRK, errorTKey))}
-        canOutsideClickClose={false}
-        isCloseButtonShown={false}
-        body={<ErrorText error={ERRORS.INVALID_MOTOR_SETTINGS} />}
-        footerMinimal
-        footer={
-          <>
-            <Button
-              large
-              icon={IconNames.ARROW_LEFT}
-              text={t(getTranslationPath(COMMON_TRK, back))}
-              onClick={goBack}
-            />
-            <Button
-              large
-              icon={<EngineMotorElectroIcon />}
-              text={t(getTranslationPath(TIPS_TRK, motorBut))}
-              onClick={goToSettings}
-            />
-          </>
-        }
-      />
+      {mode === SP_MODE.SELECT && <SettingsControlDialog />}
 
       <DialogCustom
         isOpen={Boolean(target)}
