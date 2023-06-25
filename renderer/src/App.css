@@ -105,9 +105,9 @@ html {
   cursor: none;
 }
 
-.cursorNone .bp4-button:hover,
-.cursorNone .bp4-card:hover,
-.cursorNone .bp4-control-indicator {
+.cursorNone .bp5-button:hover,
+.cursorNone .bp5-card:hover,
+.cursorNone .bp5-control-indicator {
   cursor: none !important;
 }
 

@@ -1,7 +1,7 @@
 import { Alignment, Button, Classes, Intent, Switch } from "@blueprintjs/core";
 import { IconNames } from "@blueprintjs/icons";
 import clsx from "clsx";
-import { get, isObject } from "lodash";
+import { get, isPlainObject } from "lodash";
 import React, { useCallback, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { turnOnSPI, useGetBootQuery } from "../../api/ipc";
@@ -44,7 +44,7 @@ const Performance = props => {
       let [error] = (await turnOnSPI()) || [];
       setLoading(false);
 
-      if (error && isObject(error)) {
+      if (error && isPlainObject(error)) {
         error = get(error, ["message"], ERRORS.UNKNOWN_ERROR);
       }
 

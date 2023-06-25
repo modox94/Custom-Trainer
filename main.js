@@ -5,26 +5,26 @@ const {
   Menu,
   powerSaveBlocker,
 } = require("electron");
-const { isFunction, get, isObject } = require("lodash");
+const { isFunction, get, isPlainObject } = require("lodash");
 const path = require("node:path");
 const sudo = require("sudo-prompt");
 const {
   ABSOLUTE_DIR_CONST,
   BOOT_CONFIG_OPT,
+  CADENCE_FIELDS,
+  COMMON_CONST,
   DIR_CONST,
   ERRORS,
   EVENTS,
   FILE_CONST,
-  LINE_FEED,
   MOTOR_FIELDS,
   MOVE_DIRECTION,
-  CADENCE_FIELDS,
 } = require("./src/constants/constants");
+const Frequency = require("./src/hardware/cadence_sensor");
 const MotorDriver = require("./src/hardware/motor_driver");
 const { aplicationMenu } = require("./src/software/aplication_menu");
 const Store = require("./src/software/store");
 const { commentConfigOpt, convertConfigToObj } = require("./src/utils/utils");
-const Frequency = require("./src/hardware/cadence_sensor");
 
 Menu.setApplicationMenu(aplicationMenu);
 
@@ -197,7 +197,7 @@ ipcMain.handle(EVENTS.EDIT_BOOT_CONFIG, async (event, opt, value) => {
           FILE_CONST.CONFIG,
         ]);
         let newConfigData = commentConfigOpt(configData, opt);
-        newConfigData += `${LINE_FEED}${BOOT_CONFIG_OPT.ALL}${LINE_FEED}${BOOT_CONFIG_OPT.DTPARAM}=${BOOT_CONFIG_OPT.SPI}=${value}`;
+        newConfigData += `${COMMON_CONST.LINE_FEED}${BOOT_CONFIG_OPT.ALL}${COMMON_CONST.LINE_FEED}${BOOT_CONFIG_OPT.DTPARAM}=${BOOT_CONFIG_OPT.SPI}=${value}`;
         const fullConfigPath = path.join(
           ABSOLUTE_DIR_CONST.BOOT,
           FILE_CONST.CONFIG,
@@ -277,7 +277,7 @@ ipcMain.on(EVENTS.EDIT_PROGRAM, async (event, filename, programObject) =>
 );
 
 ipcMain.on(EVENTS.EDIT_SETTINGS, async (event, filename, data) => {
-  if (!isObject(data)) {
+  if (!isPlainObject(data)) {
     console.log("invalid data", data);
   }
   for (const field in data) {

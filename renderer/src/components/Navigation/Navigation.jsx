@@ -11,7 +11,7 @@ import React, { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useLocation, useMatch, useNavigate } from "react-router-dom";
 import { setFullScreen, useGetProgramsQuery } from "../../api/ipc";
-import { DASH } from "../../constants/commonConst";
+import { COMMON_CONST } from "../../constants/commonConst";
 import { PAGES, PAGES_PATHS, SUB_PATHS } from "../../constants/pathConst";
 import {
   TRANSLATION_KEYS,
@@ -22,6 +22,7 @@ import DialogCustom from "../DialogCustom/DialogCustom";
 import ErrorText from "../ErrorText/ErrorText";
 import styles from "./Navigation.module.css";
 
+const { DASH } = COMMON_CONST;
 const { MAIN, MANUAL_MODE, SETTINGS, SELECT_PROGRAM, PROGRAM_EDITOR } = PAGES;
 const { COMMON_TRK, WORKOUT_TRK, PROGRAM_EDITOR_TRK, SETTINGS_TRK, TIPS_TRK } =
   TRANSLATION_ROOT_KEYS;

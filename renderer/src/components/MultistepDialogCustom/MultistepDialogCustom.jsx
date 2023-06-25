@@ -9,7 +9,7 @@ import {
 } from "@blueprintjs/core";
 import { IconNames } from "@blueprintjs/icons";
 import clsx from "clsx";
-import { isObject, isString } from "lodash";
+import { isPlainObject, isString } from "lodash";
 import PropTypes from "prop-types";
 import React, { useMemo } from "react";
 import { useTranslation } from "react-i18next";
@@ -67,7 +67,7 @@ const MultistepDialogCustom = props => {
 
   const backButtonProps = useMemo(
     () =>
-      isObject(propsBackButtonProps)
+      isPlainObject(propsBackButtonProps)
         ? {
             icon: IconNames.ARROW_LEFT,
             intent: Intent.NONE,
@@ -80,7 +80,7 @@ const MultistepDialogCustom = props => {
   );
   const closeButtonProps = useMemo(
     () =>
-      isObject(propsCloseButtonProps)
+      isPlainObject(propsCloseButtonProps)
         ? {
             icon: IconNames.CROSS,
             intent: Intent.DANGER,
@@ -93,7 +93,7 @@ const MultistepDialogCustom = props => {
   );
   const finalButtonProps = useMemo(
     () =>
-      isObject(propsFinalButtonProps)
+      isPlainObject(propsFinalButtonProps)
         ? {
             icon: IconNames.TICK,
             intent: Intent.SUCCESS,
@@ -106,7 +106,7 @@ const MultistepDialogCustom = props => {
   );
   const nextButtonProps = useMemo(
     () =>
-      isObject(propsNextButtonProps)
+      isPlainObject(propsNextButtonProps)
         ? {
             icon: IconNames.ARROW_RIGHT,
             intent: Intent.PRIMARY,

@@ -6,7 +6,7 @@ import { useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "react-redux";
 import { useLocation, useMatch } from "react-router-dom";
 import { useGetPotentiometerQuery, useGetSettingsQuery } from "../../api/ipc";
-import { DASH, SPACE } from "../../constants/commonConst";
+import { COMMON_CONST } from "../../constants/commonConst";
 import { PAGES, PAGES_PATHS, SUB_PATHS } from "../../constants/pathConst";
 import { FILE_CONST, RUNNINIG_STATUS } from "../../constants/reduxConst";
 import {
@@ -31,6 +31,7 @@ import {
 } from "../Icons";
 import styles from "./Footer.module.css";
 
+const { DASH, SPACE } = COMMON_CONST;
 const { PAUSE } = RUNNINIG_STATUS;
 
 const containerStyle = { top: "unset" };

@@ -3,6 +3,7 @@ const { app } = require("electron");
 const path = require("node:path");
 const fs = require("node:fs");
 const {
+  assign,
   camelCase,
   cloneDeep,
   get,
@@ -10,18 +11,19 @@ const {
   isFunction,
   set,
   unset,
-  assign,
 } = require("lodash");
 const chokidar = require("chokidar");
 const defaultTrainingPrograms = require("../../default_training_programs");
 const {
+  ABSOLUTE_DIR_CONST,
   DIR_CONST,
+  DOT_JSON,
+  ERRORS,
   FILE_CONST,
   LANGS_CODES,
   MOTOR_FIELDS,
-  ABSOLUTE_DIR_CONST,
-  ERRORS,
-  DOT_JSON,
+  interfaceDefault,
+  peripheralDefault,
 } = require("../constants/constants");
 
 const ajv = new Ajv();
@@ -48,11 +50,6 @@ const programSchema = {
   additionalProperties: true,
 };
 
-const interfaceDefault = {
-  lang: LANGS_CODES.en,
-  cursorNone: false,
-};
-
 const interfaceSchema = {
   type: "object",
   properties: {
@@ -63,14 +60,6 @@ const interfaceSchema = {
   },
   required: ["lang"],
   additionalProperties: true,
-};
-
-const peripheralDefault = {
-  [MOTOR_FIELDS.MIN_POS]: null,
-  [MOTOR_FIELDS.MAX_POS]: null,
-  [MOTOR_FIELDS.SLEEP_RATIO]: null,
-  [MOTOR_FIELDS.SWAP_MOTOR_WIRES]: null,
-  [MOTOR_FIELDS.SWAP_POTEN_WIRES]: null,
 };
 
 const peripheralSchema = {

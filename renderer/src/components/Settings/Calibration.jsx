@@ -4,7 +4,7 @@ import { get, isFinite } from "lodash";
 import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { stopMotor, useGetSettingsQuery } from "../../api/ipc";
-import { DASH } from "../../constants/commonConst";
+import { COMMON_CONST } from "../../constants/commonConst";
 import { FILE_CONST } from "../../constants/reduxConst";
 import { CADENCE_FIELDS, MOTOR_FIELDS } from "../../constants/settingsConst";
 import {
@@ -86,7 +86,9 @@ const Calibration = () => {
         <Item className={clsx({ [Classes.SKELETON]: loading })}>
           <SettingLine
             title={t(getTPath(sleepRatioKey))}
-            value={!isFinite(sleepRatio) ? DASH : String(sleepRatio)}
+            value={
+              !isFinite(sleepRatio) ? COMMON_CONST.DASH : String(sleepRatio)
+            }
           />
           <SettingLine title="TODO gearRatio" value={String(gearRatio)} />
           <SettingLine title="TODO error" value={String(error)} />

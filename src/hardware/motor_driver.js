@@ -1,4 +1,4 @@
-const { get, isFinite, isFunction, noop, round, min } = require("lodash");
+const { get, isFinite, isFunction, min, noop, round } = require("lodash");
 const { Gpio } = require("onoff");
 const {
   CALIBRATION_MAX_MOVES,
@@ -22,15 +22,15 @@ const DELAY_FOR_READ = 25; // TODO transfer to settings
 const MAX_RES_LEVEL = 10; // TODO transfer to settings
 
 const write = (value, cb = noop) => {
-  console.log("write", value);
+  // console.log("write", value);
   cb();
 };
 const writeSync = (value, cb = noop) => {
-  console.log("writeSync", value);
+  // console.log("writeSync", value);
   cb();
 };
 const unexport = (value, cb = noop) => {
-  console.log("unexport", value);
+  // console.log("unexport", value);
   cb();
 };
 const motorInNoop = { write, writeSync, unexport };
@@ -70,7 +70,9 @@ class MotorDriver {
       this.in1 = motorInNoop;
       this.in2 = motorInNoop;
 
-      console.log("Gpio error", error);
+      console.log("Motor simulator is started");
+
+      // console.log("Gpio error", error);
     }
 
     this.in1.writeSync(0);

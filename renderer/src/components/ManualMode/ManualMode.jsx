@@ -10,7 +10,7 @@ import {
   stopMotor,
   useGetMotorLevelQuery,
 } from "../../api/ipc";
-import { DASH } from "../../constants/commonConst";
+import { COMMON_CONST } from "../../constants/commonConst";
 import { MAX_RES_LEVEL } from "../../constants/settingsConst";
 import {
   TRANSLATION_KEYS,
@@ -93,7 +93,7 @@ const ManualMode = props => {
         <Item className={styles.currentLevel}>
           <p>{t(getTranslationPath(TIPS_TRK, resistanceBut))}</p>
           <p>
-            <b>{currentLevel ? currentLevel : DASH}</b>
+            <b>{currentLevel ? currentLevel : COMMON_CONST.DASH}</b>
           </p>
         </Item>
         <Item
