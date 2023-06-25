@@ -1,5 +1,4 @@
 import { get } from "lodash";
-import "./translation";
 
 const fetchOpts = {
   method: "GET",
