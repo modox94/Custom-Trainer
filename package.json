@@ -1,6 +1,6 @@
 {
   "name": "custom-trainer",
-  "version": "0.1.16",
+  "version": "0.1.17",
   "main": "main.js",
   "scripts": {
     "start": "electron-forge start",
