@@ -36,7 +36,6 @@ if (!window.electron) {
   };
 
   const onmessage = e => {
-    console.log("onmessage");
     const { data: rawData } = e || {};
     let data;
 
