@@ -1,7 +1,3 @@
 export * as ERRORS from "./ERRORS.json";
 
-export const DASH = " — ";
-
-export const SPACE = " ";
-
-export const LINE_FEED = "\n";
+export * as COMMON_CONST from "./COMMON_CONST.json";

@@ -2,9 +2,9 @@ const { Gpio } = require("onoff");
 const { get, noop, random, round } = require("lodash");
 const {
   CADENCE_FIELDS,
+  COMMON_CONST,
   DIRECTION,
   EDGE,
-  PAUSE_DELAY,
   PHYSICAL_TO_GPIO,
 } = require("../constants/constants");
 
@@ -27,18 +27,18 @@ class Frequency {
         EDGE.rising,
       );
     } catch (error) {
-      console.log("Gpio error", error);
-      console.log("cadence sensor simulator is start");
+      // console.log("Gpio error", error);
+      console.log("Cadence sensor simulator is started");
 
       this.watchCallbacks = [];
       this.loopFn = () => {
         if (!this.lastTimeout) {
-          console.log("cadence sensor simulator is stopped");
+          console.log("Cadence sensor simulator is stopped");
           return;
         }
 
         this.watchCallbacks.forEach(cbFn => cbFn());
-        const timeout = random(500, PAUSE_DELAY / 2);
+        const timeout = random(500, COMMON_CONST.PAUSE_DELAY / 2);
         const isLongTimeout = random(0, 100) > 90;
         this.lastTimeout = setTimeout(
           this.loopFn.bind(this),
@@ -95,7 +95,7 @@ class Frequency {
     const lastIndex = this.timecodes.length - 1;
     if (
       lastIndex > 0 &&
-      Math.abs(now - this.timecodes[lastIndex]) < PAUSE_DELAY
+      Math.abs(now - this.timecodes[lastIndex]) < COMMON_CONST.PAUSE_DELAY
     ) {
       const prevMills = this.timecodes[lastIndex - 1];
       const currMills = this.timecodes[lastIndex];

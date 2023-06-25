@@ -11,7 +11,7 @@ import {
   useGetPotentiometerQuery,
   useGetSettingsQuery,
 } from "../../api/ipc";
-import { DASH, ERRORS } from "../../constants/commonConst";
+import { COMMON_CONST, ERRORS } from "../../constants/commonConst";
 import { FILE_CONST } from "../../constants/reduxConst";
 import {
   MAX_POTEN_VALUE,
@@ -332,7 +332,7 @@ const Motor = () => {
           <FeatherIcon className={styles.icon50} />
           <div className={styles.text}>
             <p>
-              <b>{!isFinite(minPosition) ? DASH : minPosition}</b>
+              <b>{!isFinite(minPosition) ? COMMON_CONST.DASH : minPosition}</b>
             </p>
           </div>
         </Item>
@@ -345,7 +345,7 @@ const Motor = () => {
           <DumbbellIcon className={styles.icon50} />
           <div className={styles.text}>
             <p>
-              <b>{!isFinite(maxPosition) ? DASH : maxPosition}</b>
+              <b>{!isFinite(maxPosition) ? COMMON_CONST.DASH : maxPosition}</b>
             </p>
           </div>
         </Item>

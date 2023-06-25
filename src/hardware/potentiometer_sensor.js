@@ -24,13 +24,15 @@ class PotentiometerSensor {
   constructor() {
     this.condition = { isReady: false, error: false };
 
-    if (process.env.ELECTRON_DEV_MODE) {
+    if (process.env.ELECTRON_DEV_MODE || process.env.WEB_MODE) {
       this.sensor = sensorPlaceholder;
       this.condition.isReady = true;
+
+      console.log("Potentiometer sensor simulator is started");
     } else {
       this.sensor = mcpadc.open(5, err => {
         if (err) {
-          console.log("err", err);
+          // console.log("err", err);
           this.condition.error = err;
         } else {
           this.condition.isReady = true;

@@ -1,9 +1,8 @@
 const { isString, isUndefined } = require("lodash");
 const {
   BOOT_CONFIG_OPT,
+  COMMON_CONST,
   ERRORS,
-  HASH_SIGN,
-  LINE_FEED,
 } = require("../constants/constants");
 
 exports.sleep = async (delay = 1000) => {
@@ -16,7 +15,7 @@ exports.convertConfigToObj = configStr => {
   const configObj = {};
 
   if (isString(configStr)) {
-    const configAr = configStr.split(LINE_FEED);
+    const configAr = configStr.split(COMMON_CONST.LINE_FEED);
 
     for (const strRaw of configAr) {
       if (!strRaw) {
@@ -25,7 +24,7 @@ exports.convertConfigToObj = configStr => {
 
       const str = strRaw.trim();
 
-      if (!str || str.startsWith(HASH_SIGN)) {
+      if (!str || str.startsWith(COMMON_CONST.HASH_SIGN)) {
         continue;
       }
 
@@ -70,19 +69,19 @@ exports.commentConfigOpt = (configStr, optKey) => {
   let newConfStr = "";
 
   if (isString(configStr)) {
-    const configAr = configStr.split(LINE_FEED);
+    const configAr = configStr.split(COMMON_CONST.LINE_FEED);
 
     for (let idx = 0; idx < configAr.length; idx++) {
       const str = (configAr[idx] || "").trim();
-      if (!str || str.startsWith(HASH_SIGN)) {
+      if (!str || str.startsWith(COMMON_CONST.HASH_SIGN)) {
         continue;
       }
       if (str.includes(optKey)) {
-        configAr[idx] = `${HASH_SIGN}${configAr[idx]}`;
+        configAr[idx] = `${COMMON_CONST.HASH_SIGN}${configAr[idx]}`;
       }
     }
 
-    newConfStr = configAr.join(LINE_FEED);
+    newConfStr = configAr.join(COMMON_CONST.LINE_FEED);
   }
 
   return newConfStr;

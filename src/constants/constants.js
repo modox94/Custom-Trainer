@@ -1,6 +1,14 @@
+const LANGS_CODES = require("../../renderer/src/constants/LANGS_CODES.json");
+
+const MOTOR_FIELDS = require("../../renderer/src/constants/MOTOR_FIELDS.json");
+
 exports.BOOT_CONFIG_OPT = require("../../renderer/src/constants/BOOT_CONFIG_OPT.json");
 
+exports.BOOT_CONFIG_VALUE = require("../../renderer/src/constants/BOOT_CONFIG_VALUE.json");
+
 exports.CADENCE_FIELDS = require("../../renderer/src/constants/CADENCE_FIELDS.json");
+
+exports.COMMON_CONST = require("../../renderer/src/constants/COMMON_CONST.json");
 
 exports.ERRORS = require("../../renderer/src/constants/ERRORS.json");
 
@@ -8,9 +16,9 @@ exports.EVENTS = require("../../renderer/src/constants/EVENTS.json");
 
 exports.FILE_CONST = require("../../renderer/src/constants/FILE_CONST.json");
 
-exports.LANGS_CODES = require("../../renderer/src/constants/LANGS_CODES.json");
+exports.LANGS_CODES = LANGS_CODES;
 
-exports.MOTOR_FIELDS = require("../../renderer/src/constants/MOTOR_FIELDS.json");
+exports.MOTOR_FIELDS = MOTOR_FIELDS;
 
 exports.EDGE = {
   rising: "rising",
@@ -53,12 +61,6 @@ exports.PHYSICAL_TO_GPIO = {
   40: 21,
 };
 
-exports.LINE_FEED = "\n"; // TODO transfer to json
-
-exports.HASH_SIGN = "#"; // TODO transfer to json
-
-exports.PAUSE_DELAY = 2500; // TODO transfer to json
-
 exports.LOADING_TIMER = 5000;
 
 exports.LOADING_PAUSE = 200;
@@ -86,3 +88,16 @@ exports.DIR_CONST = {
 };
 
 exports.MOVE_DIRECTION = { forward: "forward", back: "back" };
+
+exports.interfaceDefault = {
+  lang: LANGS_CODES.en,
+  cursorNone: false,
+};
+
+exports.peripheralDefault = {
+  [MOTOR_FIELDS.MIN_POS]: null,
+  [MOTOR_FIELDS.MAX_POS]: null,
+  [MOTOR_FIELDS.SLEEP_RATIO]: null,
+  [MOTOR_FIELDS.SWAP_MOTOR_WIRES]: null,
+  [MOTOR_FIELDS.SWAP_POTEN_WIRES]: null,
+};
