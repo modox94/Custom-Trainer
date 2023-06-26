@@ -1,5 +1,5 @@
-| [English](README.md) | Русский |
-| -------------------- | ------- |
+| [English](README.md) | Русский | [YouTube Demo](https://www.youtube.com/watch?v=wF2pY8McmVg) | [Live Web Demo](https://custom-trainer.onrender.com) |
+| -------------------- | ------- | ----------------------------------------------------------- | ---------------------------------------------------- |
 
 # Custom Trainer
 

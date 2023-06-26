@@ -1,5 +1,5 @@
-| English | [Русский](README.ru.md) |
-| ------- | ----------------------- |
+| English | [Русский](README.ru.md) | [YouTube Demo](https://www.youtube.com/watch?v=wF2pY8McmVg) | [Live Web Demo](https://custom-trainer.onrender.com) |
+| ------- | ----------------------- | ----------------------------------------------------------- | ---------------------------------------------------- |
 
 # Custom Trainer
 
@@ -34,7 +34,7 @@ Install package. There is [manual](https://help.ubuntu.com/kubuntu/desktopguide/
 
 ### Settings and usage
 
-Start app. 
+Start app.
 Go to settings page.
 
 <table>
