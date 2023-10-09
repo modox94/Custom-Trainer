@@ -4,6 +4,7 @@ const {
   ipcMain,
   Menu,
   powerSaveBlocker,
+  // dialog, // TODO
 } = require("electron");
 const { isFunction, get, isPlainObject } = require("lodash");
 const path = require("node:path");
@@ -319,3 +320,12 @@ ipcMain.on(EVENTS.DELETE_PROGRAM, async (event, filename) =>
 );
 
 ipcMain.on(EVENTS.APP_QUIT, app.quit.bind(app));
+
+// TODO up/download files
+// app.on("ready", async () => {
+//   const res = await dialog.showOpenDialog({
+//     properties: ["openFile", "multiSelections"],
+//   });
+
+//   console.log("res", res);
+// });
