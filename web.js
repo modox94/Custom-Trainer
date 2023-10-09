@@ -87,17 +87,6 @@ defaultTrainingPrograms.forEach(defaultProgram => {
   set(dbDefaultInstance, [DIR_CONST.PROGRAMS, filename], defaultProgram);
 });
 
-const dbSeed = async () => {
-  for (const key in dbDefaultInstance) {
-    if (Object.hasOwnProperty.call(dbDefaultInstance, key)) {
-      const value = dbDefaultInstance[key];
-      redis.set(key, JSON.stringify(value));
-    }
-  }
-};
-dbSeed();
-setInterval(dbSeed, 10800000);
-
 const redisSet = async (key, value) => {
   if (!key) {
     console.log("Invalid redis set key", key);
@@ -118,7 +107,10 @@ const redisSet = async (key, value) => {
     valueString = JSON.stringify({});
   }
 
-  await redis.set(key, valueString);
+  await redis.set(key, valueString, {
+    EX: 60 * 60 * 60 * 24, // seconds
+    NX: true,
+  });
 
   return true;
 };
