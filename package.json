@@ -39,8 +39,8 @@
   "devDependencies": {
     "@electron-forge/cli": "^6.4.2",
     "@electron-forge/maker-deb": "^6.4.2",
-    "electron": "^26.3.0",
-    "eslint": "^8.51.0",
+    "electron": "^27.0.3",
+    "eslint": "^8.52.0",
     "nodemon": "^3.0.1",
     "prettier": "^3.0.3"
   },
@@ -66,6 +66,6 @@
     }
   },
   "optionalDependencies": {
-    "bufferutil": "^4.0.7"
+    "bufferutil": "^4.0.8"
   }
 }
