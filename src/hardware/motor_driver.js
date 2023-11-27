@@ -12,14 +12,14 @@ const {
   MOVE_DIRECTION,
   PHYSICAL_TO_GPIO,
   TEST_IN_PROGRESS,
+  DANGER_MOVE_DELAY,
+  DELAY_FOR_READ,
+  MAX_RES_LEVEL,
 } = require("../constants/constants");
 const { sleep } = require("../utils/utils");
 const { PotentiometerSensor } = require("./potentiometer_sensor");
 
 const MOVE_DIRECTION_ARRAY = Object.values(MOVE_DIRECTION);
-const DELAY = 100; // TODO transfer to settings
-const DELAY_FOR_READ = 25; // TODO transfer to settings
-const MAX_RES_LEVEL = 10; // TODO transfer to settings
 
 const write = (value, cb = noop) => {
   // console.log("write", value);
@@ -156,7 +156,7 @@ class MotorDriver {
 
     try {
       this.move(direction);
-      await sleep(DELAY);
+      await sleep(DANGER_MOVE_DELAY);
 
       if (ac.signal?.aborted) {
         return { error: ERRORS.PROMISE_CANCELLED };
@@ -625,8 +625,11 @@ class MotorDriver {
           posCur - posTarget ? driveTime + firstTime : driveTime - firstTime;
         firstTime = false;
       } else {
-        await sleep(DELAY);
-        driveTime = posCur - posTarget ? driveTime + DELAY : driveTime - DELAY;
+        await sleep(DANGER_MOVE_DELAY);
+        driveTime =
+          posCur - posTarget
+            ? driveTime + DANGER_MOVE_DELAY
+            : driveTime - DANGER_MOVE_DELAY;
       }
 
       if (ac.signal?.aborted) {

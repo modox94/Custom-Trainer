@@ -25,14 +25,15 @@ const {
   FILE_CONST,
   MOTOR_FIELDS,
   interfaceDefault,
-  peripheralDefault,
+  peripheralDefaultWeb,
+  DANGER_MOVE_DELAY,
 } = require("./src/constants/constants");
 const Frequency = require("./src/hardware/cadence_sensor");
 const MotorDriver = require("./src/hardware/motor_driver");
 const { convertConfigToObj, sleep } = require("./src/utils/utils");
 
-const DELAY = 100; // TODO
 const PORT = process.env.PORT ?? 3001;
+const EX = String(60 * 60); // seconds
 
 const redis = new Redis(process.env.REDIS_URL);
 
@@ -75,7 +76,7 @@ const dbDefaultInstance = {
   [DIR_CONST.PROGRAMS]: {},
   [DIR_CONST.SETTINGS]: {
     [FILE_CONST.INTERFACE]: interfaceDefault,
-    [FILE_CONST.PERIPHERAL]: peripheralDefault,
+    [FILE_CONST.PERIPHERAL]: peripheralDefaultWeb,
   },
   [ABSOLUTE_DIR_CONST.BOOT]: {
     [FILE_CONST.CONFIG]: getBootConfigString(),
@@ -107,10 +108,7 @@ const redisSet = async (key, value) => {
     valueString = JSON.stringify({});
   }
 
-  await redis.set(key, valueString, {
-    EX: 60 * 60 * 60 * 24, // seconds
-    NX: true,
-  });
+  await redis.set(key, valueString, "EX", EX, "NX");
 
   return true;
 };
@@ -211,25 +209,25 @@ app.post("/invoke", async (req, res) => {
     }
 
     case EVENTS.DANGER_MOVE_FORWARD: {
-      await sleep(DELAY);
+      await sleep(DANGER_MOVE_DELAY);
       res.status(200).send({ error: false });
       break;
     }
 
     case EVENTS.DANGER_MOVE_BACK: {
-      await sleep(DELAY);
+      await sleep(DANGER_MOVE_DELAY);
       res.status(200).send({ error: false });
       break;
     }
 
     case EVENTS.MOTOR_CALIB_DIRECTION_TEST: {
-      await sleep(DELAY * 5);
+      await sleep(DANGER_MOVE_DELAY * 5);
       res.status(200).send(true);
       break;
     }
 
     case EVENTS.MOTOR_CALIB_CALC_SLEEP_RATIO: {
-      await sleep(DELAY * 10);
+      await sleep(DANGER_MOVE_DELAY * 10);
       const result = random(30, 50);
       res.status(200).send(JSON.stringify(result * 100));
       break;
