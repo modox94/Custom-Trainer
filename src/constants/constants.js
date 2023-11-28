@@ -61,6 +61,12 @@ exports.PHYSICAL_TO_GPIO = {
   40: 21,
 };
 
+exports.DANGER_MOVE_DELAY = 100; // TODO transfer to settings
+
+exports.DELAY_FOR_READ = 25; // TODO transfer to settings
+
+exports.MAX_RES_LEVEL = 10; // TODO transfer to settings
+
 exports.LOADING_TIMER = 5000;
 
 exports.LOADING_PAUSE = 200;
@@ -97,6 +103,14 @@ exports.interfaceDefault = {
 exports.peripheralDefault = {
   [MOTOR_FIELDS.MIN_POS]: null,
   [MOTOR_FIELDS.MAX_POS]: null,
+  [MOTOR_FIELDS.SLEEP_RATIO]: null,
+  [MOTOR_FIELDS.SWAP_MOTOR_WIRES]: null,
+  [MOTOR_FIELDS.SWAP_POTEN_WIRES]: null,
+};
+
+exports.peripheralDefaultWeb = {
+  [MOTOR_FIELDS.MIN_POS]: 20,
+  [MOTOR_FIELDS.MAX_POS]: 80,
   [MOTOR_FIELDS.SLEEP_RATIO]: null,
   [MOTOR_FIELDS.SWAP_MOTOR_WIRES]: null,
   [MOTOR_FIELDS.SWAP_POTEN_WIRES]: null,

@@ -314,7 +314,8 @@ class Store {
         }
       });
     } catch (error) {
-      console.log("onAddOrChange", error);
+      console.log("onAddOrChange error", pathValue);
+      // console.log(error);
     }
   }
 
