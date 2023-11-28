@@ -19,8 +19,12 @@ import SettingLine from "./SettingLine";
 
 const { COMMON_TRK, SETTINGS_TRK } = TRANSLATION_ROOT_KEYS;
 const { start } = TRANSLATION_KEYS[COMMON_TRK];
-const { toCalibrateMotorBut, toCalibrateCadenceBut, sleepRatioKey } =
-  TRANSLATION_KEYS[SETTINGS_TRK];
+const {
+  toCalibrateMotorBut,
+  toCalibrateCadenceBut,
+  sleepRatioKey,
+  gearRatioKey,
+} = TRANSLATION_KEYS[SETTINGS_TRK];
 
 const getTPath = (...args) => getTranslationPath(SETTINGS_TRK, ...args);
 
@@ -90,7 +94,10 @@ const Calibration = () => {
               !isFinite(sleepRatio) ? COMMON_CONST.DASH : String(sleepRatio)
             }
           />
-          <SettingLine title="TODO gearRatio" value={String(gearRatio)} />
+          <SettingLine
+            title={t(getTPath(gearRatioKey))}
+            value={String(gearRatio)}
+          />
           <SettingLine title="TODO error" value={String(error)} />
         </Item>
       </Container>
