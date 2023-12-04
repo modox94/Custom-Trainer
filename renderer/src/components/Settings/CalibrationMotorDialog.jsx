@@ -22,16 +22,16 @@ import InputNumber from "../InputNumber/InputNumber";
 import MultistepDialogCustom from "../MultistepDialogCustom/MultistepDialogCustom";
 
 const { COMMON_TRK, SETTINGS_TRK } = TRANSLATION_ROOT_KEYS;
-const { warning } = TRANSLATION_KEYS[COMMON_TRK];
+const { errorTKey, finished, start, warning } = TRANSLATION_KEYS[COMMON_TRK];
 const {
   calibMotorCalcSleepRatioMsg,
   calibMotorCalcSleepRatioTitle,
   calibMotorDirectionTestMsg,
   calibMotorDirectionTestTitle,
   calibMotorFinishMsg,
-  calibMotorFinishTitle,
   calibMotorWarningMsg,
-  toCalibrateCadenceBut,
+  saving,
+  toCalibrateMotorBut,
 } = TRANSLATION_KEYS[SETTINGS_TRK];
 
 const getTPath = (...args) => getTranslationPath(SETTINGS_TRK, ...args);
@@ -50,7 +50,7 @@ const DIALOG_STEPS_A = Object.values(DIALOG_STEPS);
 const emptyObj = {};
 
 const CalibrationMotorDialog = props => {
-  const { onClose } = props;
+  const { onClose, setError } = props;
   const { t } = useTranslation();
   const [currentStep, setCurrentStep] = useState(DIALOG_STEPS_A[0]);
   const [stepInProgress, setStepInProgress] = useState(false);
@@ -62,6 +62,12 @@ const CalibrationMotorDialog = props => {
       stopMotor();
     };
   }, []);
+
+  useEffect(() => {
+    if (calcSleepRatioResult?.error || directionTestResult?.error) {
+      setError(calcSleepRatioResult?.error || directionTestResult?.error);
+    }
+  }, [calcSleepRatioResult, directionTestResult, setError]);
 
   const onChangeStep = newStep => {
     switch (newStep) {
@@ -157,11 +163,14 @@ const CalibrationMotorDialog = props => {
         return emptyObj;
 
       case DIALOG_STEPS.DIRECTION_TEST:
-        return { disabled: !directionTestResult || directionTestResult?.error };
+        return {
+          disabled: !directionTestResult || Boolean(directionTestResult?.error),
+        };
 
       case DIALOG_STEPS.CALC_SLEEP_RATIO:
         return {
-          disabled: !calcSleepRatioResult || calcSleepRatioResult?.error,
+          disabled:
+            !calcSleepRatioResult || Boolean(calcSleepRatioResult?.error),
         };
 
       case DIALOG_STEPS.FINISH:
@@ -194,33 +203,33 @@ const CalibrationMotorDialog = props => {
     if (directionTestResult?.error) {
       directionTestIcon = IconNames.ERROR;
       directionTestIntent = Intent.WARNING;
-      directionTestText = "TODO test error";
+      directionTestText = t(getTranslationPath(COMMON_TRK, errorTKey));
       directionTestDisabled = true;
     } else if (directionTestResult) {
       directionTestIcon = IconNames.TICK;
       directionTestIntent = Intent.PRIMARY;
-      directionTestText = "TODO dir tes fin";
+      directionTestText = t(getTranslationPath(COMMON_TRK, finished));
       directionTestDisabled = true;
     } else {
       directionTestIcon = IconNames.PLAY;
       directionTestIntent = Intent.PRIMARY;
-      directionTestText = "TODO start dir test";
+      directionTestText = t(getTranslationPath(COMMON_TRK, start));
     }
 
     if (calcSleepRatioResult?.error) {
       calcSleepRatioIcon = IconNames.ERROR;
       calcSleepRatioIntent = Intent.WARNING;
-      calcSleepRatioText = "TODO test error";
+      calcSleepRatioText = t(getTranslationPath(COMMON_TRK, errorTKey));
       calcSleepRatioDisabled = true;
     } else if (calcSleepRatioResult) {
       calcSleepRatioIcon = IconNames.TICK;
       calcSleepRatioIntent = Intent.PRIMARY;
-      calcSleepRatioText = "TODO calc sleep rat fin";
+      calcSleepRatioText = t(getTranslationPath(COMMON_TRK, finished));
       calcSleepRatioDisabled = true;
     } else {
       calcSleepRatioIcon = IconNames.PLAY;
       calcSleepRatioIntent = Intent.PRIMARY;
-      calcSleepRatioText = "TODO start calc sleep rat";
+      calcSleepRatioText = t(getTranslationPath(COMMON_TRK, start));
     }
 
     return [
@@ -285,7 +294,7 @@ const CalibrationMotorDialog = props => {
       {
         key: DIALOG_STEPS.FINISH,
         id: DIALOG_STEPS.FINISH,
-        title: t(getTPath(calibMotorFinishTitle)),
+        title: t(getTPath(saving)),
         panel: (
           <>
             <p>{t(getTPath(calibMotorFinishMsg))}</p>
@@ -312,7 +321,7 @@ const CalibrationMotorDialog = props => {
   return (
     <MultistepDialogCustom
       isOpen
-      title={t(getTPath(toCalibrateCadenceBut))}
+      title={t(getTPath(toCalibrateMotorBut))}
       backButtonProps={emptyObj}
       closeButtonProps={closeButtonProps}
       finalButtonProps={finalButtonProps}

@@ -83,7 +83,7 @@ const SettingsControlDialog = props => {
           <Button
             large
             icon={IconNames.COG}
-            text="TODO SPI"
+            text={t(getTranslationPath(COMMON_TRK, SETTINGS))}
             onClick={goToSettingsSpi}
           />
         ) : (
