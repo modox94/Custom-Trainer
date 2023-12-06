@@ -28,7 +28,7 @@ const { COMMON_TRK, WORKOUT_TRK, PROGRAM_EDITOR_TRK, SETTINGS_TRK, TIPS_TRK } =
   TRANSLATION_ROOT_KEYS;
 const { back, fullscreen, warning, cancelTKey, continueTKey, allDataWillLost } =
   TRANSLATION_KEYS[COMMON_TRK];
-const { newProgram, editProgram, copyProgram, deleteProgram } =
+const { newProgram, editProgram, copyProgram, deleteProgram, saveToFile } =
   TRANSLATION_KEYS[PROGRAM_EDITOR_TRK];
 const { programMode } = TRANSLATION_KEYS[WORKOUT_TRK];
 const { languageTKey, interfaceTKey, peripheral, performance, advanced } =
@@ -179,6 +179,10 @@ const Navigation = () => {
 
       case `${PAGES_PATHS[PROGRAM_EDITOR]}/${SUB_PATHS[PROGRAM_EDITOR].DELETE}`:
         setTitle(t(getTranslationPath(PROGRAM_EDITOR_TRK, deleteProgram)));
+        break;
+
+      case `${PAGES_PATHS[PROGRAM_EDITOR]}/${SUB_PATHS[PROGRAM_EDITOR].SAVE_TO}`:
+        setTitle(t(getTranslationPath(PROGRAM_EDITOR_TRK, saveToFile)));
         break;
 
       default: {

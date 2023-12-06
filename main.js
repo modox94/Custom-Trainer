@@ -1,12 +1,13 @@
 const {
   app,
   BrowserWindow,
+  dialog,
   ipcMain,
   Menu,
   powerSaveBlocker,
-  // dialog, // TODO
 } = require("electron");
 const { isFunction, get, isPlainObject } = require("lodash");
+const fs = require("node:fs");
 const path = require("node:path");
 const sudo = require("sudo-prompt");
 const {
@@ -25,6 +26,7 @@ const Frequency = require("./src/hardware/cadence_sensor");
 const MotorDriver = require("./src/hardware/motor_driver");
 const { aplicationMenu } = require("./src/software/aplication_menu");
 const Store = require("./src/software/store");
+const { validateProgram } = require("./src/software/validators");
 const { commentConfigOpt, convertConfigToObj } = require("./src/utils/utils");
 
 Menu.setApplicationMenu(aplicationMenu);
@@ -225,6 +227,10 @@ ipcMain.handle(EVENTS.EDIT_BOOT_CONFIG, async (event, opt, value) => {
 });
 
 ipcMain.handle(EVENTS.MOTOR_CALIB_DIRECTION_TEST, async () => {
+  // if (Math.random() * 10 > 5) {
+  //   return true;
+  // }
+
   const result = await motor.calibrationDirectionTest();
   return result;
 });
@@ -233,26 +239,6 @@ ipcMain.handle(EVENTS.MOTOR_CALIB_CALC_SLEEP_RATIO, async () => {
   const result = await motor.calibrationCalcSleepRatio();
   return result;
 });
-
-// ipcMain.handle(EVENTS.MOTOR_CALIBRATION, async () => {
-//   motor.updateField(MOTOR_FIELDS.SLEEP_RATIO, null);
-//   store.editSettings(FILE_CONST.PERIPHERAL, MOTOR_FIELDS.SLEEP_RATIO, null);
-
-//   const calibResult = await motor.calibration();
-//   if (isFinite(calibResult)) {
-//     motor.updateField(MOTOR_FIELDS.SLEEP_RATIO, calibResult);
-//     store.editSettings(
-//       FILE_CONST.PERIPHERAL,
-//       MOTOR_FIELDS.SLEEP_RATIO,
-//       calibResult,
-//     );
-//     return true;
-//   }
-
-//   motor.updateField(MOTOR_FIELDS.SLEEP_RATIO, null);
-//   store.editSettings(FILE_CONST.PERIPHERAL, MOTOR_FIELDS.SLEEP_RATIO, null);
-//   return calibResult;
-// });
 
 ipcMain.handle(EVENTS.GET_MOTOR_LEVEL, async () => {
   return await motor.getMotorLevel();
@@ -319,13 +305,45 @@ ipcMain.on(EVENTS.DELETE_PROGRAM, async (event, filename) =>
   store.delete(DIR_CONST.PROGRAMS, filename),
 );
 
+ipcMain.on(EVENTS.SAVE_TO_PROGRAM, async (event, filename) => {
+  const file = get(store.store, [DIR_CONST.PROGRAMS, filename]);
+
+  const res = await dialog.showSaveDialog({
+    defaultPath: filename,
+    properties: ["showOverwriteConfirmation"],
+  });
+  const { canceled, filePath } = res || {};
+
+  if (!canceled && filePath.length > 0) {
+    fs.writeFileSync(filePath, JSON.stringify(file));
+  }
+});
+
+ipcMain.handle(EVENTS.LOAD_FROM_PROGRAM, async () => {
+  const res = await dialog.showOpenDialog({ properties: ["openFile"] });
+  const { canceled, filePaths } = res || {};
+
+  if (canceled) {
+    return { error: ERRORS.PROMISE_CANCELLED };
+  }
+
+  if (filePaths?.length > 0 && filePaths[0]?.length > 0) {
+    let programObj;
+    try {
+      programObj = JSON.parse(
+        fs.readFileSync(filePaths[0], { encoding: "utf-8" }),
+      );
+    } catch (error) {
+      return { error: ERRORS.INVALID_FILE };
+    }
+
+    if (validateProgram(programObj)) {
+      store.createProgram(programObj);
+      return { data: programObj };
+    }
+  }
+
+  return { error: ERRORS.UNKNOWN_ERROR };
+});
+
 ipcMain.on(EVENTS.APP_QUIT, app.quit.bind(app));
-
-// TODO up/download files
-// app.on("ready", async () => {
-//   const res = await dialog.showOpenDialog({
-//     properties: ["openFile", "multiSelections"],
-//   });
-
-//   console.log("res", res);
-// });

@@ -64,6 +64,7 @@ export const TRANSLATION_KEYS = {
     deleteProgMsg: "deleteProgMsg",
     copyProgHead: "copyProgHead",
     copyProgMsg: "copyProgMsg",
+    programLoaded: "programLoaded",
   },
   [TRANSLATION_ROOT_KEYS.SETTINGS_TRK]: {
     ...LANGS_CODES,

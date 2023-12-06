@@ -222,6 +222,10 @@ const resources = {
       [en]: 'The new program will be created based on the selected "{{programTitle}}". You will need to enter a new title, make changes if necessary, and save.',
       [ru]: 'Новая программа будет создана на основе выбранной "{{programTitle}}". Нужно будет ввести новое имя, внести изменения, если потребуется, и сохранить.',
     },
+    [TK[PROGRAM_EDITOR_TRK].programLoaded]: {
+      [en]: 'The selected program "{{programTitle}}" was successfully loaded.',
+      [ru]: 'Выбранная программа "{{programTitle}}" была успешно загружена.',
+    },
   },
   [SETTINGS_TRK]: {
     [en]: {

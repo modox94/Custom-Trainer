@@ -6,7 +6,11 @@ import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { deleteProgram, useGetProgramsQuery } from "../../api/ipc";
+import {
+  deleteProgram,
+  saveToProgram,
+  useGetProgramsQuery,
+} from "../../api/ipc";
 import { PAGES, PAGES_PATHS, SUB_PATHS } from "../../constants/pathConst";
 import { SP_MODE } from "../../constants/selectProgramConst";
 import {
@@ -165,6 +169,10 @@ const SelectProgram = props => {
           case SP_MODE.COPY:
           case SP_MODE.DELETE:
             onClick = () => setTarget(fileName);
+            break;
+
+          case SP_MODE.SAVE_TO:
+            onClick = () => saveToProgram(fileName);
             break;
 
           default:
