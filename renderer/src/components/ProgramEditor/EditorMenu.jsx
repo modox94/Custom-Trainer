@@ -112,8 +112,8 @@ const EditorMenu = props => {
       });
     } else {
       setAlertProps({
-        intent: Intent.WARNING,
-        icon: IconNames.WARNING_SIGN,
+        intent: Intent.DANGER,
+        icon: IconNames.ERROR,
         children: (
           <ErrorText
             error={result?.error || ERRORS.UNKNOWN_ERROR}

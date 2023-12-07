@@ -101,6 +101,9 @@ export const TRANSLATION_KEYS = {
     calibMotorFinishMsg: "calibMotorFinishMsg",
     dataInput: "dataInput",
     saving: "saving",
+    settingsLoaded: "settingsLoaded",
+    resetSettingsTitle: "resetSettingsTitle",
+    resetSettingsMsg: "resetSettingsMsg",
   },
   [TRANSLATION_ROOT_KEYS.TIPS_TRK]: {
     tipBut: "tipBut",

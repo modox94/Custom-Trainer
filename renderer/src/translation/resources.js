@@ -410,6 +410,18 @@ const resources = {
       [en]: "Saving",
       [ru]: "Сохранение",
     },
+    [TK[SETTINGS_TRK].settingsLoaded]: {
+      [en]: "The settings were successfully loaded and applied.",
+      [ru]: "Настройки были успешно загружены и применены.",
+    },
+    [TK[SETTINGS_TRK].resetSettingsTitle]: {
+      [en]: "Reset settings",
+      [ru]: "Сброс настроек",
+    },
+    [TK[SETTINGS_TRK].resetSettingsMsg]: {
+      [en]: "Are you sure you want to reset all settings?",
+      [ru]: "Вы уверены, что хотите сбросить все настройки?",
+    },
   },
   [TIPS_TRK]: {
     [TK[TIPS_TRK].tipBut]: {
@@ -665,6 +677,10 @@ const resources = {
     [ERRORS.SUDO_NOT_GRANT_PERMISSION]: {
       [en]: "User did not grant permission.",
       [ru]: "Пользователь не предоставил разрешение.",
+    },
+    [ERRORS.INVALID_FILE]: {
+      [en]: "Invalid file.",
+      [ru]: "Неверный файл.",
     },
   },
 };

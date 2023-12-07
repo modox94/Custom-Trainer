@@ -126,6 +126,16 @@ export const editSettings = (filename, data) => {
   }
 };
 
+export const saveToSettings = () =>
+  window.electron.ipcRenderer.send(EVENTS.SAVE_TO_SETTINGS);
+
+export const loadFromSettings = async () => {
+  return await window.electron.ipcRenderer.invoke(EVENTS.LOAD_FROM_SETTINGS);
+};
+
+export const resetSettings = () =>
+  window.electron.ipcRenderer.send(EVENTS.RESET_SETTINGS);
+
 export const turnOnSPI = async () => {
   return await window.electron.ipcRenderer.invoke(
     EVENTS.EDIT_BOOT_CONFIG,

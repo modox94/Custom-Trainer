@@ -97,7 +97,7 @@ const Calibration = () => {
           />
           <SettingLine
             title={t(getTPath(gearRatioKey))}
-            value={String(gearRatio)}
+            value={!isFinite(gearRatio) ? COMMON_CONST.DASH : String(gearRatio)}
           />
           {error ? <SettingLine title={<ErrorText error={error} />} /> : null}
         </Item>

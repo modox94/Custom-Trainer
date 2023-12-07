@@ -6,7 +6,8 @@ const {
   Menu,
   powerSaveBlocker,
 } = require("electron");
-const { isFunction, get, isPlainObject } = require("lodash");
+const { get, isFunction, isPlainObject } = require("lodash");
+const { DateTime } = require("luxon");
 const fs = require("node:fs");
 const path = require("node:path");
 const sudo = require("sudo-prompt");
@@ -16,17 +17,24 @@ const {
   CADENCE_FIELDS,
   COMMON_CONST,
   DIR_CONST,
+  DOT_JSON,
   ERRORS,
   EVENTS,
   FILE_CONST,
+  interfaceDefault,
   MOTOR_FIELDS,
   MOVE_DIRECTION,
+  peripheralDefault,
 } = require("./src/constants/constants");
 const Frequency = require("./src/hardware/cadence_sensor");
 const MotorDriver = require("./src/hardware/motor_driver");
 const { aplicationMenu } = require("./src/software/aplication_menu");
 const Store = require("./src/software/store");
-const { validateProgram } = require("./src/software/validators");
+const {
+  validateInterface,
+  validatePeripheral,
+  validateProgram,
+} = require("./src/software/validators");
 const { commentConfigOpt, convertConfigToObj } = require("./src/utils/utils");
 
 Menu.setApplicationMenu(aplicationMenu);
@@ -263,7 +271,7 @@ ipcMain.on(EVENTS.EDIT_PROGRAM, async (event, filename, programObject) =>
   store.editProgram(filename, programObject),
 );
 
-ipcMain.on(EVENTS.EDIT_SETTINGS, async (event, filename, data) => {
+const editSettingsFn = (event, filename, data) => {
   if (!isPlainObject(data)) {
     console.log("invalid data", data);
   }
@@ -299,7 +307,9 @@ ipcMain.on(EVENTS.EDIT_SETTINGS, async (event, filename, data) => {
   }
 
   store.editSettings(filename, data);
-});
+};
+
+ipcMain.on(EVENTS.EDIT_SETTINGS, editSettingsFn);
 
 ipcMain.on(EVENTS.DELETE_PROGRAM, async (event, filename) =>
   store.delete(DIR_CONST.PROGRAMS, filename),
@@ -344,6 +354,68 @@ ipcMain.handle(EVENTS.LOAD_FROM_PROGRAM, async () => {
   }
 
   return { error: ERRORS.UNKNOWN_ERROR };
+});
+
+ipcMain.on(EVENTS.SAVE_TO_SETTINGS, async () => {
+  const file = get(store.store, [DIR_CONST.SETTINGS]);
+
+  const res = await dialog.showSaveDialog({
+    defaultPath: `custom_trainer_settings_${DateTime.now().toFormat(
+      "yy-MM-dd_HH:mm:ss",
+    )}${DOT_JSON}`,
+    properties: ["showOverwriteConfirmation"],
+  });
+  const { canceled, filePath } = res || {};
+
+  if (!canceled && filePath.length > 0) {
+    fs.writeFileSync(filePath, JSON.stringify(file));
+  }
+});
+
+ipcMain.handle(EVENTS.LOAD_FROM_SETTINGS, async () => {
+  const res = await dialog.showOpenDialog({ properties: ["openFile"] });
+  const { canceled, filePaths } = res || {};
+
+  if (canceled) {
+    return { error: ERRORS.PROMISE_CANCELLED };
+  }
+
+  if (filePaths?.length > 0 && filePaths[0]?.length > 0) {
+    let settingsObj;
+    try {
+      settingsObj = JSON.parse(
+        fs.readFileSync(filePaths[0], { encoding: "utf-8" }),
+      );
+    } catch (error) {
+      return { error: ERRORS.INVALID_FILE };
+    }
+
+    if (
+      isPlainObject(settingsObj) &&
+      validateInterface(settingsObj[FILE_CONST.INTERFACE]) &&
+      validatePeripheral(settingsObj[FILE_CONST.PERIPHERAL])
+    ) {
+      editSettingsFn(
+        undefined,
+        FILE_CONST.INTERFACE,
+        settingsObj[FILE_CONST.INTERFACE],
+      );
+      editSettingsFn(
+        undefined,
+        FILE_CONST.PERIPHERAL,
+        settingsObj[FILE_CONST.PERIPHERAL],
+      );
+
+      return { data: true };
+    }
+  }
+
+  return { error: ERRORS.UNKNOWN_ERROR };
+});
+
+ipcMain.on(EVENTS.RESET_SETTINGS, async () => {
+  editSettingsFn(undefined, FILE_CONST.INTERFACE, interfaceDefault);
+  editSettingsFn(undefined, FILE_CONST.PERIPHERAL, peripheralDefault);
 });
 
 ipcMain.on(EVENTS.APP_QUIT, app.quit.bind(app));
