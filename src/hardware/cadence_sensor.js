@@ -12,7 +12,6 @@ const cadenceSensorPin = PHYSICAL_TO_GPIO[11];
 
 class Frequency {
   constructor(options) {
-    // TODO rewrite logic of gear ratio and add calibration fn
     this.timecodes = get(options, ["timecodes"], []);
     this[CADENCE_FIELDS.GEAR_RATIO] = get(
       options,

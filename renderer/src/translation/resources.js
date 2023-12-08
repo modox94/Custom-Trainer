@@ -110,9 +110,17 @@ const resources = {
       [en]: "Start",
       [ru]: "Начать",
     },
+    [TK[COMMON_TRK].stop]: {
+      [en]: "Stop",
+      [ru]: "Остановить",
+    },
     [TK[COMMON_TRK].finish]: {
       [en]: "Finish",
       [ru]: "Завершить",
+    },
+    [TK[COMMON_TRK].finished]: {
+      [en]: "Finished",
+      [ru]: "Завершено",
     },
     [TK[COMMON_TRK].continueTKey]: {
       [en]: "Continue",
@@ -214,6 +222,10 @@ const resources = {
       [en]: 'The new program will be created based on the selected "{{programTitle}}". You will need to enter a new title, make changes if necessary, and save.',
       [ru]: 'Новая программа будет создана на основе выбранной "{{programTitle}}". Нужно будет ввести новое имя, внести изменения, если потребуется, и сохранить.',
     },
+    [TK[PROGRAM_EDITOR_TRK].programLoaded]: {
+      [en]: 'The selected program "{{programTitle}}" was successfully loaded.',
+      [ru]: 'Выбранная программа "{{programTitle}}" была успешно загружена.',
+    },
   },
   [SETTINGS_TRK]: {
     [en]: {
@@ -268,29 +280,13 @@ const resources = {
       [en]: "Motor calibration",
       [ru]: "Калибровка двигателя",
     },
-    [TK[SETTINGS_TRK].toCalibrateMotorMsg]: {
-      [en]: "TODO calibrationMsg",
-      [ru]: "TODO calibrationMsg",
-    },
     [TK[SETTINGS_TRK].toCalibrateCadenceBut]: {
       [en]: "Speed sensor calibration",
       [ru]: "Калибровка датчика скорости",
     },
-    [TK[SETTINGS_TRK].toCalibrateCadenceMsg]: {
-      [en]: "TODO toCalibrateCadenceMsg",
-      [ru]: "TODO toCalibrateCadenceMsg",
-    },
     [TK[SETTINGS_TRK].sleepRatioKey]: {
-      [en]: "TODO sleepRatioKey",
-      [ru]: "TODO sleepRatioKey",
-    },
-    [TK[SETTINGS_TRK].sleepRatioHead]: {
-      [en]: "TODO sleepRatioHead",
-      [ru]: "TODO sleepRatioHead",
-    },
-    [TK[SETTINGS_TRK].sleepRatioMsg]: {
-      [en]: "TODO sleepRatioMsg",
-      [ru]: "TODO sleepRatioMsg",
+      [en]: "Motor coefficient",
+      [ru]: "Коэффициент двигателя",
     },
     [TK[SETTINGS_TRK].spiTitle]: {
       [en]: "SPI (Serial Peripheral Interface)",
@@ -326,14 +322,6 @@ const resources = {
       [en]: "Gear ratio of speed sensor",
       [ru]: "Передаточное число датчика скорости",
     },
-    [TK[SETTINGS_TRK].startCalibration]: {
-      [en]: "Start calibration",
-      [ru]: "Начать калибровку",
-    },
-    [TK[SETTINGS_TRK].stopCalibration]: {
-      [en]: "Stop calibration",
-      [ru]: "Закончить калибровку",
-    },
     [TK[SETTINGS_TRK].calibCadenWarningMsg]: {
       [en]: `Calibration of the speed sensor will take place in several stages. Press "$t(${getTP(
         COMMON_TRK,
@@ -350,31 +338,23 @@ const resources = {
     },
     [TK[SETTINGS_TRK].calibCadenCollectDataMsg]: {
       [en]: `Before starting the procedure, you should set the pedals to a position that will be easy for you to reproduce (for example, the left crank in the lowest position). The pedals have to be motionless. Then you should press "$t(${getTP(
-        SETTINGS_TRK,
-        TK[SETTINGS_TRK].startCalibration,
+        COMMON_TRK,
+        TK[COMMON_TRK].start,
       )})" button below and make a few (~10) full cycles with the pedals at a steady speed, rotating only forward and stop the pedals in the same position as at the beginning of the calibration. You must remember exactly how many full cycles you made (the accuracy of the calculations depends on this). Then you should click "$t(${getTP(
-        SETTINGS_TRK,
-        TK[SETTINGS_TRK].stopCalibration,
+        COMMON_TRK,
+        TK[COMMON_TRK].stop,
       )})" button below and go to the next step.`,
       [ru]: `Для калибровки датчика перед началом процедуры необходимо установить педали в положение, которое вам будет легко воспроизвести (например левый шатун в крайнем нижнем положении). Педали должны быть неподвижны. Затем вам следует нажать кнопку "$t(${getTP(
-        SETTINGS_TRK,
-        TK[SETTINGS_TRK].startCalibration,
+        COMMON_TRK,
+        TK[COMMON_TRK].start,
       )})" ниже и совершить несколько (~10) полных оборотов педалями с равномерной скоростью, вращая только вперед и остановить педали в том же положении, что при начале калибровки. Вы должны запомнить сколько именно полных оборотов вы сделали (от этого зависит точность расчетов). Затем вам следует нажать кнопку ниже "$t(${getTP(
-        SETTINGS_TRK,
-        TK[SETTINGS_TRK].stopCalibration,
+        COMMON_TRK,
+        TK[COMMON_TRK].stop,
       )})" и перейти к следующему шагу.`,
-    },
-    [TK[SETTINGS_TRK].calibCadenUserDataTitle]: {
-      [en]: "Data input",
-      [ru]: "Ввод данных",
     },
     [TK[SETTINGS_TRK].calibCadenUserDataMsg]: {
       [en]: "You must enter below the number of complete cycles that you made in the previous step.",
       [ru]: "Ниже вы должны ввести количество полных оборотов, которые вы совершили на предыдущем шаге.",
-    },
-    [TK[SETTINGS_TRK].calibCadenFinishTitle]: {
-      [en]: "Saving",
-      [ru]: "Сохранение",
     },
     [TK[SETTINGS_TRK].calibCadenFinishMsg]: {
       [en]: `Below you can change the calculated gear ratio if you understand what you are doing. Otherwise just press "$t(${getTP(
@@ -387,32 +367,60 @@ const resources = {
       )})".`,
     },
     [TK[SETTINGS_TRK].calibMotorWarningMsg]: {
-      [en]: "TODO calibMotorWarningMsg",
-      [ru]: "TODO calibMotorWarningMsg",
+      [en]: `Calibration of the motor will take place in several stages. A coefficient will be calculated that will allow for faster changes in resistance level. Press "$t(${getTP(
+        COMMON_TRK,
+        TK[COMMON_TRK].next,
+      )})" button for continue.`,
+      [ru]: `Калибровка двигателя будет проходить в несколько этапов. По окончанию калибровки будет рассчитан коэффициент, который позволит быстрее менять нагрузку. Нажмите кнопку "$t(${getTP(
+        COMMON_TRK,
+        TK[COMMON_TRK].next,
+      )})", чтобы продолжить.`,
     },
     [TK[SETTINGS_TRK].calibMotorDirectionTestTitle]: {
-      [en]: "TODO calibMotorDirectionTestTitle",
-      [ru]: "TODO calibMotorDirectionTestTitle",
+      [en]: "Motor Direction",
+      [ru]: "Направление двигателя",
     },
     [TK[SETTINGS_TRK].calibMotorDirectionTestMsg]: {
-      [en]: "TODO calibMotorDirectionTestMsg",
-      [ru]: "TODO calibMotorDirectionTestMsg",
+      [en]: "Checking the correct direction of the motor.",
+      [ru]: "Проверка корректности направления движения двигателя.",
     },
     [TK[SETTINGS_TRK].calibMotorCalcSleepRatioTitle]: {
-      [en]: "TODO calibMotorCalcSleepRatioTitle",
-      [ru]: "TODO calibMotorCalcSleepRatioTitle",
+      [en]: "Motor calibration",
+      [ru]: "Калибровка двигателя",
     },
     [TK[SETTINGS_TRK].calibMotorCalcSleepRatioMsg]: {
-      [en]: "TODO calibMotorCalcSleepRatioMsg",
-      [ru]: "TODO calibMotorCalcSleepRatioMsg",
-    },
-    [TK[SETTINGS_TRK].calibMotorFinishTitle]: {
-      [en]: "TODO calibMotorFinishTitle",
-      [ru]: "TODO calibMotorFinishTitle",
+      [en]: "At this stage, the motor will be set to its edge positions several times. A coefficient will then be calculated based on the time spent.",
+      [ru]: "На этом этапе двигатель несколько раз будет установлен в крайние положения. Затем будет рассчитан коэффициент основанный на времени которое было затрачено.",
     },
     [TK[SETTINGS_TRK].calibMotorFinishMsg]: {
-      [en]: "TODO calibMotorFinishMsg",
-      [ru]: "TODO calibMotorFinishMsg",
+      [en]: `Below you can change the calculated motor coefficient if you understand what you are doing. Otherwise just press "$t(${getTP(
+        COMMON_TRK,
+        TK[COMMON_TRK].finish,
+      )})" button.`,
+      [ru]: `Ниже вы можете изменить рассчитанный коэффициент двигателя, если понимаете что делаете. В противном случае просто нажмите кнопку "$t(${getTP(
+        COMMON_TRK,
+        TK[COMMON_TRK].finish,
+      )})".`,
+    },
+    [TK[SETTINGS_TRK].dataInput]: {
+      [en]: "Data input",
+      [ru]: "Ввод данных",
+    },
+    [TK[SETTINGS_TRK].saving]: {
+      [en]: "Saving",
+      [ru]: "Сохранение",
+    },
+    [TK[SETTINGS_TRK].settingsLoaded]: {
+      [en]: "The settings were successfully loaded and applied.",
+      [ru]: "Настройки были успешно загружены и применены.",
+    },
+    [TK[SETTINGS_TRK].resetSettingsTitle]: {
+      [en]: "Reset settings",
+      [ru]: "Сброс настроек",
+    },
+    [TK[SETTINGS_TRK].resetSettingsMsg]: {
+      [en]: "Are you sure you want to reset all settings?",
+      [ru]: "Вы уверены, что хотите сбросить все настройки?",
     },
   },
   [TIPS_TRK]: {
@@ -493,16 +501,16 @@ const resources = {
       [ru]: "Двигатель",
     },
     [TK[TIPS_TRK].motorTip]: {
-      [en]: "TODO motorTip",
-      [ru]: "TODO motorTip",
+      [en]: "motor settings.",
+      [ru]: "настройки двигателя.",
     },
     [TK[TIPS_TRK].calibrationBut]: {
       [en]: "Calibration",
       [ru]: "Калибровка",
     },
     [TK[TIPS_TRK].calibrationTip]: {
-      [en]: "TODO calibrationTip",
-      [ru]: "TODO calibrationTip",
+      [en]: "calibration of sensors and motor.",
+      [ru]: "калибровка датчиков и двигателя.",
     },
     [TK[TIPS_TRK].heartBeatSettingsBut]: {
       [en]: "Heartbeat",
@@ -525,74 +533,74 @@ const resources = {
       [ru]: "Налево",
     },
     [TK[TIPS_TRK].motorToLeftTip]: {
-      [en]: "The conditional direction of movement of the motor.",
-      [ru]: "Условное направление движения двигателя.",
+      [en]: "the conditional direction of movement of the motor.",
+      [ru]: "условное направление движения двигателя.",
     },
     [TK[TIPS_TRK].motorToRightBut]: {
       [en]: "Right",
       [ru]: "Направо",
     },
     [TK[TIPS_TRK].motorToRightTip]: {
-      [en]: "The conditional direction of movement of the motor.",
-      [ru]: "Условное направление движения двигателя.",
+      [en]: "the conditional direction of movement of the motor.",
+      [ru]: "условное направление движения двигателя.",
     },
     [TK[TIPS_TRK].motorPotenBut]: {
       [en]: "Potentiometer",
       [ru]: "Потенциометр",
     },
     [TK[TIPS_TRK].motorPotenTip]: {
-      [en]: "The current reading of the motor potentiometer, in other words the position of the motor.",
-      [ru]: "Текущие показания потенциометра двигателя, другими словами значения положения двигателя.",
+      [en]: "the current reading of the motor potentiometer, in other words the position of the motor.",
+      [ru]: "текущие показания потенциометра двигателя, другими словами значения положения двигателя.",
     },
     [TK[TIPS_TRK].motorMinPosBut]: {
       [en]: "Easiest position",
       [ru]: "Легчайшее положение",
     },
     [TK[TIPS_TRK].motorMinPosTip]: {
-      [en]: "TODO motorMinPosTip",
-      [ru]: "TODO motorMinPosTip",
+      [en]: "motor position at easiest resistance level.",
+      [ru]: "положение двигателя при легчайшем уровне нагрузки.",
     },
     [TK[TIPS_TRK].motorMaxPosBut]: {
       [en]: "Hardest position",
       [ru]: "Тяжелейшее положение",
     },
     [TK[TIPS_TRK].motorMaxPosTip]: {
-      [en]: "TODO motorMaxPosTip",
-      [ru]: "TODO motorMaxPosTip",
+      [en]: "motor position at hardest resistance level.",
+      [ru]: "положение двигателя при тяжелейшем уровне нагрузки.",
     },
     [TK[TIPS_TRK].motorSwapMotorWiresBut]: {
       [en]: "Swap motor wires",
       [ru]: "Поменять местами провода двигателя",
     },
     [TK[TIPS_TRK].motorSwapMotorWiresTip]: {
-      [en]: "TODO motorSwapMotorWiresTip",
-      [ru]: "TODO motorSwapMotorWiresTip",
+      [en]: "reverse the direction of motor.",
+      [ru]: "обратить направление движения двигателя.",
     },
     [TK[TIPS_TRK].motorSwapPotenWiresBut]: {
       [en]: "Swap potentiometer wires",
       [ru]: "Поменять местами провода потенциометра",
     },
     [TK[TIPS_TRK].motorSwapPotenWiresTip]: {
-      [en]: "TODO motorSwapPotenWiresTip",
-      [ru]: "TODO motorSwapPotenWiresTip",
+      [en]: "reverse the potentiometer values.",
+      [ru]: "обратить значения потенциометра на обратные.",
     },
   },
   [ERRORS_TRK]: {
     [ERRORS.UNKNOWN_ERROR]: {
-      [en]: "TODO UNKNOWN_ERROR",
-      [ru]: "TODO UNKNOWN_ERROR",
+      [en]: "Unknown error.",
+      [ru]: "Неизвестная ошибка.",
     },
     [ERRORS.GPIO_EPERM]: {
-      [en]: "TODO GPIO_EPERM",
-      [ru]: "TODO GPIO_EPERM",
+      [en]: "GPIO Permissions Denied",
+      [ru]: "GPIO Отказано в доступе.",
     },
     [ERRORS.POTEN_ERROR]: {
-      [en]: "TODO POTEN_ERROR",
-      [ru]: "TODO POTEN_ERROR",
+      [en]: "Potentiometer error.",
+      [ru]: "Ошибка потенциометра.",
     },
     [ERRORS.INVALID_RESIST_LEVEL]: {
-      [en]: "TODO INVALID_RESIST_LEVEL",
-      [ru]: "TODO INVALID_RESIST_LEVEL",
+      [en]: "Invalid resistance level.",
+      [ru]: "Недопустимый уровень нагрузки.",
     },
     [ERRORS.INVALID_MOTOR_SETTINGS]: {
       [en]: "Your motor is not configured or its settings are invalid. Go to the motor settings section and fix it.",
@@ -623,52 +631,56 @@ const resources = {
       [ru]: "Для корректной работы приложения необходимо включить интерфейс SPI в настройках.",
     },
     [ERRORS.LOADING_TIMER_EXPIRED]: {
-      [en]: "TODO LOADING_TIMER_EXPIRED",
-      [ru]: "TODO LOADING_TIMER_EXPIRED",
+      [en]: "Loading time has expired.",
+      [ru]: "Время загрузки истекло.",
     },
     [ERRORS.CALIBRATION_NO_DATA]: {
-      [en]: "TODO CALIBRATION_NO_DATA",
-      [ru]: "TODO CALIBRATION_NO_DATA",
+      [en]: "There is not enough data for calibration. The limit positions of the motor have not been set.",
+      [ru]: "Недостаточно данных для калибровки. Не заданы крайние положения двигателя.",
     },
     [ERRORS.CALIBRATION_INVALID_EDGES]: {
-      [en]: "TODO CALIBRATION_INVALID_EDGES",
-      [ru]: "TODO CALIBRATION_INVALID_EDGES",
+      [en]: "The limit positions of the motor have invalid values.",
+      [ru]: "Крайние положения двигателя имеют недопустимые значения.",
     },
     [ERRORS.CALIBRATION_WRONG_DIRECTION]: {
-      [en]: "TODO CALIBRATION_WRONG_DIRECTION",
-      [ru]: "TODO CALIBRATION_WRONG_DIRECTION",
+      [en]: "The motor is moving in the wrong direction.",
+      [ru]: "Двигатель движется в неверном направлении.",
     },
     [ERRORS.CALIBRATION_HINDRANCE]: {
-      [en]: "TODO CALIBRATION_HINDRANCE",
-      [ru]: "TODO CALIBRATION_HINDRANCE",
+      [en]: "There may be something blocking the engine from moving.",
+      [ru]: "Возможно что-то препятствует движению двигателя.",
     },
     [ERRORS.CALIBRATION_TOO_LONG]: {
-      [en]: "TODO CALIBRATION_TOO_LONG",
-      [ru]: "TODO CALIBRATION_TOO_LONG",
+      [en]: "Something went wrong. The procedure takes too long.",
+      [ru]: "Что-то пошло не так. Процедура идет слишком долго.",
     },
     [ERRORS.CALIBRATION_UNKNOWN]: {
-      [en]: "TODO CALIBRATION_UNKNOWN",
-      [ru]: "TODO CALIBRATION_UNKNOWN",
+      [en]: "Unknown error.",
+      [ru]: "Неизвестная ошибка.",
     },
     [ERRORS.PROMISE_CANCELLED]: {
-      [en]: "TODO PROMISE_CANCELLED",
-      [ru]: "TODO PROMISE_CANCELLED",
+      [en]: "The action was cancelled.",
+      [ru]: "Команда была отменена.",
     },
     [ERRORS.BOOT_CONFIG_NOT_EXIST]: {
-      [en]: "TODO BOOT_CONFIG_NOT_EXIST",
-      [ru]: "TODO BOOT_CONFIG_NOT_EXIST",
+      [en]: "The config file does not exist.",
+      [ru]: "Файла настроек не существует.",
     },
     [ERRORS.BOOT_CONFIG_WRONG_ARGS]: {
-      [en]: "TODO BOOT_CONFIG_WRONG_ARGS",
-      [ru]: "TODO BOOT_CONFIG_WRONG_ARGS",
+      [en]: "The config file contains wrong arguments.",
+      [ru]: "В файле конфигурации указаны неправильные аргументы.",
     },
     [ERRORS.BOOT_CONFIG_INVALID_ARG]: {
-      [en]: "TODO BOOT_CONFIG_INVALID_ARG",
-      [ru]: "TODO BOOT_CONFIG_INVALID_ARG",
+      [en]: "The config file contains invalid arguments.",
+      [ru]: "Файл конфигурации содержит недопустимые аргументы.",
     },
     [ERRORS.SUDO_NOT_GRANT_PERMISSION]: {
       [en]: "User did not grant permission.",
       [ru]: "Пользователь не предоставил разрешение.",
+    },
+    [ERRORS.INVALID_FILE]: {
+      [en]: "Invalid file.",
+      [ru]: "Неверный файл.",
     },
   },
 };

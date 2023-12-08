@@ -33,7 +33,7 @@ const MotorDriver = require("./src/hardware/motor_driver");
 const { convertConfigToObj, sleep } = require("./src/utils/utils");
 
 const PORT = process.env.PORT ?? 3001;
-const EX = String(60 * 60); // seconds
+const EX = 60 * 60; // seconds (1 hour)
 
 const redis = new Redis(process.env.REDIS_URL);
 
@@ -108,7 +108,7 @@ const redisSet = async (key, value) => {
     valueString = JSON.stringify({});
   }
 
-  await redis.set(key, valueString, "EX", EX, "NX");
+  await redis.set(key, valueString, "EX", EX);
 
   return true;
 };
@@ -148,6 +148,49 @@ const settingsPeripheral = get(
 
 const motor = new MotorDriver(settingsPeripheral);
 const rate = new Frequency(settingsPeripheral);
+
+const editSettingsFn = async (filename, data) => {
+  if (!isPlainObject(data)) {
+    console.log("invalid data", data);
+  }
+  for (const field in data) {
+    if (Object.hasOwnProperty.call(data, field)) {
+      const value = data[field];
+      switch (filename) {
+        case FILE_CONST.PERIPHERAL: {
+          switch (field) {
+            case MOTOR_FIELDS.MIN_POS:
+            case MOTOR_FIELDS.MAX_POS:
+            case MOTOR_FIELDS.SLEEP_RATIO:
+            case MOTOR_FIELDS.SWAP_MOTOR_WIRES:
+            case MOTOR_FIELDS.SWAP_POTEN_WIRES:
+              motor.updateField(field, value);
+              break;
+
+            case CADENCE_FIELDS.GEAR_RATIO:
+              rate.updateField(field, value);
+              break;
+
+            default:
+              break;
+          }
+
+          break;
+        }
+
+        default:
+          break;
+      }
+    }
+  }
+
+  const settingsDir = await redisGet(DIR_CONST.SETTINGS);
+
+  merge(settingsDir, { [filename]: data });
+  redisSet(DIR_CONST.SETTINGS, settingsDir);
+
+  wsSend({ event: EVENTS.WATCH_SETTINGS, payload: settingsDir });
+};
 
 const app = express();
 
@@ -249,6 +292,16 @@ app.post("/invoke", async (req, res) => {
       break;
     }
 
+    case EVENTS.LOAD_FROM_PROGRAM: {
+      res.status(200).send(JSON.stringify({ data: true }));
+      break;
+    }
+
+    case EVENTS.LOAD_FROM_SETTINGS: {
+      res.status(200).send(JSON.stringify({ data: true }));
+      break;
+    }
+
     default:
       res.status(400).send();
       break;
@@ -346,48 +399,22 @@ app.post("/send", async (req, res) => {
         break;
       }
 
-      for (const field in data) {
-        if (Object.hasOwnProperty.call(data, field)) {
-          const value = data[field];
-          switch (filename) {
-            case FILE_CONST.PERIPHERAL: {
-              switch (field) {
-                case MOTOR_FIELDS.MIN_POS:
-                case MOTOR_FIELDS.MAX_POS:
-                case MOTOR_FIELDS.SLEEP_RATIO:
-                case MOTOR_FIELDS.SWAP_MOTOR_WIRES:
-                case MOTOR_FIELDS.SWAP_POTEN_WIRES:
-                  motor.updateField(field, value);
-                  break;
-
-                case CADENCE_FIELDS.GEAR_RATIO:
-                  rate.updateField(field, value);
-                  break;
-
-                default:
-                  break;
-              }
-
-              break;
-            }
-
-            default:
-              break;
-          }
-        }
-      }
-
-      const settingsDir = await redisGet(DIR_CONST.SETTINGS);
-
-      merge(settingsDir, { [filename]: data });
-      redisSet(DIR_CONST.SETTINGS, settingsDir);
-
-      wsSend({ event: EVENTS.WATCH_SETTINGS, payload: settingsDir });
+      await editSettingsFn(filename, data);
 
       res.status(200).send();
       break;
     }
 
+    case EVENTS.RESET_SETTINGS: {
+      await editSettingsFn(FILE_CONST.INTERFACE, interfaceDefault);
+      await editSettingsFn(FILE_CONST.PERIPHERAL, peripheralDefaultWeb);
+
+      res.status(200).send();
+      break;
+    }
+
+    case EVENTS.SAVE_TO_PROGRAM:
+    case EVENTS.SAVE_TO_SETTINGS:
     case EVENTS.APP_QUIT: {
       // do nothing
       res.status(200).send();

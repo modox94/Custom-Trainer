@@ -16,17 +16,15 @@ import InputNumber from "../InputNumber/InputNumber";
 import MultistepDialogCustom from "../MultistepDialogCustom/MultistepDialogCustom";
 
 const { COMMON_TRK, SETTINGS_TRK } = TRANSLATION_ROOT_KEYS;
-const { warning } = TRANSLATION_KEYS[COMMON_TRK];
+const { start, stop, warning } = TRANSLATION_KEYS[COMMON_TRK];
 const {
   calibCadenCollectDataMsg,
   calibCadenCollectDataTitle,
   calibCadenFinishMsg,
-  calibCadenFinishTitle,
   calibCadenUserDataMsg,
-  calibCadenUserDataTitle,
   calibCadenWarningMsg,
-  startCalibration,
-  stopCalibration,
+  dataInput,
+  saving,
   toCalibrateCadenceBut,
 } = TRANSLATION_KEYS[SETTINGS_TRK];
 
@@ -173,14 +171,14 @@ const CalibrationCadenceDialog = props => {
     if (!collectingInProgress) {
       icon = IconNames.PLAY;
       intent = Intent.PRIMARY;
-      text = t(getTPath(startCalibration));
+      text = t(getTranslationPath(COMMON_TRK, start));
       disabled = collectedData > 0;
     }
 
     if (collectingInProgress) {
       icon = IconNames.STOP;
       intent = Intent.SUCCESS;
-      text = t(getTPath(stopCalibration));
+      text = t(getTranslationPath(COMMON_TRK, stop));
     }
 
     return [
@@ -213,7 +211,7 @@ const CalibrationCadenceDialog = props => {
       {
         key: DIALOG_STEPS.USER_DATA,
         id: DIALOG_STEPS.USER_DATA,
-        title: t(getTPath(calibCadenUserDataTitle)),
+        title: t(getTPath(dataInput)),
         panel: (
           <>
             <p>{t(getTPath(calibCadenUserDataMsg))}</p>
@@ -228,7 +226,7 @@ const CalibrationCadenceDialog = props => {
       {
         key: DIALOG_STEPS.FINISH,
         id: DIALOG_STEPS.FINISH,
-        title: t(getTPath(calibCadenFinishTitle)),
+        title: t(getTPath(saving)),
         panel: (
           <>
             <p>{t(getTPath(calibCadenFinishMsg))}</p>

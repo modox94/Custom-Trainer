@@ -20,7 +20,15 @@ const SettingLine = props => {
   return (
     <div className={clsx(styles.settingButtonContainer, className)}>
       <Text
-        className={clsx(Classes.TEXT_LARGE, styles.maxWidth75, titleClassName)}
+        className={clsx(
+          Classes.TEXT_LARGE,
+          {
+            [styles.maxWidth75]: Boolean(
+              buttonIcon || buttonText || onClick || value,
+            ),
+          },
+          titleClassName,
+        )}
       >
         {title}
       </Text>

@@ -1,3 +1,5 @@
+const CADENCE_FIELDS = require("../../renderer/src/constants/CADENCE_FIELDS.json");
+
 const LANGS_CODES = require("../../renderer/src/constants/LANGS_CODES.json");
 
 const MOTOR_FIELDS = require("../../renderer/src/constants/MOTOR_FIELDS.json");
@@ -6,8 +8,6 @@ exports.BOOT_CONFIG_OPT = require("../../renderer/src/constants/BOOT_CONFIG_OPT.
 
 exports.BOOT_CONFIG_VALUE = require("../../renderer/src/constants/BOOT_CONFIG_VALUE.json");
 
-exports.CADENCE_FIELDS = require("../../renderer/src/constants/CADENCE_FIELDS.json");
-
 exports.COMMON_CONST = require("../../renderer/src/constants/COMMON_CONST.json");
 
 exports.ERRORS = require("../../renderer/src/constants/ERRORS.json");
@@ -15,6 +15,8 @@ exports.ERRORS = require("../../renderer/src/constants/ERRORS.json");
 exports.EVENTS = require("../../renderer/src/constants/EVENTS.json");
 
 exports.FILE_CONST = require("../../renderer/src/constants/FILE_CONST.json");
+
+exports.CADENCE_FIELDS = CADENCE_FIELDS;
 
 exports.LANGS_CODES = LANGS_CODES;
 
@@ -98,6 +100,8 @@ exports.MOVE_DIRECTION = { forward: "forward", back: "back" };
 exports.interfaceDefault = {
   lang: LANGS_CODES.en,
   cursorNone: false,
+  showTips: true,
+  devStatus: false,
 };
 
 exports.peripheralDefault = {
@@ -106,6 +110,7 @@ exports.peripheralDefault = {
   [MOTOR_FIELDS.SLEEP_RATIO]: null,
   [MOTOR_FIELDS.SWAP_MOTOR_WIRES]: null,
   [MOTOR_FIELDS.SWAP_POTEN_WIRES]: null,
+  [CADENCE_FIELDS.GEAR_RATIO]: null,
 };
 
 exports.peripheralDefaultWeb = {
@@ -114,4 +119,5 @@ exports.peripheralDefaultWeb = {
   [MOTOR_FIELDS.SLEEP_RATIO]: null,
   [MOTOR_FIELDS.SWAP_MOTOR_WIRES]: null,
   [MOTOR_FIELDS.SWAP_POTEN_WIRES]: null,
+  [CADENCE_FIELDS.GEAR_RATIO]: null,
 };

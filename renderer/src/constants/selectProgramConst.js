@@ -3,4 +3,5 @@ export const SP_MODE = {
   EDIT: "EDIT",
   COPY: "COPY",
   DELETE: "DELETE",
+  SAVE_TO: "SAVE_TO",
 };

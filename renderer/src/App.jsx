@@ -173,6 +173,10 @@ const App = () => {
                 path={SUB_PATHS[PROGRAM_EDITOR].DELETE}
                 element={<SelectProgram mode={SP_MODE.DELETE} />}
               />
+              <Route
+                path={SUB_PATHS[PROGRAM_EDITOR].SAVE_TO}
+                element={<SelectProgram mode={SP_MODE.SAVE_TO} />}
+              />
             </Route>
           </Routes>
 

@@ -24,7 +24,7 @@ const CONSTANTS_OBJECT = {
 };
 
 const ErrorText = props => {
-  const { className, error, text, br } = props;
+  const { className, error, text, br, icon } = props;
   const { t } = useTranslation();
 
   if (!error && !text) {
@@ -34,7 +34,9 @@ const ErrorText = props => {
   return (
     <>
       <span className={clsx(styles.redText, className)}>
-        <Icon className={styles.redIcon} icon={IconNames.WARNING_SIGN} />
+        {icon && (
+          <Icon className={styles.redIcon} icon={IconNames.WARNING_SIGN} />
+        )}
         {`${COMMON_CONST.SPACE}${
           error ? t(getTPath(error), CONSTANTS_OBJECT) : text
         }`}
@@ -49,11 +51,13 @@ ErrorText.propTypes = {
   error: PropTypes.oneOf(Object.values(ERRORS)),
   text: PropTypes.string,
   br: PropTypes.bool,
+  icon: PropTypes.bool,
 };
 ErrorText.defaultProps = {
   className: "",
   text: "",
   br: false,
+  icon: true,
 };
 
 export default ErrorText;

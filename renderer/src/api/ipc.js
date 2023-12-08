@@ -111,6 +111,13 @@ export const editProgram = (filename, programObject) =>
 export const deleteProgram = filename =>
   window.electron.ipcRenderer.send(EVENTS.DELETE_PROGRAM, filename);
 
+export const saveToProgram = filename =>
+  window.electron.ipcRenderer.send(EVENTS.SAVE_TO_PROGRAM, filename);
+
+export const loadFromProgram = async () => {
+  return await window.electron.ipcRenderer.invoke(EVENTS.LOAD_FROM_PROGRAM);
+};
+
 export const editSettings = (filename, data) => {
   if (Object.values(FILE_CONST).includes(filename)) {
     window.electron.ipcRenderer.send(EVENTS.EDIT_SETTINGS, filename, data);
@@ -118,6 +125,16 @@ export const editSettings = (filename, data) => {
     console.log("error invalid filename");
   }
 };
+
+export const saveToSettings = () =>
+  window.electron.ipcRenderer.send(EVENTS.SAVE_TO_SETTINGS);
+
+export const loadFromSettings = async () => {
+  return await window.electron.ipcRenderer.invoke(EVENTS.LOAD_FROM_SETTINGS);
+};
+
+export const resetSettings = () =>
+  window.electron.ipcRenderer.send(EVENTS.RESET_SETTINGS);
 
 export const turnOnSPI = async () => {
   return await window.electron.ipcRenderer.invoke(

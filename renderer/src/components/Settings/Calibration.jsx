@@ -12,6 +12,7 @@ import {
   TRANSLATION_ROOT_KEYS,
 } from "../../constants/translationConst";
 import { getTranslationPath } from "../../utils/translationUtils";
+import ErrorText from "../ErrorText/ErrorText";
 import { Container, Item } from "../SquareGrid/SquareGrid";
 import CalibrationCadenceDialog from "./CalibrationCadenceDialog";
 import CalibrationMotorDialog from "./CalibrationMotorDialog";
@@ -96,9 +97,9 @@ const Calibration = () => {
           />
           <SettingLine
             title={t(getTPath(gearRatioKey))}
-            value={String(gearRatio)}
+            value={!isFinite(gearRatio) ? COMMON_CONST.DASH : String(gearRatio)}
           />
-          <SettingLine title="TODO error" value={String(error)} />
+          {error ? <SettingLine title={<ErrorText error={error} />} /> : null}
         </Item>
       </Container>
 
