@@ -43,39 +43,38 @@ const environmentSlice = createSlice({
       state.programSteps = undefined;
     },
   },
-  extraReducers: {
-    [updateRunningStatus.pending]: (state, action) => {
-      const lastTimecode = get(action, ["meta", "arg"]);
-      const requestId = get(action, ["meta", "requestId"]);
-      const isValid = isFinite(lastTimecode);
+  extraReducers(builder) {
+    builder
+      .addCase(updateRunningStatus.pending, (state, action) => {
+        const lastTimecode = get(action, ["meta", "arg"]);
+        const requestId = get(action, ["meta", "requestId"]);
+        const isValid = isFinite(lastTimecode);
 
-      if (!isValid) {
-        state.runningStatus = RUNNINIG_STATUS.PAUSE;
-      }
+        if (!isValid) {
+          state.runningStatus = RUNNINIG_STATUS.PAUSE;
+        }
 
-      if (isValid && state.runningStatus === RUNNINIG_STATUS.PAUSE) {
-        state.runningStatus = RUNNINIG_STATUS.RUN;
-      }
+        if (isValid && state.runningStatus === RUNNINIG_STATUS.PAUSE) {
+          state.runningStatus = RUNNINIG_STATUS.RUN;
+        }
 
-      if (isValid) {
-        state.lastSleep = isProduction ? requestId : lastTimecode;
-      }
-    },
+        if (isValid) {
+          state.lastSleep = isProduction ? requestId : lastTimecode;
+        }
+      })
+      .addCase(updateRunningStatus.rejected, noop)
+      .addCase(updateRunningStatus.fulfilled, (state, action) => {
+        const lastTimecode = get(action, ["meta", "arg"]);
+        const requestId = get(action, ["meta", "requestId"]);
+        const { lastSleep, runningStatus } = state;
+        const isLastRequest = isProduction
+          ? requestId === lastSleep
+          : lastTimecode === lastSleep;
 
-    [updateRunningStatus.rejected]: noop,
-
-    [updateRunningStatus.fulfilled]: (state, action) => {
-      const lastTimecode = get(action, ["meta", "arg"]);
-      const requestId = get(action, ["meta", "requestId"]);
-      const { lastSleep, runningStatus } = state;
-      const isLastRequest = isProduction
-        ? requestId === lastSleep
-        : lastTimecode === lastSleep;
-
-      if (isLastRequest && runningStatus === RUNNINIG_STATUS.RUN) {
-        state.runningStatus = RUNNINIG_STATUS.PAUSE;
-      }
-    },
+        if (isLastRequest && runningStatus === RUNNINIG_STATUS.RUN) {
+          state.runningStatus = RUNNINIG_STATUS.PAUSE;
+        }
+      });
   },
 });
 
