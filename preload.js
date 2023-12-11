@@ -28,9 +28,6 @@ contextBridge.exposeInMainWorld("electron", {
     postMessage(channel, message, transfer) {
       ipcRenderer.postMessage(channel, message, transfer);
     },
-    sendTo(webContentsId, channel, ...args) {
-      ipcRenderer.sendTo(webContentsId, channel, ...args);
-    },
     sendToHost(channel, ...args) {
       ipcRenderer.sendToHost(channel, ...args);
     },
