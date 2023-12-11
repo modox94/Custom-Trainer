@@ -35,10 +35,7 @@ import { PE_MODE } from "./constants/programEditorConst";
 import { FILE_CONST } from "./constants/reduxConst";
 import { SP_MODE } from "./constants/selectProgramConst";
 import { LANGS_CODES } from "./constants/translationConst";
-import {
-  getCursorNoneTemp,
-  getFooterStatus,
-} from "./selectors/environmentSelectors";
+import { getCursorNoneTemp, getFooterStatus } from "./slices/environmentSlice";
 
 const { MAIN, MANUAL_MODE, SETTINGS, SELECT_PROGRAM, PROGRAM_EDITOR } = PAGES;
 

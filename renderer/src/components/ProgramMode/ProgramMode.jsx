@@ -19,7 +19,7 @@ import {
   TRANSLATION_KEYS,
   TRANSLATION_ROOT_KEYS,
 } from "../../constants/translationConst";
-import { getRunningStatus } from "../../selectors/environmentSelectors";
+import { getRunningStatus } from "../../slices/environmentSlice";
 import { getTranslationPath } from "../../utils/translationUtils";
 import BarChart from "../BarChart/BarChart";
 import CadenceGauge from "../CadenceGauge/CadenceGauge";

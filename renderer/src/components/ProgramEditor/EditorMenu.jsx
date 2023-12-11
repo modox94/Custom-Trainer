@@ -16,8 +16,6 @@ import {
 import {
   getProgramSteps,
   getProgramTitle,
-} from "../../selectors/environmentSelectors";
-import {
   resetProgramSteps,
   resetProgramTitle,
 } from "../../slices/environmentSlice";

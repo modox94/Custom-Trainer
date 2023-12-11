@@ -1,9 +1,9 @@
-import { createSlice } from "@reduxjs/toolkit";
 import { get, isFinite, noop } from "lodash";
-import { updateRunningStatus } from "../actions/environmentActions";
+import { COMMON_CONST } from "../constants/commonConst";
 import { DEFAULT_STEPS } from "../constants/programEditorConst";
 import { NAMES, RUNNINIG_STATUS } from "../constants/reduxConst";
-import { isProduction } from "../utils/commonUtils";
+import { isProduction, sleep } from "../utils/commonUtils";
+import { createSlice } from "./createSlice";
 
 const initialState = {
   runningStatus: RUNNINIG_STATUS.PAUSE,
@@ -15,66 +15,75 @@ const initialState = {
 const environmentSlice = createSlice({
   name: NAMES.environment,
   initialState,
-  reducers: {
-    showFooter: state => {
+  reducers: create => ({
+    showFooter: create.reducer(state => {
       state.footerStatus = true;
-    },
-    hideFooter: state => {
+    }),
+    hideFooter: create.reducer(state => {
       state.footerStatus = false;
-    },
-    tryCursorNone: state => {
+    }),
+    tryCursorNone: create.reducer(state => {
       state.cursorNoneTemp = true;
-    },
-    resetCursorNone: state => {
+    }),
+    resetCursorNone: create.reducer(state => {
       state.cursorNoneTemp = false;
-    },
-    setProgramTitle: (state, action) => {
+    }),
+    setProgramTitle: create.reducer((state, action) => {
       const value = action.payload || "";
       state.programTitle = value;
-    },
-    resetProgramTitle: state => {
+    }),
+    resetProgramTitle: create.reducer(state => {
       state.programTitle = "";
-    },
-    setProgramSteps: (state, action) => {
+    }),
+    setProgramSteps: create.reducer((state, action) => {
       const value = action.payload || DEFAULT_STEPS;
       state.programSteps = value;
-    },
-    resetProgramSteps: state => {
+    }),
+    resetProgramSteps: create.reducer(state => {
       state.programSteps = undefined;
-    },
-  },
-  extraReducers(builder) {
-    builder
-      .addCase(updateRunningStatus.pending, (state, action) => {
-        const lastTimecode = get(action, ["meta", "arg"]);
-        const requestId = get(action, ["meta", "requestId"]);
-        const isValid = isFinite(lastTimecode);
+    }),
+    updateRunningStatus: create.asyncThunk(
+      async () => await sleep(COMMON_CONST.PAUSE_DELAY),
+      {
+        pending: (state, action) => {
+          const lastTimecode = get(action, ["meta", "arg"]);
+          const requestId = get(action, ["meta", "requestId"]);
+          const isValid = isFinite(lastTimecode);
 
-        if (!isValid) {
-          state.runningStatus = RUNNINIG_STATUS.PAUSE;
-        }
+          if (!isValid) {
+            state.runningStatus = RUNNINIG_STATUS.PAUSE;
+          }
 
-        if (isValid && state.runningStatus === RUNNINIG_STATUS.PAUSE) {
-          state.runningStatus = RUNNINIG_STATUS.RUN;
-        }
+          if (isValid && state.runningStatus === RUNNINIG_STATUS.PAUSE) {
+            state.runningStatus = RUNNINIG_STATUS.RUN;
+          }
 
-        if (isValid) {
-          state.lastSleep = isProduction ? requestId : lastTimecode;
-        }
-      })
-      .addCase(updateRunningStatus.rejected, noop)
-      .addCase(updateRunningStatus.fulfilled, (state, action) => {
-        const lastTimecode = get(action, ["meta", "arg"]);
-        const requestId = get(action, ["meta", "requestId"]);
-        const { lastSleep, runningStatus } = state;
-        const isLastRequest = isProduction
-          ? requestId === lastSleep
-          : lastTimecode === lastSleep;
+          if (isValid) {
+            state.lastSleep = isProduction ? requestId : lastTimecode;
+          }
+        },
+        rejected: noop,
+        fulfilled: (state, action) => {
+          const lastTimecode = get(action, ["meta", "arg"]);
+          const requestId = get(action, ["meta", "requestId"]);
+          const { lastSleep, runningStatus } = state;
+          const isLastRequest = isProduction
+            ? requestId === lastSleep
+            : lastTimecode === lastSleep;
 
-        if (isLastRequest && runningStatus === RUNNINIG_STATUS.RUN) {
-          state.runningStatus = RUNNINIG_STATUS.PAUSE;
-        }
-      });
+          if (isLastRequest && runningStatus === RUNNINIG_STATUS.RUN) {
+            state.runningStatus = RUNNINIG_STATUS.PAUSE;
+          }
+        },
+      },
+    ),
+  }),
+  selectors: {
+    getRunningStatus: state => state.runningStatus,
+    getFooterStatus: state => state.footerStatus,
+    getCursorNoneTemp: state => state.cursorNoneTemp,
+    getProgramTitle: state => state.programTitle || "",
+    getProgramSteps: state => state.programSteps,
   },
 });
 
@@ -87,6 +96,15 @@ export const {
   resetProgramTitle,
   setProgramSteps,
   resetProgramSteps,
+  updateRunningStatus,
 } = environmentSlice.actions;
+
+export const {
+  getRunningStatus,
+  getFooterStatus,
+  getCursorNoneTemp,
+  getProgramTitle,
+  getProgramSteps,
+} = environmentSlice.selectors;
 
 export default environmentSlice;

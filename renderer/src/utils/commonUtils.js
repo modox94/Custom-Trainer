@@ -1,10 +1,12 @@
 import { get, isPlainObject } from "lodash";
 import { useEffect, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { updateRunningStatus } from "../actions/environmentActions";
 import { useGetCadenceQuery } from "../api/ipc";
 import { RUNNINIG_STATUS } from "../constants/reduxConst";
-import { getRunningStatus } from "../selectors/environmentSelectors";
+import {
+  getRunningStatus,
+  updateRunningStatus,
+} from "../slices/environmentSlice";
 
 const { PAUSE } = RUNNINIG_STATUS;
 

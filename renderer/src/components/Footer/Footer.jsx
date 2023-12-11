@@ -13,8 +13,11 @@ import {
   TRANSLATION_KEYS,
   TRANSLATION_ROOT_KEYS,
 } from "../../constants/translationConst";
-import { getFooterStatus } from "../../selectors/environmentSelectors";
-import { hideFooter, showFooter } from "../../slices/environmentSlice";
+import {
+  getFooterStatus,
+  hideFooter,
+  showFooter,
+} from "../../slices/environmentSlice";
 import { useCadenceState } from "../../utils/commonUtils";
 import { getTranslationPath } from "../../utils/translationUtils";
 import DialogCustom from "../DialogCustom/DialogCustom";

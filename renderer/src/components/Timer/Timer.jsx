@@ -9,7 +9,7 @@ import {
   TRANSLATION_KEYS,
   TRANSLATION_ROOT_KEYS,
 } from "../../constants/translationConst";
-import { getRunningStatus } from "../../selectors/environmentSelectors";
+import { getRunningStatus } from "../../slices/environmentSlice";
 import { usePrevious } from "../../utils/commonUtils";
 import { getTranslationPath } from "../../utils/translationUtils";
 import { Item } from "../SquareGrid/SquareGrid";

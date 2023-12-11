@@ -28,8 +28,8 @@ import {
 import {
   getProgramSteps,
   getProgramTitle,
-} from "../../selectors/environmentSelectors";
-import { setProgramSteps } from "../../slices/environmentSlice";
+  setProgramSteps,
+} from "../../slices/environmentSlice";
 import { getTranslationPath } from "../../utils/translationUtils";
 import BarChart from "../BarChart/BarChart";
 import { DumbbellIcon, GaugeHighIcon } from "../Icons";

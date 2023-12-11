@@ -21,8 +21,10 @@ import {
   TRANSLATION_KEYS,
   TRANSLATION_ROOT_KEYS,
 } from "../../constants/translationConst";
-import { getProgramTitle } from "../../selectors/environmentSelectors";
-import { setProgramTitle } from "../../slices/environmentSlice";
+import {
+  getProgramTitle,
+  setProgramTitle,
+} from "../../slices/environmentSlice";
 import { getTranslationPath } from "../../utils/translationUtils";
 import { Container, Item } from "../SquareGrid/SquareGrid";
 import styles from "./EnterTitle.module.css";
